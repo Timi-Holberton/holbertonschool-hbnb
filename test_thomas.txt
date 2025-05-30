@@ -30,3 +30,38 @@ Persistence Layer
 Utilisateur → API (Presentation Layer)
          	→ Facade (Service Layer)
          	→ Models / Repositories (Business + Persistence Layer)
+
+Composants par couche :
+	- Presentation Layer (Services, API) :
+		- main.py : Point d'entrée de l'application (Ex : Flask)
+		- Routes API (Ex : /users) : Explosent les endpoints REST (GET, POST, PUT, DELETE)
+		- Contrôleurs : Fonctions qui reçoivent les requêtes, valident les données et appellent les services
+		- Schemas (Ex : UserSchema) : Formatent les objets en JSON
+		- Gestion des erreurs (handlers) : Centralisent la geston des exceptions
+		- Middleware : Gèrent des traitements transversaux : authentification, logs, CORS...
+		- Service d'authentification : Gèrent les tokens, sessions et permissions
+
+	- Business Logic Layer (Models) :
+		- Modèles métiers (Users, Place, Review, Amenity) : Représentent les entités et leurs comportements (Ex : user.is_admin())
+		- Services métier (UserService, PlaceService) : Gèrent des cas d'usage complexes (Ex : réserver un lieu)
+		- Rules / Policies : Contiennent les règles spécifiques (Ex : "un utilisateur ne peut poster qu'un seul avis par lieu")
+		- Façades (UserFacade, ReviewFacade) : Fournissent un point d'accès simplifié aux cas d'usage
+		- Validateurs métier : Valident des règles non techniques (Ex : formats de date métier, logique de note)
+
+	- Persistence Layer :
+		- ORM Models (UserModel, PlaceModel) : Mappent les entités métier à la base de données
+		- Repositories (UserRepository, ReviewRepository) : Fournissent des méthodes pour lire/écrire les données (Ex : get_user_by_id, save_review)
+		- Database Engine (MySQL, SQLite) : Base de données physique ou en mémoire
+		- Session/Connexion Database : Gestion des transactions et connexions
+		- Migrations (alembic, flask-migrate) : Gèrent les évolutions du schéma de la base de données
+		- Configuration (database.cfg, .env) : Paramètres de connexion (host, port, user, dbname)
+
+Explications détaillées Facade :
+
+Le Facade Pattern permet de simplifier l'utilisation d'un système complexe, de masquer les détails internes du sous-système,
+de centraliser les appels ou traitements multiples via une interface unifiée et de faciliter la maintenant et la compréhension du code.
+
+La classe façade appelle des modules internes, fait le lien entre eux et expose une interface propre aux clients (Ex : API, service, contrôleur...).
+
+Le Facade Pattern permet à la présentation layer (API) d'appeler une seule interface au lieu d'interagir directement avec les modèles et la base.
+Il oriente les requêtes : l'API ne sait pas comment les objets sont stockés, elle se contente de demander au "service façade".
