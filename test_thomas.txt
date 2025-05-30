@@ -19,10 +19,14 @@ Presentation Layer -> Persistence Layer avec Facade Pattern :
 Presentation Layer
     |
     v
-  ReviewFacade.create_review(...)
+ ReviewFacade.create_review(...)
     |
     v
  Business Logic Layer (ReviewService)
     |
     v
 Persistence Layer
+
+Utilisateur → API (Presentation Layer)
+         	→ Facade (Service Layer)
+         	→ Models / Repositories (Business + Persistence Layer)
