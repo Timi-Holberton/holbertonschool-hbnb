@@ -1,0 +1,28 @@
+Résumé global :
+
+[UTILISATEUR]
+    |
+    v
+[Presentation Layer] --- Expose API, gère formats et erreurs
+    |
+    v
+[Business Logic Layer] --- Applique les règles métiers
+    |
+    v
+[Persistence Layer] --- Accès aux données
+    |
+    v
+[BASE DE DONNÉES]
+
+Presentation Layer -> Persistence Layer avec Facade Pattern :
+
+Presentation Layer
+    |
+    v
+  ReviewFacade.create_review(...)
+    |
+    v
+ Business Logic Layer (ReviewService)
+    |
+    v
+Persistence Layer
