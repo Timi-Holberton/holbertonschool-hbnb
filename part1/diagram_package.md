@@ -1,3 +1,4 @@
+```python
 @startuml
 !theme cerulean-outline
 title Architecture 3 couches du projet HBnB
@@ -100,3 +101,4 @@ placeRepo --> database : Requête SQL
 reviewRepo --> database : Requête SQL
 amenityRepo --> database : Requête SQL
 @enduml
+```
