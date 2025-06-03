@@ -51,9 +51,8 @@ flowchart TD
   reviewRepo <--> database
   amenityRepo <--> database
 
-baseModel -->|hérite| userModel 
-baseModel -->|hérite| placeModel
-baseModel -->|hérite| reviewModel
-baseModel -->|hérite| amenityModel
-
+userModel -->|hérite| baseModel
+placeModel -->|hérite| baseModel
+reviewModel -->|hérite| baseModel
+amenityModel -->|hérite| baseModel
 ```
