@@ -1,58 +1,61 @@
-```mermaid
-flowchart TD
-  subgraph Presentation_Layer ["Presentation Layer"]
-    apiGateway["API Services"]
-    UserAPI
-    PlaceAPI
-    ReviewAPI
-    AmenityAPI
-  end
+@startuml
+!theme cerulean-outline
+title Architecture 3 couches du projet HBnB
 
-  subgraph Business_Logic_Layer ["Business Logic Layer"]
-    facade["Facade"]
-    userModel["User Model"]
-    placeModel["Place Model"]
-    reviewModel["Review Model"]
-    amenityModel["Amenity Model"]
-    baseModel["Base model"]
-  end
+package "Presentation Layer" {
+    [API Services] as apiGateway
+    [UserAPI]
+    [PlaceAPI]
+    [ReviewAPI]
+    [AmenityAPI]
+}
 
-  subgraph Persistence_Layer ["Persistence Layer"]
-    userRepo["UserRepository"]
-    placeRepo["PlaceRepository"]
-    reviewRepo["ReviewRepository"]
-    amenityRepo["AmenityRepository"]
-    database["Base de données"]
-  end
+package "Business Logic Layer" {
+    [Facade] as facade
+    [Base Model] as baseModel
+    [User Model] as userModel
+    [Place Model] as placeModel
+    [Review Model] as reviewModel
+    [Amenity Model] as amenityModel
+}
 
-  apiGateway <--> UserAPI
-  apiGateway <--> PlaceAPI
-  apiGateway <--> ReviewAPI
-  apiGateway <--> AmenityAPI
+package "Persistence Layer" {
+    [UserRepository] as userRepo
+    [PlaceRepository] as placeRepo
+    [ReviewRepository] as reviewRepo
+    [AmenityRepository] as amenityRepo
+    [Base de données] as database
+}
 
-  UserAPI <--> facade
-  PlaceAPI <--> facade
-  ReviewAPI <--> facade
-  AmenityAPI <--> facade
+' Connexions entre les composants
+apiGateway --> UserAPI : Transmet à
+apiGateway --> PlaceAPI : Transmet à
+apiGateway --> ReviewAPI : Transmet à
+apiGateway --> AmenityAPI : Transmet à
 
-  facade <--> userModel
-  facade <--> placeModel
-  facade <--> reviewModel
-  facade <--> amenityModel
-  facade <--> baseModel
+UserAPI --> facade : Délègue à
+PlaceAPI --> facade : Délègue à
+ReviewAPI --> facade : Délègue à
+AmenityAPI --> facade : Délègue à
 
-  userModel <--> userRepo
-  placeModel <--> placeRepo
-  reviewModel <--> reviewRepo
-  amenityModel <--> amenityRepo
+userModel -[#green]|> baseModel : hérite
+placeModel -[#green]|> baseModel : hérite
+reviewModel -[#green]|> baseModel : hérite
+amenityModel -[#green]|> baseModel : hérite
 
-  userRepo <--> database
-  placeRepo <--> database
-  reviewRepo <--> database
-  amenityRepo <--> database
 
-userModel -->|hérite| baseModel
-placeModel -->|hérite| baseModel
-reviewModel -->|hérite| baseModel
-amenityModel -->|hérite| baseModel
-```
+facade --> userModel : Utilise
+facade --> placeModel : Utilise
+facade --> reviewModel : Utilise
+facade --> amenityModel : Utilise
+
+userModel --> userRepo : Accède à
+placeModel --> placeRepo : Accède à
+reviewModel --> reviewRepo : Accède à
+amenityModel --> amenityRepo : Accède à
+ 
+userRepo --> database : Requêtes SQL
+placeRepo --> database : Requêtes SQL
+reviewRepo --> database : Requêtes SQL
+amenityRepo --> database : Requêtes SQL
+@enduml
