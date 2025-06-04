@@ -72,13 +72,6 @@ participant Database
 	DataBase-->>BusinessLogic: Validation failed
 	BusinessLogic-->>API: Return failure
 	API-->>User: Review submission failed (code 404)
-	User->>API: user select a place and send a HTTP request
-	API->>API: Verify parameters of API
-	API->>BusinessLogic: Check matching criteria
-	BusinessLogic->>Database: request database
-	Database-->>BusinessLogic: List<Place> with criteria
-	BusinessLogic-->>API: return the list of places
-	API-->>User: user see the list of places depending on the criteria
 ```
 
 # Fetching a List of Places
