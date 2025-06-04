@@ -1,26 +1,5 @@
-## Récupérer une liste de lieux - Version Boromir
-```mermaid
-sequenceDiagram
-    participant User
-    participant API
-    participant BusinessLogic
-    participant Database
 
-    User->>PlaceAPI: user click on a logement and send a request HTTP
-    PlaceAPI->>PlaceAPI: vérifie elle-même les paramètres de la requête avant
-        API->>BusinessLogic: critere is correct
-    alt Filter is valid
-        BusinessLogic->>Database: send a request for the database
-        Database-->>BusinessLogic: List<Place>
-        BusinessLogic-->>PlaceAPI: Return list of places
-        API-->>User: Code 200
-    else Filter invalid
-        BusinessLogic-->>PlaceAPI: Return an error
-        API-->>User: Code 400 or 404
-    end
-```
-
-## User Registration
+# User Registration
 ```mermaid
 sequenceDiagram
 participant Utilisateur
@@ -39,4 +18,25 @@ Note right of API: Sinon:
 BaseDeDonnées-->>LogiqueMetier: Utilisateur déjà existant (Échec)
 LogiqueMetier-->>API: Retourne Échec
 API-->>Utilisateur: Inscription échouée (code 400 ou 404)
+```
+
+# Fetching a List of Places
+```mermaid
+sequenceDiagram
+    participant User
+    participant API
+    participant BusinessLogic
+    participant Database
+
+    User->>API: user select a place and send a HTTP request
+    API->>API: Verify parameters of API
+    
+    API->>BusinessLogic: Check matching criteria
+    BusinessLogic->>Database: request database
+
+    Database-->>BusinessLogic: List<Place> with criteria
+	
+    BusinessLogic-->>API: return the list of places
+
+    API-->>User: user see the list of places depending on the criteria
 ```
