@@ -30,7 +30,7 @@ sequenceDiagram
 participant User
 participant API
 participant BusinessLogic
-participant Database
+participant DataBase
 	User->>API: Create Place (Send Place data)
 	API->>API: Verify parameters of API
 	Note right of User: If Place not have information complete
@@ -55,7 +55,7 @@ sequenceDiagram
 participant User
 participant API
 participant BusinessLogic
-participant Database
+participant DataBase
 	User->>API: Submit review (Send review data)
 	API->>API: Verify parameters of API
 	Note right of User: If Review not have information complete (Rating & comment)
