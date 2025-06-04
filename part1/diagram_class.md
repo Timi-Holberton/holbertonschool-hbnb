@@ -1,5 +1,5 @@
 ## :jigsaw: Diagramme de classes — Projet HBnB
-mermaid
+```mermaid
 ---
 config:
   theme: default
@@ -11,8 +11,8 @@ classDiagram
         + updated_at
     }
     class User {
-        - nom
-        + prénom
+        - last_name
+        + first_name
         - email
         - password
         + admin
@@ -22,10 +22,11 @@ classDiagram
         - authenticate()
     }
     class Place {
-        - proprio
+        - owner
         + title
         + description
         + price
+		+ max_person
         + localisation (longitude/latitude)
         + contact
         + list_amenities
@@ -38,7 +39,7 @@ classDiagram
         + user_id
         + place_id
         + rating
-        + avis
+        + review
         + create_review()
         + update_review()
         + delete_review()
@@ -52,13 +53,14 @@ classDiagram
         + delete_amenity()
         + list_amenities()
     }
-    %% Héritage
-    User --|> BaseModel : hérite de
-    Place --|> BaseModel : hérite de
-    Review --|> BaseModel : hérite de
-    Amenity --|> BaseModel : hérite de
+    %% inherits
+    User --|> BaseModel : inherits from
+    Place --|> BaseModel : inherits from
+    Review --|> BaseModel : inherits from
+    Amenity --|> BaseModel : inherits from
     %% Relations
-    User "1" --> "0..*" Place : possède
-    User "1" --> "0..*" Review : rédige
-    Place "1" --> "0..*" Review : reçoit
-    Place "0..*" --> "0..*" Amenity : comprend
+    User "1" --> "0..*" Place : has
+    User "1" --> "0..*" Review : write
+    Place "1" --> "0..*" Review : receives
+    Place "0..*" --> "0..*" Amenity : include
+```
