@@ -1,5 +1,5 @@
 ## :jigsaw: Diagramme de classes — Projet HBnB
-```mermaid
+mermaid
 ---
 config:
   theme: default
@@ -39,7 +39,7 @@ classDiagram
         + user_id
         + place_id
         + rating
-        + review
+        + comment
         + create_review()
         + update_review()
         + delete_review()
@@ -63,4 +63,4 @@ classDiagram
     User "1" --> "0..*" Review : write
     Place "1" --> "0..*" Review : receives
     Place "0..*" --> "0..*" Amenity : include
-```
+
