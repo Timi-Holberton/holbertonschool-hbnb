@@ -1,6 +1,6 @@
 @startuml
 !theme cerulean-outline
-title Architecture 3 couches du projet HBnB
+title Three layer architecture of the HBnB project
 
 package "Presentation Layer" {
     [API Services] as apiGateway
@@ -24,38 +24,38 @@ package "Persistence Layer" {
     [PlaceRepository] as placeRepo
     [ReviewRepository] as reviewRepo
     [AmenityRepository] as amenityRepo
-    [Base de données] as database
+    [Database] as database
 }
 
 ' Connexions entre les composants
-apiGateway --> UserAPI : Transmet à
-apiGateway --> PlaceAPI : Transmet à
-apiGateway --> ReviewAPI : Transmet à
-apiGateway --> AmenityAPI : Transmet à
+apiGateway <--> UserAPI : Transfer to
+apiGateway <--> PlaceAPI : Transfer to
+apiGateway <--> ReviewAPI : Transfer to
+apiGateway <--> AmenityAPI : Transfer to
 
-UserAPI --> facade : Délègue à
-PlaceAPI --> facade : Délègue à
-ReviewAPI --> facade : Délègue à
-AmenityAPI --> facade : Délègue à
+UserAPI <--> facade : Delegates to
+PlaceAPI <--> facade : Delegates to
+ReviewAPI <--> facade : Delegates to
+AmenityAPI <--> facade : Delegates to
 
-userModel -[#green]|> baseModel : hérite
-placeModel -[#green]|> baseModel : hérite
-reviewModel -[#green]|> baseModel : hérite
-amenityModel -[#green]|> baseModel : hérite
+userModel -[#green]|> baseModel
+placeModel -[#green]|> baseModel
+reviewModel -[#green]|> baseModel : <color:green>inherited 
+amenityModel -[#green]|> baseModel : <color:green>inherited
 
 
-facade --> userModel : Utilise
-facade --> placeModel : Utilise
-facade --> reviewModel : Utilise
-facade --> amenityModel : Utilise
+facade <--> userModel : Used
+facade <--> placeModel : Used
+facade <--> reviewModel : Used
+facade <--> amenityModel : Used
 
-userModel --> userRepo : Accède à
-placeModel --> placeRepo : Accède à
-reviewModel --> reviewRepo : Accède à
-amenityModel --> amenityRepo : Accède à
+userModel <--> userRepo : accesses
+placeModel <--> placeRepo : accesses
+reviewModel <--> reviewRepo : accesses
+amenityModel <--> amenityRepo : accesses
  
-userRepo --> database : Requêtes SQL
-placeRepo --> database : Requêtes SQL
-reviewRepo --> database : Requêtes SQL
-amenityRepo --> database : Requêtes SQL
+userRepo <--> database : Request SQL
+placeRepo <--> database : Request SQL
+reviewRepo <--> database : Request SQL
+amenityRepo <--> database : Request SQL
 @enduml
