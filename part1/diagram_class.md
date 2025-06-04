@@ -1,5 +1,4 @@
 ## :jigsaw: Diagramme de classes — Projet HBnB
-%%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f0f0f0', 'edgeLabelBackground':'#ffffff'}}}%%
 ```mermaid
 ---
 config:
