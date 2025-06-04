@@ -1,4 +1,4 @@
-## :jigsaw: Diagramme de classes — HBnB Evolution
+## :jigsaw: Diagramme de classes — Projet HBnB
 ```mermaid
 ---
 config:
