@@ -24,7 +24,7 @@ BusinessLogic-->>API: Return failure
 API-->>User: Registration failed (code 409)
 ```
 
-# Création d’un hébergement :
+# Creation of a place :
 ```mermaid
 sequenceDiagram
 participant User
