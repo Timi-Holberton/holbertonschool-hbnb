@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-from app.models.review import Review
 from app.models.BaseModel import BaseModel
-from app.models.amenity import Amenity
-from app.models.user import User
 
 
 class Place(BaseModel):
@@ -13,17 +10,19 @@ class Place(BaseModel):
         self.price = self.validate_price(price)
         self.latitude = self.validate_latitude(latitude)
         self.longitude = self.validate_longitude(longitude)
-        self.owner = self.valid_owner(owner)
+        self.owner = self.validate_owner(owner)
         self.reviews = []  # List to store related reviews
         self.amenities = []  # List to store related amenities
 
     def add_review(self, review):
+        from app.models.review import Review
         if not isinstance(review, Review):
             raise TypeError("Expected argument 'review' to "
                             "be an instance of Review.")
         self.reviews.append(review)
 
     def add_amenity(self, amenity):
+        from app.models.amenity import Amenity
         if not isinstance(amenity, Amenity):
             raise TypeError("Expected argument 'amenity' to "
                             "be an instance of Amenity.")
@@ -72,6 +71,7 @@ class Place(BaseModel):
         return longitude
 
     def validate_owner(self, user):
+        from .user import User
         """Vérifie que User est un propriétaire acceptable pour le lieu"""
         if not isinstance(user, User):
             raise ValueError("Le propriétaire doit être une instance de User")
@@ -82,6 +82,7 @@ class Place(BaseModel):
 
     def check_owner_permission(self, user):
         """Vérifie que l'utilisateur est autorisé à modifier ce lieu"""
+        from .user import User
         if not isinstance(user, User):
             raise ValueError("L'utilisateur doit être une instance de User")
         if not hasattr(user, 'id') or not user.id:

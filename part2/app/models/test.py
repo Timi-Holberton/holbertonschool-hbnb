@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from app.models.user import User
 
 
@@ -8,8 +7,9 @@ def test_user_creation():
     assert user.first_name == "John"
     assert user.last_name == "Doe"
     assert user.email == "john.doe@example.com"
-    assert user.is_admin is False  # Default value
+    assert user.is_admin is False  # Valeur par défaut
     print("User creation test passed!")
 
 
-test_user_creation()
+if __name__ == "__main__":
+    test_user_creation()

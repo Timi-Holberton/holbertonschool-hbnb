@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 from email_validator import validate_email, EmailNotValidError
-from werkzeug.security import generate_password_hash, check_password_hash
-from app.models.review import Review
-from app.models.place import Place
 from app.models.BaseModel import BaseModel
 import re
 """
@@ -70,44 +67,18 @@ class User(BaseModel):
             raise ValueError("is_admin doit être un booléen")
         return is_admin
 
-    """
-   def validate_password(self, password):
-
-    Valide la complexité du mot de passe, et retourne un hash sécurisé.
-    
-    if len(password) < 12:
-            raise ValueError(
-                "Le mot de passe doit contenir au moins 12 caractères")
-        if not re.search(r"[A-Z]", password):
-            raise ValueError("Le mot de passe doit contenir une majuscule")
-        if not re.search(r"[a-z]", password):
-            raise ValueError("Le mot de passe doit contenir une minuscule")
-        if not re.search(r"[\d]", password):
-            raise ValueError("Le mot de passe doit contenir un chiffre")
-        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-            raise ValueError(
-                "Le mot de passe doit contenir un caractère spécial")
-        return generate_password_hash(password, method="pbkdf2:sha256",
-                                      salt_length=16)
-
-    def check_password(self, password):
-      
-    Vérifie si raw_password(mot de passe clair) correspond
-    au mot de passe haché stocké.
-   
-        return check_password_hash(self.__password_hashé, password)
-    """
-
     def add_review(self, review):
         # sert à vérifier que l’objet passé est bien un Review.
         # empêche d'ajouter des types inattendus.
         # La liste reviews ne contient que des objets Review.
+        from app.models.review import Review
         if not isinstance(review, Review):
             raise TypeError("Expected argument 'review' to "
                             "be an instance of Review.")
         self.reviews.append(review)
 
     def add_place(self, place):
+        from app.models.place import Place
         if not isinstance(place, Place):
             raise TypeError("Expected argument 'place' to "
                             "be an instance of Place.")
