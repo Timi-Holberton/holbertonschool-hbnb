@@ -1,3 +1,6 @@
+PYTHONPATH=$(pwd)/part2 python3 -m test_part2.test_place
+
+
 """
 def validate_password(self, password):
 Valide la complexité du mot de passe, et retourne un hash sécurisé.
