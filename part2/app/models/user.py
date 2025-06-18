@@ -85,4 +85,5 @@ class User(BaseModel):
         self.places.append(place)
 
     def to_dict(self):
+        # transforme une liste de user en dico
         return {'id': self.id, 'first_name': self.first_name, 'last_name': self.last_name, 'email': self.email, }

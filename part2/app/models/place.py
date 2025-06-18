@@ -48,10 +48,10 @@ class Place(BaseModel):
 
     def validate_price(self, price):
         """ function price for the place"""
-        if not isinstance(price, (int, float)):
+        if not isinstance(price, float):
             raise ValueError("Le prix doit être un nombre")
-        if price <= 0:
-            raise ValueError("Le prix doit être strictement supérieur à 0")
+        if price < 0:
+            raise ValueError("Le prix doit être supérieur à 0")
         return price
 
     def validate_latitude(self, latitude):

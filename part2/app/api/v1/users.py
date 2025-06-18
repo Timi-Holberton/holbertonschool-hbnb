@@ -60,8 +60,20 @@ class UserList(Resource):
     @api.response(404, 'User not found')
     def get(self):
         """Affiche la liste des utilisateurs"""
-        users = facade.get_all()
-        return {"users": users, "message": "Liste récupéré avec succès"}, 200
+        user = facade.get_all()
+        if user:
+            return {
+                'user': {
+                    'id': user.id,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'email': user.email
+                }, "message": "Liste des utilisateurs récupérés avec succès"
+            }, 200
+        else:
+            return {
+                "error": "Aucun utilisateur présent dans la base de données"
+            }, 404
 
 
 # méthode PUT utiliser pour mettre à jour une ressource existante
@@ -85,7 +97,12 @@ class UserResource(Resource):
         # Si l'utilisateur n'xiste pas (None ou équivalent) l'API retourne message d'erreur et code
         if not user:
             return {'error': 'User not found'}, 404
-        return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
+        return {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email
+        }, 200
         # si utilisateur est trouvé, l'API retoiurne ses données dans un dico JSON avec code
 
     def put(self, user_id):
