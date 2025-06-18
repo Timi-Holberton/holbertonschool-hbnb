@@ -1,3 +1,4 @@
+from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
@@ -55,13 +56,24 @@ class UserList(Resource):
         # Le code suivant définti un endpoint GET
         # pour récupérer les infos d'un utilisateur à partir de son ID
 
+    @api.response(200, 'List user print')
+    @api.response(404, 'User not found')
+    def get(self):
+        """Affiche la liste des utilisateurs"""
+        users = facade.get_all()
+        return {"users": users, "message": "Liste récupéré avec succès"}, 200
 
-@api.route('/<user_id>')
+
+# méthode PUT utiliser pour mettre à jour une ressource existante
+
+
+@api.route('/<user_id>', methods=['PUT'])
 # créer une route de type /users/12345 par exemple, <user_id est une valeur dynamique extraite directement de l'URL
 # la classe 'UserRessosurce' est lié à cette route et va gérer les requêtes comme GET, PUT, DELETE
 class UserResource(Resource):
     # Pour Swagger, cela indique les codes de réponses possible.
     @api.response(200, 'User details retrieved successfully')
+    @api.response(400, 'Invalid input data')
     @api.response(404, 'User not found')
     # Cette méthode s'éxecute quand une requête GET est faite sur /users/<user_id>
     # user_id est automatiquement passé en argument, récpéré par l'URL
@@ -75,3 +87,26 @@ class UserResource(Resource):
             return {'error': 'User not found'}, 404
         return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
         # si utilisateur est trouvé, l'API retoiurne ses données dans un dico JSON avec code
+
+    def put(self, user_id):
+        data = request.json
+       # le serveur reçoit la requêteet le coprs de la requête contient des
+       # données au format JSON
+       # parsing automatique du corps de la requête pour obtenir un dictionnaire Python (ou objet) correspondant au JSON envoyé.
+        if not data:
+            return {"error": "Données manquantes"}, 400
+
+        user = facade.update_user(user_id, data)
+
+        if user:
+            return {
+                'user': {
+                    'id': user.id,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'email': user.email
+                },
+                'message': "L'utilisateur a bien été mis à jour"
+            }, 200
+        else:
+            return {"error": "L'utilisateur n'existe pas"}, 404
