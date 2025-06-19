@@ -88,10 +88,7 @@ class HBnBFacade:
         if not user:
             raise ValueError("Aucun utilisateur trouvé avec cet ID")
 
-        clean_data = place_data.copy()
-        clean_data.pop("owner_id")
-
-        place = Place(owner=user, **clean_data)
+        place = Place(**place_data)
         self.place_repo.add(place)
         return place
 

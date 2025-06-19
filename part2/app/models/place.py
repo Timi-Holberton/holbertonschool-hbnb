@@ -3,14 +3,14 @@ from app.models.BaseModel import BaseModel
 
 
 class Place(BaseModel):
-    def __init__(self, title, description, price, latitude, longitude, owner):
+    def __init__(self, title, description, price, latitude, longitude, owner_id):
         super().__init__()
         self.title = self.validate_title(title)
         self.description = self.validate_description(description)
         self.price = self.validate_price(price)
         self.latitude = self.validate_latitude(latitude)
         self.longitude = self.validate_longitude(longitude)
-        self.owner = self.validate_owner(owner)
+        self.owner_id = owner_id
         self.reviews = []  # List to store related reviews
         self.amenities = []  # List to store related amenities
 
@@ -99,6 +99,6 @@ class Place(BaseModel):
             'price': self.price,
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'owner_id': self.owner.id,
-            'amenities': self.amenities
+            'owner_id': self.owner_id,
+            'amenities': [amenity.to_dict() for amenity in self.amenities]
         }

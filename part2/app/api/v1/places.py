@@ -41,6 +41,10 @@ class PlaceList(Resource):
         existing_place = facade.get_place(title)
         if existing_place:
             return {'error': 'the place already exists'}, 409
+        owner_id = place_data.get('owner_id')
+        user = facade.get_user_by_id(owner_id)
+        if not user:
+            return {'error': "propriétaire non trouvé"}, 400
         new_place = facade.create_place(place_data)
         return {
             'id': new_place.id,
@@ -49,7 +53,7 @@ class PlaceList(Resource):
             'price': new_place.price,
             'latitude': new_place.latitude,
             'longitude': new_place.longitude,
-            'owner_id': new_place.owner.id
+            'owner_id': new_place.owner_id
         }, 201
 
     @api.response(200, 'List of places retrieved successfully')
@@ -57,17 +61,7 @@ class PlaceList(Resource):
         """Retrieve a list of all places"""
         place = facade.get_all_places()
         if place:
-            return {
-                'user': {
-                    'id': place.id,
-                    'title': place.title,
-                    'latitude': place.latitude,
-                    'longitude': place.longitude,
-                }
-            }, 200
-
-
-"""
+            return place, 200
 
 
 @api.route('/<place_id>')
@@ -79,51 +73,36 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'The place doesn\'t exist'}, 404
+
         return {
             'id': place.id,
             'title': place.title,
             'description': place.description,
             'latitude': place.latitude,
             'longitude': place.longitude,
-            'ower_id': place.owner,
-            "owner": {
-                'id': user_model.id,
-                'first_name': user_model.first_name,
-                'last_name': user_model.last_name,
-                'email': user_model.email
-            },
-            "amenities": [
-                {
-                    'id': amenity_model.id,
-                    'name': amenity_model.name
-                }
-            ]
+            "owner": place.owner.to_dict(),
+            "amenities": [amenity.to_dict() for amenity in place.amenities]
         }, 200
 
-
-@api.expect(place_model)
-@api.response(200, 'Place updated successfully')
-@api.response(404, 'Place not found')
-@api.response(400, 'Invalid input data')
-def put(self, place_id):
-    data = request.json
-       # le serveur reçoit la requêteet le coprs de la requête contient des
-       # données au format JSON
-       # parsing automatique du corps de la requête pour obtenir un dictionnaire Python (ou objet) correspondant au JSON envoyé.
-       if not data:
+    @api.expect(place_model)
+    @api.response(200, 'Place updated successfully')
+    @api.response(404, 'Place not found')
+    @api.response(400, 'Invalid input data')
+    def put(self, place_id):
+        data = request.json
+        # le serveur reçoit la requêteet le coprs de la requête contient des
+        # données au format JSON
+        # parsing automatique du corps de la requête pour obtenir un dictionnaire Python (ou objet) correspondant au JSON envoyé.
+        if not data:
             return {"error": "Données manquantes"}, 400
 
-        place = facade.update_user(place_id, data)
+        place = facade.update_place(place_id, data)
 
         if place:
             return {
-                'user': {
-                    'title': place.title,
-                    'description': place.description,
-                    'price': place.price
-                },
-                'message': "Le lieu a bien été mis à jour"
+                'title': place.title,
+                'description': place.description,
+                'price': place.price
             }, 200
         else:
             return {"error": "Le lieu n'existe pas"}, 404
-"""

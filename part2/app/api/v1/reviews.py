@@ -21,9 +21,13 @@ class ReviewList(Resource):
     def post(self):
         """Register a new review"""
         review_data = api.payload
-        existing_review = facade.get_review(review_data)
+        user_id
         if existing_review:
             return {'error': 'Review already registered'}, 400
+        owner_id = review_data.get('owner_id')
+        user = facade.get_user_by_id(owner_id)
+        if not user:
+            return {'error': "propriétaire non trouvé"}, 400
         new_review = facade.create_review(review_data)
         return {
             'id': new_review.id,
