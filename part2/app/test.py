@@ -4,6 +4,7 @@ from app.models.review import Review
 
 
 def test_place_creation():
+
     owner = User(first_name="Alice", last_name="Smith",
                  email="alice.smith@example.com")
     place = Place(title="Cozy Apartment", description="A nice place to stay",

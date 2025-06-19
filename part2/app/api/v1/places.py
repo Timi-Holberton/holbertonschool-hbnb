@@ -1,3 +1,4 @@
+from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
@@ -48,7 +49,6 @@ class PlaceList(Resource):
             'latitude': new_place.latitude,
             'longitude': new_place.longitude,
             'ower_id': new_place.owner,
-            'amenities': new_place.amenities
         }, 201
 
     @api.response(200, 'List of places retrieved successfully')
@@ -59,11 +59,10 @@ class PlaceList(Resource):
             return {
                 'user': {
                     'id': place.id,
-                    'owner_id': place.owner,
-                    'first_name': place.first_name,
                     'title': place.title,
-                    'price': place.price
-                }, "message": "Liste des utilisateurs récupérés avec succès"
+                    'latitude': place.latitude,
+                    'longitude': place.longitude,
+                }
             }, 200
 
 
@@ -73,14 +72,52 @@ class PlaceResource(Resource):
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get place details by ID"""
-        # Placeholder for the logic to retrieve a place by ID, including associated owner and amenities
-        pass
+        place = facade.get_place(place_id)
+        if not place:
+            return {'The place doesn\'t exist'}, 404
+        return {
+            'id': place.id,
+            'title': place.title,
+            'description': place.description,
+            'latitude': place.latitude,
+            'longitude': place.longitude,
+            'ower_id': place.owner,
+            "owner": {
+                'id': user_model.id,
+                'first_name': user_model.first_name,
+                'last_name': user_model.last_name,
+                'email': user_model.email
+            },
+            "amenities": [
+                {
+                    'id': amenity_model.id,
+                    'name': amenity_model.name
+                }
+            ]
+        }, 200
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
     def put(self, place_id):
-        """Update a place's information"""
-        # Placeholder for the logic to update a place by ID
-        pass
+        data = request.json
+        # le serveur reçoit la requêteet le coprs de la requête contient des
+        # données au format JSON
+        # parsing automatique du corps de la requête pour obtenir un dictionnaire Python (ou objet) correspondant au JSON envoyé.
+        if not data:
+            return {"error": "Données manquantes"}, 400
+
+        place = facade.update_user(place_id, data)
+
+        if place:
+            return {
+                'user': {
+                    'title': place.title,
+                    'description': place.description,
+                    'price': place.price
+                },
+                'message': "Le lieu a bien été mis à jour"
+            }, 200
+        else:
+            return {"error": "Le lieu n'existe pas"}, 404

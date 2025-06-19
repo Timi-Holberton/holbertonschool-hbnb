@@ -1,3 +1,4 @@
+from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
@@ -47,7 +48,7 @@ class AmenityResource(Resource):
             return {'error': 'Amenity not found'}, 404
         return {
             'id': amenity.id,
-            'name': amenity.id,
+            'name': amenity.name,
         }, 200
 
     @api.expect(amenity_model)
@@ -56,5 +57,17 @@ class AmenityResource(Resource):
     @api.response(400, 'Invalid input data')
     def put(self, amenity_id):
         """Update an amenity's information"""
-        # Placeholder for the logic to update an amenity by ID
-        pass
+        amenity_data = request.json
+        if not amenity_data:
+            return {"error": "Données manquantes"}, 400
+        amenity = facade.update_amenity(amenity_id, amenity_data)
+        if amenity:
+            return {
+                'amenity': {
+                    'id': amenity.id,
+                    'name': amenity.name
+                },
+                'message': "Amenity a bien été mis à jour"
+            }, 200
+        else:
+            return {"error": "l'amenity n'existe pas"}, 400

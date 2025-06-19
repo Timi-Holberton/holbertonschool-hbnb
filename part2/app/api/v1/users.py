@@ -60,26 +60,11 @@ class UserList(Resource):
     @api.response(404, 'User not found')
     def get(self):
         """Affiche la liste des utilisateurs"""
-        user = facade.get_all()
-        if user:
-            return {
-                'user': {
-                    'id': user.id,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'email': user.email
-                }, "message": "Liste des utilisateurs récupérés avec succès"
-            }, 200
-        else:
-            return {
-                "error": "Aucun utilisateur présent dans la base de données"
-            }, 404
+        users = facade.get_all()
+        return users, 200
 
 
-# méthode PUT utiliser pour mettre à jour une ressource existante
-
-
-@api.route('/<user_id>', methods=['PUT'])
+@api.route('/<user_id>', methods=['GET', 'PUT'])
 # créer une route de type /users/12345 par exemple, <user_id est une valeur dynamique extraite directement de l'URL
 # la classe 'UserRessosurce' est lié à cette route et va gérer les requêtes comme GET, PUT, DELETE
 class UserResource(Resource):
@@ -107,9 +92,9 @@ class UserResource(Resource):
 
     def put(self, user_id):
         data = request.json
-       # le serveur reçoit la requêteet le coprs de la requête contient des
-       # données au format JSON
-       # parsing automatique du corps de la requête pour obtenir un dictionnaire Python (ou objet) correspondant au JSON envoyé.
+        # le serveur reçoit la requêteet le coprs de la requête contient des
+        # données au format JSON
+        # parsing automatique du corps de la requête pour obtenir un dictionnaire Python (ou objet) correspondant au JSON envoyé.
         if not data:
             return {"error": "Données manquantes"}, 400
 
@@ -117,13 +102,10 @@ class UserResource(Resource):
 
         if user:
             return {
-                'user': {
-                    'id': user.id,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'email': user.email
-                },
-                'message': "L'utilisateur a bien été mis à jour"
+                'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email
             }, 200
         else:
             return {"error": "L'utilisateur n'existe pas"}, 404
