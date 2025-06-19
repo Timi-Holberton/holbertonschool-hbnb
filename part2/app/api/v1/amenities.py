@@ -18,7 +18,8 @@ class AmenityList(Resource):
     def post(self):
         """Register a new amenity"""
         amenity_data = api.payload
-        existing_amenity = facade.get_amenity(amenity_data)
+        name = amenity_data.get('name')
+        existing_amenity = facade.get_amenity(name)
         if existing_amenity:
             return {'error': 'Amenity already registered'}, 400
         new_amenity = facade.create_amenity(amenity_data)
@@ -30,11 +31,8 @@ class AmenityList(Resource):
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
         """Retrieve a list of all amenities"""
-        amenities = facade.get_all()
-        return {
-            "amenities": amenities,
-            "message": "Liste des amenities récupérées avec succès"
-        }, 200
+        amenities = facade.get_all_amenities()
+        return amenities, 200
 
 
 @api.route('/<amenity_id>')
@@ -63,11 +61,8 @@ class AmenityResource(Resource):
         amenity = facade.update_amenity(amenity_id, amenity_data)
         if amenity:
             return {
-                'amenity': {
-                    'id': amenity.id,
-                    'name': amenity.name
-                },
-                'message': "Amenity a bien été mis à jour"
+                'id': amenity.id,
+                'name': amenity.name
             }, 200
         else:
-            return {"error": "l'amenity n'existe pas"}, 400
+            return {"error": "l'amenity n'existe pas"}, 404

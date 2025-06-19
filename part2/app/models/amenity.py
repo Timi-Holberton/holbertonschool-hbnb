@@ -19,3 +19,7 @@ class Amenity(BaseModel):
             raise ValueError(
                 "Le nom de l'agrément ne doit pas dépasser 50 caractères")
         return name
+
+    def to_dict(self):
+        # transforme une liste de user en dico
+        return {'id': self.id, 'name': self.name}

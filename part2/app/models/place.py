@@ -90,3 +90,15 @@ class Place(BaseModel):
         if self.owner.id != user.id:
             raise PermissionError(
                 "Vous n'êtes pas autorisé à modifier ce lieu")
+
+    def to_dict(self):
+        # transforme une liste de user en dico
+        return {
+            'title': self.title,
+            'description': self.description,
+            'price': self.price,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'owner_id': self.owner,
+            'amenities': self.amenities
+        }

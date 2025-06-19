@@ -39,3 +39,13 @@ class Review(BaseModel):
         if not isinstance(place, Place):
             raise TypeError("Le lieu doit être une instance de Place")
         return place
+
+    def to_dict(self):
+        # transforme une liste de user en dico
+        return {
+            'id': self.id,
+            'text': self.text,
+            'rating': self.rating,
+            'user': self.user,
+            'place': self.place
+        }

@@ -66,8 +66,8 @@ class HBnBFacade:
         return [amenity.to_dict() for amenity in amenities]
 
     def update_amenity(self, amenity_id, amenity_data):
-        self.user_repo.update(amenity_id, amenity_data)
-        amenity = self.user_repo.get(amenity_id)
+        self.amenity_repo.update(amenity_id, amenity_data)
+        amenity = self.amenity_repo.get(amenity_id)
         return amenity
 
 
@@ -78,12 +78,12 @@ class HBnBFacade:
     def create_place(self, place_data):
         """ fonction qui créé un nouveau lieu """
         place = Place(**place_data)
-        self.user_repo.add(place)
+        self.place_repo.add(place)
         return place
 
     def get_place(self, place_id):
         """ fonction qui ajoute un nouveau lieu"""
-        return self.user_repo.get(place_id)
+        return self.place_repo.get(place_id)
 
     def get_all_places(self):
         """ fonction qui ajoute plusieurs lieux """
@@ -109,7 +109,7 @@ class HBnBFacade:
 
     def get_all_reviews(self):
         # Espace réservé pour la logique de récupération de tous les avis
-        reviews = self.amenity_repo.get_all()
+        reviews = self.review_repo.get_all()
         return [review.to_dict() for review in reviews]
 
     def get_reviews_by_place(self, place_id):
