@@ -92,13 +92,13 @@ class Place(BaseModel):
                 "Vous n'êtes pas autorisé à modifier ce lieu")
 
     def to_dict(self):
-        # transforme une liste de user en dico
+        # transforme une liste de place en dico
         return {
             'title': self.title,
             'description': self.description,
             'price': self.price,
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'owner_id': self.owner,
+            'owner_id': self.owner.id,
             'amenities': self.amenities
         }

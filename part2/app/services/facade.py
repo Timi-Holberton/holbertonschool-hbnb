@@ -50,6 +50,10 @@ class HBnBFacade:
         # Retourne l'utilisateur mis à jour à l'appelant (typiquement, l'API)
         return user
 
+    def get_user_by_id(self, user_id):
+        """Récupère un utilisateur par son identifiant unique"""
+        return self.user_repo.get_by_attribute('id', user_id)
+
 
 # CHEZ TIMI !!
 
@@ -76,8 +80,18 @@ class HBnBFacade:
 # Implémentez ces validations à l’aide de setters de propriétés dans la Placeclasse pour price, latitude, longitude
 
     def create_place(self, place_data):
-        """ fonction qui créé un nouveau lieu """
-        place = Place(**place_data)
+        owner_id = place_data.get("owner_id")
+        if not owner_id:
+            raise ValueError("owner_id est requis")
+
+        user = self.get_user_by_id(owner_id)
+        if not user:
+            raise ValueError("Aucun utilisateur trouvé avec cet ID")
+
+        clean_data = place_data.copy()
+        clean_data.pop("owner_id")
+
+        place = Place(owner=user, **clean_data)
         self.place_repo.add(place)
         return place
 

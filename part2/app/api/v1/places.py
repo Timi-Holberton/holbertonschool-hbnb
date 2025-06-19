@@ -37,7 +37,8 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         place_data = api.payload
-        existing_place = facade.get_place(place_data)
+        title = place_data.get('title')
+        existing_place = facade.get_place(title)
         if existing_place:
             return {'error': 'the place already exists'}, 409
         new_place = facade.create_place(place_data)
@@ -48,7 +49,7 @@ class PlaceList(Resource):
             'price': new_place.price,
             'latitude': new_place.latitude,
             'longitude': new_place.longitude,
-            'ower_id': new_place.owner,
+            'owner_id': new_place.owner.id
         }, 201
 
     @api.response(200, 'List of places retrieved successfully')
@@ -66,12 +67,15 @@ class PlaceList(Resource):
             }, 200
 
 
+"""
+
+
 @api.route('/<place_id>')
 class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
-        """Get place details by ID"""
+        # Get place details by ID
         place = facade.get_place(place_id)
         if not place:
             return {'The place doesn\'t exist'}, 404
@@ -96,16 +100,17 @@ class PlaceResource(Resource):
             ]
         }, 200
 
-    @api.expect(place_model)
-    @api.response(200, 'Place updated successfully')
-    @api.response(404, 'Place not found')
-    @api.response(400, 'Invalid input data')
-    def put(self, place_id):
-        data = request.json
-        # le serveur reçoit la requêteet le coprs de la requête contient des
-        # données au format JSON
-        # parsing automatique du corps de la requête pour obtenir un dictionnaire Python (ou objet) correspondant au JSON envoyé.
-        if not data:
+
+@api.expect(place_model)
+@api.response(200, 'Place updated successfully')
+@api.response(404, 'Place not found')
+@api.response(400, 'Invalid input data')
+def put(self, place_id):
+    data = request.json
+       # le serveur reçoit la requêteet le coprs de la requête contient des
+       # données au format JSON
+       # parsing automatique du corps de la requête pour obtenir un dictionnaire Python (ou objet) correspondant au JSON envoyé.
+       if not data:
             return {"error": "Données manquantes"}, 400
 
         place = facade.update_user(place_id, data)
@@ -121,3 +126,4 @@ class PlaceResource(Resource):
             }, 200
         else:
             return {"error": "Le lieu n'existe pas"}, 404
+"""
