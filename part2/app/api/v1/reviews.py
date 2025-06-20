@@ -46,20 +46,20 @@ class ReviewList(Resource):
             'id': new_review.id,
             'text': new_review.text,
             'rating': new_review.rating,
-            'user_id': new_review.user_id,
-            'place_id': new_review.place_id
+            'user_id': new_review.user.id,
+            'place_id': new_review.place.id
         }, 201
 
 
-@api.response(200, 'List of reviews retrieved successfully')
-def get(self):
-    """Retrieve a list of all reviews"""
-    # Placeholder for logic to return a list of all reviews
-    reviews = facade.get_all_reviews()
-    return {
-        'reviews': reviews,
-        'message': "Liste des reviews récupérés avec succès"
-    }, 200
+    @api.response(200, 'List of reviews retrieved successfully')
+    def get(self):
+        """Retrieve a list of all reviews"""
+        # Placeholder for logic to return a list of all reviews
+        reviews = facade.get_all_reviews()
+        return {
+            'reviews': reviews,
+            'message': "Liste des reviews récupérés avec succès"
+        }, 200
 
 
 @api.route('/<review_id>')
@@ -67,19 +67,28 @@ class ReviewResource(Resource):
     @api.response(200, 'Review details retrieved successfully')
     @api.response(404, 'Review not found')
     def get(self, review_id):
-        """Get review details by ID"""
-        # Placeholder for the logic to retrieve a review by ID
-        review = facade.get_all_reviews(review_id)
+        review = facade.get_review(review_id)
         if not review:
             return {'error': 'Review not found'}, 404
+
+        if review.user is not None:
+            user_data = review.user.to_dict()
+        else:
+            user_data = None
+
+        if review.place is not None:
+            place_data = review.place.to_dict()
+        else:
+            place_data = None
+
         return {
             'id': review.id,
             'text': review.text,
             'rating': review.rating,
-            'user_id': review.user_id,
-            'place_id': review.place_id
+            'user': user_data,
+            'place': place_data
         }, 200
-
+    
     @api.expect(review_model)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
@@ -97,8 +106,8 @@ class ReviewResource(Resource):
                     'id': review.id,
                     'text': review.text,
                     'rating': review.rating,
-                    'user_id': review.user_id,
-                    'place_id': review.place_id
+                    'user': review.user.id,
+                    'place': review.place.id
                 }, 'message': 'Review a bien été mis à jour'
             }, 200
         else:
