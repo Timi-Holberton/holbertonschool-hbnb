@@ -21,20 +21,24 @@ class ReviewList(Resource):
     def post(self):
         """Register a new review"""
         review_data = api.payload
-        if not review_data:
-            return {'error': 'Données manquantes'}, 400
+        
+        user_id = review_data.get('user_id')
+        place_id = review_data.get('place_id')
 
-        user = facade.get_user_by_id(review_data.get('user_id'))
+        if not user_id or not place_id:
+            return {'error': 'user_id ou place_id manquant'}, 400
+
+        user = facade.get_user_by_id(user_id)
         if not user:
             return {'error': 'Utilisateur non trouvé'}, 400
 
-        place = facade.get_place(review_data.get('place_id'))
+        place = facade.get_place(place_id)
         if not place:
             return {'error': 'Lieu non trouvé'}, 400
 
-        existing_reviews = facade.get_reviews_by_place(review_data.get('place_id'))
+        existing_reviews = facade.get_reviews_by_place(place_id) or []
         for rev in existing_reviews:
-            if rev.user_id == review_data.get('user_id'):
+            if rev.user_id == user_id:
                 return {'error': 'Review déjà enregistrée par cet utilisateur'}, 400
 
         new_review = facade.create_review(review_data)

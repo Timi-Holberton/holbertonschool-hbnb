@@ -158,10 +158,36 @@ class HBnBFacade:
 #---------------------------------------------------------------------------#
 
     def create_review(self, review_data):
-        # Espace réservé pour la logique de création d'un avis, incluant la validation
-        # de user_id, place_id et rating
-        review = Review(**review_data)
+        # Récupérer les IDs dans les données reçues
+        user_id = review_data.get('user_id')
+        place_id = review_data.get('place_id')
+
+        # Validation des IDs
+        if not user_id:
+            raise ValueError("user_id est requis")
+        if not place_id:
+            raise ValueError("place_id est requis")
+
+        # Récupérer les objets User et Place associés
+        user = self.get_user_by_id(user_id)
+        if not user:
+            raise ValueError(f"Aucun utilisateur trouvé avec l'ID {user_id}")
+
+        place = self.get_place(place_id)
+        if not place:
+            raise ValueError(f"Aucun lieu trouvé avec l'ID {place_id}")
+
+        # Extraire les autres champs nécessaires à Review
+        text = review_data.get('text')
+        rating = review_data.get('rating')
+
+        # Créer l’objet Review avec des objets User et Place
+        review = Review(text=text, rating=rating, user=user, place=place)
+
+        # Ajouter la review dans le dépôt (base de données ou autre persistance)
         self.review_repo.add(review)
+
+        # Retourner l’objet Review créé
         return review
 
     def get_review(self, review_id):
@@ -175,7 +201,7 @@ class HBnBFacade:
 
     def get_reviews_by_place(self, place_id):
         # Espace réservé pour la logique de récupération de tous les avis pour un lieu spécifique
-        return self.review_repo.get_by_attribute('place_id', place_id)
+        return self.review_repo.get_by_attribute('place_id', place_id) or []
 
     def update_review(self, review_id, review_data):
         # Espace réservé pour la logique de mise à jour d’un avis
