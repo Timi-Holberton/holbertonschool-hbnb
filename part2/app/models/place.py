@@ -14,6 +14,54 @@ class Place(BaseModel):
         self.reviews = []  # List to store related reviews
         self.amenities = []  # List to store related amenities
 
+    @property
+    def price(self):
+        return self._price
+
+    @price.setter
+    def price(self, price):
+        self._price = self.validate_price(price)
+
+    def validate_price(self, price):
+        """ function price for the place"""
+        if not isinstance(price, (int, float)):
+            raise ValueError("Le prix doit être un nombre")
+        if price < 0:
+            raise ValueError("Le prix doit être supérieur à 0")
+        return price
+
+    @property
+    def longitude(self):
+        return self._longitude
+    
+    @longitude.setter
+    def longitude(self, longitude):
+        self._longitude = self.validate_longitude(longitude)
+
+    def validate_longitude(self, longitude):
+        if not isinstance(longitude, (int, float)):
+            raise ValueError("La longitude doit être un nombre")
+        if not -180.0 <= longitude <= 180.0:
+            raise ValueError(
+                "La longitude doit être comprise entre -180 et 180 °C")
+        return longitude
+
+    @property
+    def latitude(self):
+        return self._latitude
+
+    @latitude.setter
+    def latitude(self, latitude):
+        self._latitude = self.validate_latitude(latitude)
+
+    def validate_latitude(self, latitude):
+        if not isinstance(latitude, (int, float)):
+            raise ValueError("La latitude doit être un nombre")
+        if not -90.0 <= latitude <= 90.0:
+            raise ValueError(
+                "La latitude doit être comprise entre -90.0 et 90.0")
+        return latitude
+
     def add_review(self, review):
         from app.models.review import Review
         if not isinstance(review, Review):
@@ -45,30 +93,6 @@ class Place(BaseModel):
             if len(description) > 4000:
                 raise ValueError("Pas plus de 4000 caractères !!")
         return description
-
-    def validate_price(self, price):
-        """ function price for the place"""
-        if not isinstance(price, float):
-            raise ValueError("Le prix doit être un nombre")
-        if price < 0:
-            raise ValueError("Le prix doit être supérieur à 0")
-        return price
-
-    def validate_latitude(self, latitude):
-        if not isinstance(latitude, (int, float)):
-            raise ValueError("La latitude doit être un nombre")
-        if not -90.0 <= latitude <= 90.0:
-            raise ValueError(
-                "La latitude doit être comprise entre -90.0 et 90.0")
-        return latitude
-
-    def validate_longitude(self, longitude):
-        if not isinstance(longitude, (int, float)):
-            raise ValueError("La longitude doit être un nombre")
-        if not -180.0 <= longitude <= 180.0:
-            raise ValueError(
-                "La longitude doit être comprise entre -180 et 180 °C")
-        return longitude
 
     def validate_owner(self, user):
         from .user import User

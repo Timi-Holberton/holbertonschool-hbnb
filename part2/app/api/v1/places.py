@@ -75,9 +75,14 @@ class PlaceResource(Resource):
 
         # Récupérer le User (owner)
         owner = facade.get_user_by_id(place.owner_id)
-        owner_data = owner.to_dict() if owner else None
+        if owner:
+            owner_data = owner.to_dict()
+        else:
+            owner_data = None
 
-        # Récupérer les amenities (déjà des objets)
+
+        # Récupérer les amenities (déjà des objets), récupère le dictionnaire
+        # dans la classe place
         amenities_data = [a.to_dict() for a in place.amenities]
 
         return {
