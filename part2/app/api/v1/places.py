@@ -69,19 +69,26 @@ class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
-        # Get place details by ID
         place = facade.get_place(place_id)
         if not place:
-            return {'The place doesn\'t exist'}, 404
+            return {'error': 'The place does not exist'}, 404
+
+        # Récupérer le User (owner)
+        owner = facade.get_user_by_id(place.owner_id)
+        owner_data = owner.to_dict() if owner else None
+
+        # Récupérer les amenities (déjà des objets)
+        amenities_data = [a.to_dict() for a in place.amenities]
 
         return {
             'id': place.id,
             'title': place.title,
             'description': place.description,
+            'price': place.price,
             'latitude': place.latitude,
             'longitude': place.longitude,
-            "owner": place.owner.to_dict(),
-            "amenities": [amenity.to_dict() for amenity in place.amenities]
+            'owner': owner_data,
+            'amenities': amenities_data
         }, 200
 
     @api.expect(place_model)

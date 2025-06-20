@@ -92,13 +92,13 @@ class Place(BaseModel):
                 "Vous n'êtes pas autorisé à modifier ce lieu")
 
     def to_dict(self):
-        # transforme une liste de place en dico
         return {
+            'id': self.id,
             'title': self.title,
             'description': self.description,
             'price': self.price,
             'latitude': self.latitude,
             'longitude': self.longitude,
             'owner_id': self.owner_id,
-            'amenities': [amenity.to_dict() for amenity in self.amenities]
+            'amenities': [a.to_dict() for a in self.amenities if hasattr(a, 'to_dict')]
         }

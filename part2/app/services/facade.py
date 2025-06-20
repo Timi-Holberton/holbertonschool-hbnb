@@ -54,8 +54,9 @@ class HBnBFacade:
         """Récupère un utilisateur par son identifiant unique"""
         return self.user_repo.get_by_attribute('id', user_id)
 
-
-# CHEZ TIMI !!
+#---------------------------------------------------------------------------#
+#------------------------------Anenities------------------------------------#
+#---------------------------------------------------------------------------#
 
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
@@ -74,22 +75,45 @@ class HBnBFacade:
         amenity = self.amenity_repo.get(amenity_id)
         return amenity
 
+#---------------------------------------------------------------------------#
+#--------------------------------Place--------------------------------------#
+#---------------------------------------------------------------------------#
 
-# CHEZ ROBIN
-# pensez à mettre des exceptions et ajouter les importation !!!!!!!!!!!
+
+# pensez à mettre des exceptions  !!!!!!!!!!!
 # Implémentez ces validations à l’aide de setters de propriétés dans la Placeclasse pour price, latitude, longitude
 
     def create_place(self, place_data):
+        # Extraire l'identifiant du propriétaire à partir des données reçues
         owner_id = place_data.get("owner_id")
         if not owner_id:
+            # Vérifie que l'identifiant du propriétaire est bien fourni
             raise ValueError("owner_id est requis")
 
+        # Vérifie que l'utilisateur correspondant à l'identifiant existe
         user = self.get_user_by_id(owner_id)
         if not user:
             raise ValueError("Aucun utilisateur trouvé avec cet ID")
 
+        # Extraire la liste des identifiants des commodités (amenities) depuis les données
+        # On les retire du dictionnaire pour éviter de les passer au constructeur de Place
+        amenity_ids = place_data.pop("amenities", [])
+
+        # Créer une nouvelle instance de Place avec les données restantes
         place = Place(**place_data)
+
+        # Associer les objets Amenity à l'objet Place
+        for amenity_id in amenity_ids:
+            # Récupère l'objet Amenity correspondant à l'identifiant
+            amenity = self.get_amenity(amenity_id)
+            if amenity:
+                # Ajoute l'amenity à la liste des commodités de la place
+                place.add_amenity(amenity)
+
+        # Enregistre la nouvelle place dans le dépôt (base de données ou autre persistance)
         self.place_repo.add(place)
+
+        # Retourne l'objet place nouvellement créé
         return place
 
     def get_place(self, place_id):
@@ -102,10 +126,36 @@ class HBnBFacade:
         return [place.to_dict() for place in places]
 
     def update_place(self, place_id, place_data):
-        """ fonction qui met à jour un lieu"""
-        self.place_repo.update(place_id, place_data)
-        place = self.place_repo.get(place_id)
+        # Récupérer le lieu à mettre à jour à partir de son identifiant
+        place = self.get_place(place_id)
+        if not place:
+            # Si le lieu n'existe pas, lever une exception
+            raise ValueError("Place introuvable")
+
+        # Extraire la liste des identifiants d'amenities si elle est fournie
+        # On la retire du dictionnaire pour éviter de l'envoyer à update()
+        amenities_ids = place_data.pop("amenities", None)
+
+        # Mettre à jour les attributs de l'objet place avec les nouvelles données
+        place.update(place_data)
+
+        if amenities_ids is not None:
+            # Si une nouvelle liste d'amenities est fournie,
+            # on réinitialise la liste actuelle
+            place.amenities = []
+            for amenity_id in amenities_ids:
+                # Récupérer chaque objet Amenity correspondant à l'identifiant
+                amenity = self.get_amenity(amenity_id)
+                if amenity:
+                    # Ajouter l'amenity à la liste de la place
+                    place.add_amenity(amenity)
+
+        # Retourner l'objet place mis à jour
         return place
+
+#---------------------------------------------------------------------------#
+#-------------------------------review--------------------------------------#
+#---------------------------------------------------------------------------#
 
     def create_review(self, review_data):
         # Espace réservé pour la logique de création d'un avis, incluant la validation
