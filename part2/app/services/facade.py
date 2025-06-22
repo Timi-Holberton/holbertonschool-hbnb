@@ -199,27 +199,19 @@ class HBnBFacade:
         return self.review_repo.get(review_id)
 
     def get_all_reviews(self):
-        # Espace réservé pour la logique de récupération de tous les avis
         reviews = self.review_repo.get_all()
-        reviews_list = []
-        for review in reviews:
-            review_dict = review.to_dict()
-            if review.user is not None:
-                review_dict['user'] = review.user.to_dict()
-            else:
-                review_dict['user'] = None
-
-            if review.place is not None:
-                review_dict['place'] = review.place.to_dict()
-            else:
-                review_dict['place'] = None
-
-            reviews_list.append(review_dict)
-        return reviews_list
+        return [review.to_dict() for review in reviews]
 
     def get_reviews_by_place(self, place_id):
         # Espace réservé pour la logique de récupération de tous les avis pour un lieu spécifique
-        return self.review_repo.get_by_attribute('place_id', place_id) or []
+        all_reviews = self.review_repo.get_all()
+        filtered_reviews = []
+
+        for review in all_reviews:
+            if review.place and review.place.id == place_id:
+                filtered_reviews.append(review)
+
+        return filtered_reviews
 
     def update_review(self, review_id, review_data):
         # Espace réservé pour la logique de mise à jour d’un avis
@@ -229,4 +221,15 @@ class HBnBFacade:
 
     def delete_review(self, review_id):
         # Espace réservé pour la logique de suppression d’un avis
-        return self.review_repo.delete(review_id)
+        # Vérifie d'abord si la review existe
+        review = self.review_repo.get(review_id)
+        if not review:
+            return False  # Ne rien supprimer si l'ID est inconnu
+
+        # Supprime la review
+        self.review_repo.delete(review_id)
+
+        # Confirme qu'elle n'existe plus
+        return True
+
+

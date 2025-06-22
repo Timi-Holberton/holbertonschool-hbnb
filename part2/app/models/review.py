@@ -41,11 +41,10 @@ class Review(BaseModel):
         return place
 
     def to_dict(self):
-        # transforme une liste de user en dico
         return {
-            'id': self.id,
-            'text': self.text,
-            'rating': self.rating,
-            'user': self.user,
-            'place': self.place
+            "id": self.id,
+            "text": self.text,
+            "rating": self.rating,
+            "user_id": self.user.id if self.user else None,
+            "place_id": self.place.id if self.place else None
         }

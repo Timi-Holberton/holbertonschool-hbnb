@@ -118,3 +118,25 @@ class PlaceResource(Resource):
             }, 200
         else:
             return {"error": "Le lieu n'existe pas"}, 404
+
+@api.route('/<place_id>/reviews')
+class PlaceReviewList(Resource):
+    @api.response(200, 'List of reviews for the place retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Retrieve all reviews for a specific place"""
+        # vérifie si le lieu existe bien
+        place = facade.get_place(place_id)
+        if not place:
+            return {"error": "Place not found"}, 404
+        # ensuite on récupère tous les avis du lieu
+        reviews = facade.get_reviews_by_place(place_id)
+        # On retourne la liste formatée (même si elle est vide)
+        return [
+            {
+                "id": review.id,
+                "text": review.text,
+                "rating": review.rating
+            }
+            for review in reviews
+        ], 200
