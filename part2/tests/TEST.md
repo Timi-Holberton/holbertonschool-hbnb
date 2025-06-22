@@ -30,4 +30,4 @@ By combining unit tests and functional tests, we achieve thorough coverage of al
 Below is our test log, which records step-by-step the tested endpoints, input data used, as well as the expected results compared to the actual results obtained.  
 We also note any problems encountered during testing. This documentation is essential to present our results and demonstrate that the implementation meets all the defined requirements.
 
-📄 [Documentation test (PDF)](../../TEST_Units_Places_and_Reviews.pdf)
+📄 [Documentation test (PDF)](../TEST_Units_Places_and_Reviews.pdf)
