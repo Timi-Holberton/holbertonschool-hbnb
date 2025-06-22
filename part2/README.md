@@ -1,49 +1,44 @@
-Bienvenue dans le projet HBNB - BL and API
+Welcome to the HBNB - BL and API project
 
-## Présentation
+## Presentation
 
-HBnB est une API RESTful inspirée du site AirBnB, développée en Python avec Flask et Flask-RESTX. Le projet suit une architecture en trois couches développée dans la partie 1 du projet HBnB.
+HBnB is a RESTful API inspired by the AirBnB website, developed in Python with Flask and Flask-RESTX. The project follows a three-layer architecture developed in part 1 of the HBnB project.
 
-pour éxécuter l'application il faudra : 
+To run the application, you will need:
 
-1) Installer les dépendances en utilisant : 
-	- pip install -r requirements.txt
-2) Exécuter l'application : 
-	- python run.py
+1) Install dependencies using: 
+    - pip install -r requirements.txt
+2) Run the application: 
+    - python run.py
 
-l'application devrait être en cours d'exécution 
+the application should be running
 
-## But de chaque répertoire et fichier :
+## Purpose of each directory and file:
 
-├── app/ : est le répertoire qui contient le code principal de l'application.
-│   ├── __init__.py : constructeur qui contient toutes les informations des répertoires de app
-│   ├── api/ : sous-répertoire de app qui héberge les points de terminaison de l'API, organisés par version ( v1/).
-│   │   ├── __init__.py : constructeur qui contient toutes les informations de l'API
-│   │   ├── v1/ : 1ère version de l'API qui va contenir des informations utiles
-│   │       ├── __init__.py : constructeur qui contient les informations de chaques users, place, review et amenities
-│   │       ├── users.py : Route utilisateur
-│   │       ├── places.py : Route place
-│   │       ├── reviews.py : Route reviews
-│   │       ├── amenities.py : Route amenities
-│   ├── models/ : sous-répertoire contient les classes de logique métier
-│   │   ├── __init__.py : constructeur qui contiendra tout ce qu'il faut pour la logique métier
-│   │   ├── user.py : Class User
-│   │   ├── place.py : Class place
-│   │   ├── review.py : Class review
-│   │   ├── amenity.py : Class amenity
-│   ├── services/ : sous-répertoire est l'endroit où le modèle Facade est implémenté, gérant l'interaction entre les couches.
-│   │   ├── __init__.py : constructeur qui contient les méthodes de la façade
-│   │   ├── facade.py : fichier façade qui permet l'interaction entre les différentes couches
-│   ├── persistence/ : sous-répertoire est l'emplacement où le référentiel en mémoire est implémenté. Il sera ultérieurement remplacé par une solution basée sur une base de données utilisant SQL Alchemy.
+├── app/ : is the directory that contains the main application code.
+│   ├── __init__.py : constructor of app
+│   ├── api/ : subdirectory of app that hosts the API endpoints, organised by version ( v1/).
+│   │   ├── __init__.py : constructeur of the API
+│   │   ├── v1/ : First version of the API, which will contain useful information
+│   │       ├── __init__.py : constructor of the first version of API
+│   │       ├── users.py : User Route
+│   │       ├── places.py : Place Route
+│   │       ├── reviews.py : Reviews Route
+│   │       ├── amenities.py : Amenities Route 
+│   ├── models/ : subdirectory contains the business logic classes
+│   │   ├── __init__.py : constructor of the models
+│   │   ├── user.py : User models
+│   │   ├── place.py : Place models
+│   │   ├── review.py : Review models
+│   │   ├── amenity.py : Amenity models
+│   ├── services/ : subdirectory. The Facade model will be implemented, managing the interaction between the layers.
+│   │   ├── __init__.py : constructor of the facade
+│   │   ├── facade.py : enables interaction between the different layers
+│   ├── persistence/ : subdirectory. This is where the in-memory repository is implemented. It will eventually be replaced by a database-based solution using SQL Alchemy.
 │       ├── __init__.py
 │       ├── repository.py
-├── run.py : est le point d'entrée pour l'exécution de l'application Flask.
-├── config.py : sera utilisé pour configurer les variables d'environnement et les paramètres de l'application.
-├── requirements.txt : liste tous les packages Python nécessaires au projet.
-├── README.md : contiend un bref aperçu du projet.
-
-# Copyright (c) 2025 [Robin et Timi - Holberton School]
-# All rights reserved.
-
-# This file is part of HBnB project and is licensed under the MIT License.
+├── run.py : is the entry point for running the Flask application.
+├── config.py : will be used to configure environment variables and application settings.
+├── requirements.txt : lists all Python packages required for the project.
+├── README.md : contains a brief overview of the project.
 
