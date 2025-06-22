@@ -53,7 +53,7 @@ class User(BaseModel):
         try:
             validate = validate_email(email)
             # on appelle la bibliothèque validate_email et on la valide
-            return validate.email
+            return validate.normalized
         # si l'email est valide il renvoie l'email(en version propre)
         except EmailNotValidError as email_error:
             raise ValueError(f"Erreur email invalide : {email_error}")
