@@ -20,6 +20,8 @@ The application should now be running.
 
 ## Purpose of each directory and file
 
+![Structure du projet](structure.png)
+
 ├── app/ # Contains the main application code
 │ ├── init.py # App constructor
 │ ├── api/ # Contains API endpoints (by version)
