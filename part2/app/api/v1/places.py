@@ -2,6 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
+# Create a namespace for place-related endpoints
 api = Namespace('places', description='Place operations')
 
 # Define the models for related entities
@@ -46,15 +47,24 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         place_data = api.payload
+        # Check if a place with the same title already exists
         title = place_data.get('title')
         existing_place = facade.get_place(title)
         if existing_place:
             return {'error': 'the place already exists'}, 409
+            
         owner_id = place_data.get('owner_id')
         user = facade.get_user_by_id(owner_id)
         if not user:
-            return {'error': "propriétaire non trouvé"}, 400
-        new_place = facade.create_place(place_data)
+            return {'error': "owner not found"}, 400
+
+        try:
+            new_place = facade.create_place(place_data)
+        # str(e) contient le texte du message d’erreur qui a été donné 
+        # lors du raise de l’exception dans la classe model
+        except ValueError as error:
+            return {'error': str(error)}, 400
+
         return {
             'id': new_place.id,
             'title': new_place.title,
@@ -78,6 +88,7 @@ class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
+        """Retrieve a specific place by ID"""
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'The place does not exist'}, 404
@@ -90,8 +101,7 @@ class PlaceResource(Resource):
             owner_data = None
 
 
-        # Récupérer les amenities (déjà des objets), récupère le dictionnaire
-        # dans la classe place
+        # Fetch amenities related to the place
         amenities_data = [a.to_dict() for a in place.amenities]
 
         return {
@@ -110,23 +120,26 @@ class PlaceResource(Resource):
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
     def put(self, place_id):
+        """Update the details of a specific place"""
+        # Récupérer les données JSON envoyées dans la requête
         data = request.json
-        # le serveur reçoit la requêteet le coprs de la requête contient des
-        # données au format JSON
-        # parsing automatique du corps de la requête pour obtenir un dictionnaire Python (ou objet) correspondant au JSON envoyé.
+        # si aucune données n'est envoyé dans postman ou autre
         if not data:
-            return {"error": "Données manquantes"}, 400
+            return {"error": "data not found"}, 400
 
-        place = facade.update_place(place_id, data)
+        try:
+            # essaie de mettre à jour le lieu
+            place = facade.update_place(place_id, data)
+        except ValueError as error:
+            message = str(error)
+            # si le message retour contient not found, retourne 404 .lower évite les erreurs de case
+            if "not found" in message.lower(): 
+                return {'error': message}, 404
+            # pour les autres erreurs renvoie 400
+            return {'error': message}, 400
+        # Si mise à jour ok
+        return {"message": "Place updated successfully"}, 200
 
-        if place:
-            return {
-                'title': place.title,
-                'description': place.description,
-                'price': place.price
-            }, 200
-        else:
-            return {"error": "Le lieu n'existe pas"}, 404
 
 @api.route('/<place_id>/reviews')
 class PlaceReviewList(Resource):

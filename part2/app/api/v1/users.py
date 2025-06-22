@@ -62,7 +62,7 @@ class UserList(Resource):
     @api.response(200, 'List user print')
     @api.response(404, 'User not found')
     def get(self):
-        """Affiche la liste des utilisateurs"""
+        """ return the lists of users """
         users = facade.get_all()
         return users, 200
 
@@ -99,10 +99,11 @@ class UserResource(Resource):
         # données au format JSON
         # parsing automatique du corps de la requête pour obtenir un dictionnaire Python (ou objet) correspondant au JSON envoyé.
         if not data:
-            return {"error": "Données manquantes"}, 400
-
-        user = facade.update_user(user_id, data)
-
+            return {"error": "Data not found"}, 400
+        try:
+            user = facade.update_user(user_id, data)
+        except ValueError as error:
+            return {'error': str(error)}, 400
         if user:
             return {
                 'id': user.id,
@@ -111,4 +112,4 @@ class UserResource(Resource):
                 'email': user.email
             }, 200
         else:
-            return {"error": "L'utilisateur n'existe pas"}, 404
+            return {"error": "User don't exist"}, 404

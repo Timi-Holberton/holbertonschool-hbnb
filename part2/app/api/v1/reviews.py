@@ -2,6 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
+# Create a namespace for review-related endpoints
 api = Namespace('reviews', description='Review operations')
 
 # Define the review model for input validation and documentation
@@ -24,39 +25,36 @@ class ReviewList(Resource):
         review_data = api.payload
         
         # Extraction des champs 'user_id' et 'place_id' des données de la review car ils seront utilisés
-
         user_id = review_data.get('user_id')
         place_id = review_data.get('place_id')
 
         # présence de l'id du lieu et de l'utilisateur obligatoire
-
         if not user_id or not place_id:
             return {'error': 'user_id ou place_id manquant'}, 400
 
         # on vérifie que le l'utilisateur existe sinon on retourne une erreur
-
         user = facade.get_user_by_id(user_id)
         if not user:
             return {'error': 'Utilisateur non trouvé'}, 400
 
         # on vérifie que le le lieu existe sinon on retourne une erreur
-
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Lieu non trouvé'}, 400
-        
-        # Récupère toutes les reviews existantes pour ce lieu
 
+        # Récupère toutes les reviews existantes pour ce lieu
         existing_reviews = facade.get_reviews_by_place(place_id) or []
 
         # Vérifie si l'utilisateur a déjà posté une review pour ce lieu
-
         for rev in existing_reviews:
             if rev.user and rev.user.id == user_id:
                 return {'error': 'Review déjà enregistrée par cet utilisateur'}, 400
         # Si tout est bon, crée une nouvelle review avec les données fournies
-        
-        new_review = facade.create_review(review_data)
+        try:
+            new_review = facade.create_review(review_data)
+        except ValueError as error:
+            return {"error": str(error)}, 400
+
         return {
             'id': new_review.id,
             'text': new_review.text,
@@ -71,10 +69,7 @@ class ReviewList(Resource):
         """Retrieve a list of all reviews"""
         # Placeholder for logic to return a list of all reviews
         reviews = facade.get_all_reviews()
-        return {
-            'reviews': reviews,
-            'message': "Liste des reviews récupérés avec succès"
-        }, 200
+        return reviews, 200
 
 
 @api.route('/<review_id>')
@@ -82,10 +77,12 @@ class ReviewResource(Resource):
     @api.response(200, 'Review details retrieved successfully')
     @api.response(404, 'Review not found')
     def get(self, review_id):
+        """Retrieve a review by its ID"""
         review = facade.get_review(review_id)
         if not review:
             return {'error': 'Review not found'}, 404
 
+        # Serialize user and place data if available
         if review.user is not None:
             user_data = review.user.to_dict()
         else:
@@ -110,28 +107,49 @@ class ReviewResource(Resource):
     @api.response(400, 'Invalid input data')
     def put(self, review_id):
         """Update a review's information"""
-        # Placeholder for the logic to update a review by ID
         review_data = request.json
         if not review_data:
-            return {"error": "Données manquantes"}, 400
-        review = facade.update_review(review_id, review_data)
-        if review:
-            return {
-                'review': {
-                    'id': review.id,
-                    'text': review.text,
-                    'rating': review.rating,
-                    'user': review.user.id,
-                    'place': review.place.id
-                }, 'message': 'Review a bien été mis à jour'
-            }, 200
-        else:
-            return {'error': 'Review not exist'}, 400
+            return {"error": "Missing data"}, 400
+
+        # 1. Vérifier si la review existe
+        review = facade.get_review(review_id)
+        if not review:
+            return {'error': 'Review not found'}, 404
+
+        # 2. Valider les données fournies
+        if 'rating' in review_data:
+            rating = review_data['rating']
+            if not isinstance(rating, int) or not (1 <= rating <= 5):
+                return {'error': 'Rating must be an integer between 1 and 5'}, 400
+
+        if 'text' in review_data:
+            text = review_data['text'].strip()
+            if not text:
+                return {'error': 'Review text cannot be empty'}, 400
+
+        # 3. Mettre à jour la review via la façade
+        try:
+            updated_review = facade.update_review(review_id, review_data)
+        except Exception as e:
+            # Capture toute erreur inattendue (ex: validation côté modèle)
+            return {'error': str(e)}, 400
+
+        # 4. Retourner la review mise à jour
+        return {
+            'review': {
+                'id': updated_review.id,
+                'text': updated_review.text,
+                'rating': updated_review.rating,
+                'user': updated_review.user.id if updated_review.user else None,
+                'place': updated_review.place.id if updated_review.place else None
+            },
+            'message': 'Review successfully updated'
+        }, 200
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     def delete(self, review_id):
-        """Delete a review"""
+        """Delete a review by its ID"""
         review_delete = facade.delete_review(review_id)
         if not review_delete:
             return {'error': 'The review does not exist'}, 404
