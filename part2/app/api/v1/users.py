@@ -1,3 +1,32 @@
+"""
+User management module (users) via a RESTful API.
+
+This module defines a Flask-RESTx namespace dedicated to user-related operations,
+with endpoints to create, retrieve, and update users registered in the application.
+
+Main functionalities:
+- POST /users/               : Create a new user.
+- GET /users/                : Retrieve the list of all users.
+- GET /users/<user_id>       : Retrieve a user by their ID.
+- PUT /users/<user_id>       : Update user information.
+
+Each endpoint uses Flask-RESTx models for input validation and 
+API documentation via Swagger.
+
+Operations rely on the 'facade' service to handle business logic
+and data access, including checking for email uniqueness.
+
+HTTP status codes used:
+- 200 : Successful operation.
+- 201 : Resource successfully created.
+- 400 : Invalid data or email already registered.
+- 404 : User not found.
+
+This module enforces strict input validation 
+(first name, last name, email) and provides interactive documentation via Swagger UI.
+"""
+
+
 from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade

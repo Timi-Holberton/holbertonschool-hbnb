@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
 
+"""
+Module defining the Amenity class.
+
+This class represents an amenity or service available with a validated name 
+and methods for updating and converting to a dictionary.
+
+It inherits from the BaseModel class which provides a unique identifier and common functionalities.
+
+Main features:
+- Strict validation of the name (type, presence, max length 50).
+- Secure attribute updating via the update() method.
+- Conversion to dictionary via to_dict() to facilitate serialization.
+
+Exceptions are raised for invalid data to ensure the integrity of Amenity objects.
+"""
+
+
 from app.models.BaseModel import BaseModel
 
 

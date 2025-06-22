@@ -1,3 +1,32 @@
+"""
+Place management module (places) via a RESTful API.
+
+This module defines a Flask-RESTx namespace for managing places, 
+with endpoints allowing the creation, retrieval, update, 
+and access to reviews associated with each place.
+
+Main functionalities:
+- POST /places/                  : Create a new place.
+- GET /places/                   : Retrieve the list of all places.
+- GET /places/<place_id>         : Retrieve details of a place by its ID.
+- PUT /places/<place_id>         : Update an existing place.
+- GET /places/<place_id>/reviews : Retrieve all reviews linked to a place.
+
+Each resource uses Flask-RESTx models for data validation 
+and automatic API documentation (Swagger).
+
+Operations rely on the 'facade' service to handle business logic 
+and data access.
+
+HTTP status codes used:
+- 200 : Operation successful.
+- 201 : Resource successfully created.
+- 400 : Invalid or missing data.
+- 404 : Resource not found.
+- 409 : Conflict (e.g., place already exists).
+"""
+
+
 from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade

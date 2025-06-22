@@ -1,5 +1,34 @@
 #!/usr/bin/env python3
 
+"""
+Facade class for managing business logic related to the HBnB application.
+
+This class acts as a front-end interface to handle operations on core entities:
+users, places, reviews, and amenities. It abstracts the underlying data
+repositories and provides methods for creating, retrieving, updating, and deleting
+these entities, enforcing necessary validations and relationships.
+
+Main features:
+- Manage User entities: creation, retrieval (by ID or email), update.
+- Manage Amenity entities: creation, retrieval, update.
+- Manage Place entities: creation (with owner and amenities association), retrieval,
+  update (including amenities update).
+- Manage Review entities: creation (linked to user and place), retrieval, update,
+  deletion.
+- Validation of entity existence and integrity before operations.
+- Handles relationships between entities (e.g., associating amenities with places,
+  linking reviews to users and places).
+
+Exceptions:
+- Raises ValueError for invalid or missing data.
+- Handles cases where referenced entities (e.g., users, places) do not exist.
+
+Note:
+- Uses in-memory repositories to store entity instances.
+- The facade abstracts persistence details from higher-level API layers.
+"""
+
+
 from app.persistence.repository import InMemoryRepository
 from app.models.user import User
 from app.models.amenity import Amenity

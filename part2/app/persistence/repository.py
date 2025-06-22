@@ -1,3 +1,26 @@
+"""
+Defines an abstract base class and an in-memory implementation for a generic repository pattern.
+
+Classes:
+- Repository (ABC): Abstract base class specifying the interface for a repository managing CRUD operations.
+- InMemoryRepository: Concrete implementation of Repository that stores objects in memory using a dictionary.
+
+Responsibilities:
+- add(obj): Add a new object to the repository.
+- get(obj_id): Retrieve an object by its unique identifier.
+- get_all(): Return a list of all stored objects.
+- update(obj_id, data): Update an existing object identified by obj_id with provided data.
+- delete(obj_id): Remove an object by its identifier.
+- get_by_attribute(attr_name, attr_value): Retrieve an object matching a specific attribute value.
+
+Details:
+- InMemoryRepository stores objects in a dictionary keyed by their 'id' attribute.
+- The update method assumes the stored objects implement their own update(data) method.
+- get_by_attribute enables lookup by arbitrary attribute, useful for searching without knowing the ID.
+
+This design abstracts persistence mechanisms and enables easy swapping or extension with other storage backends.
+"""
+
 from abc import ABC, abstractmethod
 
 

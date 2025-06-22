@@ -1,4 +1,26 @@
 #!/usr/bin/env python3
+
+"""
+Module defining the Place class.
+
+This class represents a place with its main attributes: title, description, price, 
+geographical coordinates (latitude, longitude), owner, as well as its relationships 
+with reviews and amenities.
+
+The class includes strict validations for each attribute, 
+methods to add reviews and amenities, 
+and authorization checks related to the owner.
+
+Main features:
+- Validation of data (title, description, price, latitude, longitude).
+- Management of relationships with reviews and amenities.
+- User permission control for modifications.
+- Conversion to dictionary for API serialization.
+
+Exceptions are raised to ensure data integrity and modification security.
+"""
+
+
 from app.models.BaseModel import BaseModel
 
 

@@ -1,13 +1,29 @@
 #!/usr/bin/env python3
+
+"""
+Module defining the User class.
+
+This class represents a user with personal information 
+(first name, last name, email) and their administrator status. 
+It includes rigorous validation methods to ensure data integrity, 
+as well as methods to manage relationships with places and reviews associated with the user.
+
+Main features:
+- Validation of names (first and last) with rules on length and allowed characters.
+- Email validation using the external email-validator library.
+- Management of administrator status (boolean).
+- Data updating with strict validation for sensitive fields.
+- Association of Review and Place objects to the user.
+- Conversion of the object to a dictionary for serialization.
+
+Exceptions are raised to ensure validation robustness.
+"""
+
+
+
 from email_validator import validate_email, EmailNotValidError
 from app.models.BaseModel import BaseModel
 import re
-"""
-class User: inherits from BaseModel.
-method: data validation and requirements
-Cardinality: User can have multiple Places
-"""
-
 
 class User(BaseModel):
     """

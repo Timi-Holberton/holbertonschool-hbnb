@@ -1,3 +1,35 @@
+"""
+Review management module (reviews) via a RESTful API.
+
+This module defines a Flask-RESTx namespace dedicated to review operations,
+with endpoints that allow the creation, retrieval, update, and deletion
+of reviews associated with places and users.
+
+Main functionalities:
+- POST /reviews/               : Create a new review.
+- GET /reviews/                : Retrieve the list of all reviews.
+- GET /reviews/<review_id>     : Retrieve a review by its ID.
+- PUT /reviews/<review_id>     : Update an existing review.
+- DELETE /reviews/<review_id>  : Delete a review by its ID.
+
+Each endpoint uses Flask-RESTx models for input validation 
+and automatic API documentation (Swagger).
+
+Operations rely on the 'facade' service to handle business logic 
+and data access.
+
+HTTP status codes used:
+- 200 : Operation successful.
+- 201 : Resource successfully created.
+- 400 : Invalid or missing data.
+- 404 : Resource not found.
+
+Error handling includes checking for the existence of associated users and places,
+as well as validating the 'rating' field (must be an integer between 1 and 5)
+and the 'text' field.
+"""
+
+
 from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade

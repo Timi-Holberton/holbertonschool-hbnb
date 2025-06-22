@@ -1,4 +1,24 @@
 #!/usr/bin/env python3
+
+"""
+Module defining the Review class.
+
+This class represents a review left by a user on a place, with text 
+and a rating between 1 and 5. It strictly validates each attribute's data 
+and ensures consistency in the relationships between the user and the place.
+
+Main features:
+- Validation of the text (type and maximum length).
+- Validation of the rating (integer between 1 and 5).
+- Validation that the user is a valid instance of the User class.
+- Validation that the place is a valid instance of the Place class.
+- Conversion of the object to a dictionary for serialization.
+
+Exceptions are raised to ensure the robustness and integrity of Review objects.
+"""
+
+
+
 from app.models.BaseModel import BaseModel
 
 

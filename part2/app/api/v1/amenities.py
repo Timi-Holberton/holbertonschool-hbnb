@@ -1,3 +1,27 @@
+"""
+Amenity management module via a RESTful API.
+
+This module defines a Flask-RESTx namespace for managing amenities, 
+providing endpoints for creating, retrieving, updating, 
+and listing amenities.
+
+Available endpoints:
+- POST /amenities/       : Create a new amenity.
+- GET /amenities/        : Retrieve the list of all amenities.
+- GET /amenities/<id>    : Retrieve a specific amenity by its ID.
+- PUT /amenities/<id>    : Update an existing amenity.
+
+Each endpoint uses input validation through Flask-RESTx models 
+and returns appropriate HTTP status codes based on the result of operations.
+
+The module relies on the 'facade' service for data access and management.
+
+Handled exceptions:
+- Returns 400 for invalid data.
+- Returns 404 if the amenity is not found.
+- Returns 400 if t
+"""
+
 from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
