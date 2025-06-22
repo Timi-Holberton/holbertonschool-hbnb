@@ -1,51 +1,55 @@
-Welcome to the HBNB - BL and API project
+# Welcome to the HBNB - BL and API Project
 
 ## Presentation
 
-HBnB is a RESTful API inspired by the AirBnB website, developed in Python with Flask and Flask-RESTX. The project follows a three-layer architecture developed in part 1 of the HBnB project.
+HBnB is a RESTful API inspired by the AirBnB website, developed in Python with Flask and Flask-RESTX.  
+The project follows a three-layer architecture developed in part 1 of the HBnB project.
 
-To run the application, you will need:
+### To run the application
 
-1) Install dependencies using: 
-    - pip install -r requirements.txt
-2) Run the application: 
-    - python run.py
+1. Install dependencies using:
+   `pip install -r requirements.txt`
+2. Run the application:
+   `python3 run.py`
+3. If you want to run the test:
+   `python3 run_tests.py`
 
-the application should be running
+The application should now be running.
 
-## Purpose of each directory and file:
+---
 
-├── app/ : is the directory that contains the main application code.
-│   ├── __init__.py : constructor of app
-│   ├── api/ : subdirectory of app that hosts the API endpoints, organised by version ( v1/).
-│   │   ├── __init__.py : constructeur of the API
-│   │   ├── v1/ : First version of the API, which will contain useful information
-│   │       ├── __init__.py : constructor of the first version of API
-│   │       ├── users.py : User Route
-│   │       ├── places.py : Place Route
-│   │       ├── reviews.py : Reviews Route
-│   │       ├── amenities.py : Amenities Route 
-│   ├── models/ : subdirectory contains the business logic classes
-│   │   ├── __init__.py : constructor of the models
-│   │   ├── user.py : User models
-│   │   ├── place.py : Place models
-│   │   ├── review.py : Review models
-│   │   ├── amenity.py : Amenity models
-│   ├── services/ : subdirectory. The Facade model will be implemented, managing the interaction between the layers.
-│   │   ├── __init__.py : constructor of the facade
-│   │   ├── facade.py : enables interaction between the different layers
-│   ├── persistence/ : subdirectory. This is where the in-memory repository is implemented. It will eventually be replaced by a database-based solution using SQL Alchemy.
-│       ├── __init__.py
-│       ├── repository.py
-├── tests : a directory contains a file for execute a lot of unit tests
-│   ├── test_amenities.py : a lot of test for the amenity
-│   ├── test_places.py : a lot of test for the places
-│   ├── test_reviews.py : a lot of test for the reviews
-│   ├── test_users : a lot of test for the users
-│   ├── TEST.md : Documentation for result of all test with the API
-├── run.py : is the entry point for running the Flask application.
-├── config.py : will be used to configure environment variables and application settings.
-├── requirements.txt : lists all Python packages required for the project.
-├── README.md : contains a brief overview of the project.
-├── run_tests.py : is the entry point for executing all unit tests if several conditions are met
-BL and API project
+## Purpose of each directory and file
+
+├── app/ # Contains the main application code
+│ ├── init.py # App constructor
+│ ├── api/ # Contains API endpoints (by version)
+│ │ ├── init.py
+│ │ ├── v1/
+│ │ ├── init.py
+│ │ ├── users.py # User Routes
+│ │ ├── places.py # Place Routes
+│ │ ├── reviews.py # Review Routes
+│ │ ├── amenities.py # Amenity Routes
+│ ├── models/ # Business logic classes
+│ │ ├── init.py
+│ │ ├── user.py
+│ │ ├── place.py
+│ │ ├── review.py
+│ │ ├── amenity.py
+│ ├── services/ # Facade pattern for layer communication
+│ │ ├── init.py
+│ │ ├── facade.py
+│ ├── persistence/ # In-memory repository
+│ ├── init.py
+│ ├── repository.py
+├── tests/ # Unit tests
+│ ├── test_amenities.py
+│ ├── test_places.py
+│ ├── test_reviews.py
+│ ├── test_users.py
+│ ├── TEST.md # API test documentation
+├── run.py # Entry point of the Flask app
+├── config.py # App configuration
+├── requirements.txt # Dependencies
+├── README.md # Project overview
+├── run_tests.py # Entry point for running unit tests
