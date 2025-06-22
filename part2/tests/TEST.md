@@ -1,16 +1,33 @@
-# Tests Unitaires de l'API HBnB
+# HBnB API Unit Testing
 
-Pour garantir le bon fonctionnement de l’API HBnB, nous avons mis en place des tests unitaires complets en combinant deux approches complémentaires :
+To ensure the proper functioning of the HBnB API, we have implemented comprehensive unit tests by combining two complementary approaches:
 
-- **Tests fonctionnels automatisés avec Postman**  
-  Nous avons utilisé Postman pour tester nos API en lui fournissant différentes données d’entrée.
-  Ces tests automatisés permettent de vérifier les réponses des endpoints, les codes HTTP retournés, ainsi que la gestion des erreurs dans divers cas d’usage.
-  Ils permettent de valider le comportement global de l’API en conditions réelles.
 
-- **Tests unitaires en Python avec unittest**  
-  Ces tests ciblent la logique interne du backend, en vérifiant le fonctionnement des fonctions, la validation des données et la gestion des exceptions.
-  Ils garantissent la robustesse du code et facilitent la détection rapide des régressions.
+## Automated Functional Testing with Postman
 
-Cette double approche assure à la fois la conformité fonctionnelle pour les utilisateurs et la qualité du code pour les développeurs.
+We used Postman to automatically test different parts of our API.  
+These tests send requests with various data to the API endpoints.  
+They verify that the API responds correctly with the right HTTP status codes, accurate data, and proper error handling.  
+These functional tests simulate real usage scenarios, helping to ensure the API works correctly in all cases.  
+They are automated, making it easy to run them regularly and quickly during development.  
+We preferred Postman over Swagger for this purpose.
+
+The Postman script is available for automated testing.
+Filename: script_postman in the folder tests
+
+
+## Unit Testing in Python with unittest
+
+We also created unit tests in Python using the `unittest` module.  
+These tests check that each function or method in our application works correctly on its own.  
+They help quickly identify issues when code changes are made and ensure the logic is correct.  
+With these tests, we can precisely control actions like creating, updating, or deleting data, and verify error handling.  
+By combining unit tests and functional tests, we achieve thorough coverage of all parts of the project.
+
+
+## Test Report
+
+Below is our test log, which records step-by-step the tested endpoints, input data used, as well as the expected results compared to the actual results obtained.  
+We also note any problems encountered during testing. This documentation is essential to present our results and demonstrate that the implementation meets all the defined requirements.
 
 📄 [Documentation test (PDF)](../../TEST_Units_Places_and_Reviews.pdf)
