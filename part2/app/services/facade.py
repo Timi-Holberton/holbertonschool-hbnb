@@ -6,9 +6,6 @@ from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
 
-# tu importes une classe qui permetde stocker des données en mémoire
-
-
 class HBnBFacade:
 
     """ Front end for managing business operations related to the HBnB application."""
@@ -21,24 +18,29 @@ class HBnBFacade:
         self.amenity_repo = InMemoryRepository()
 
     def create_user(self, user_data):
+        """ Creates a new user based on the data provided """
         user = User(**user_data)
         self.user_repo.add(user)
         return user
 
     def get_user(self, user_id):
+        """ Retrieves a user by their unique ID """
         return self.user_repo.get(user_id)
         # on retourne un utilisateur par son ID
 
     def get_all(self):
+        """ Returns a list of all users in the form of dictionaries."""
         users = self.user_repo.get_all()
         return [user.to_dict() for user in users]
         # on retourne une liste
 
     def get_user_by_email(self, email):
+        """ Search for a user based on their email address """
         return self.user_repo.get_by_attribute('email', email)
         # Permet de chercher un utilisateurà partir de son email
 
     def update_user(self, user_id, data):
+        """ Updates the data of an existing user """
         # Appelle la méthode 'update' du repository pour modifier l'utilisateur existant
         # Cette méthode modifie directement l'objet en mémoire, mais ne retourne rien
         self.user_repo.update(user_id, data)
@@ -59,31 +61,42 @@ class HBnBFacade:
 #---------------------------------------------------------------------------#
 
     def create_amenity(self, amenity_data):
+        """ Creates a new amenity based on the data provided """
         amenity = Amenity(**amenity_data)
         self.amenity_repo.add(amenity)
         return amenity
 
     def get_amenity(self, amenity_id):
+        """ return a specific amenities with ID """
         return self.amenity_repo.get(amenity_id)
 
     def get_all_amenities(self):
+        """ return all of amenities """
         amenities = self.amenity_repo.get_all()
         return [amenity.to_dict() for amenity in amenities]
 
     def update_amenity(self, amenity_id, amenity_data):
-        self.amenity_repo.update(amenity_id, amenity_data)
+        """ update a amenity """
+        # Récupère l'amenity en mémoire à partir de son ID
         amenity = self.amenity_repo.get(amenity_id)
+        if not amenity:
+            # Pas trouvé donc on retourne None = ID inconnu
+            return None
+        try:
+            # essaie de mettre à jour, doit valider les données et lever ValueError
+            amenity.update(amenity_data)
+        except ValueError as error:
+            # Relance l'exception pour que l'API la gère
+            raise error
+        # si ok, retourne amenity modifié
         return amenity
 
 #---------------------------------------------------------------------------#
 #--------------------------------Place--------------------------------------#
 #---------------------------------------------------------------------------#
 
-
-# pensez à mettre des exceptions  !!!!!!!!!!!
-# Implémentez ces validations à l’aide de setters de propriétés dans la Placeclasse pour price, latitude, longitude
-
     def create_place(self, place_data):
+        """ Creates a new amenity based on the data provided """
         # Extraire l'identifiant du propriétaire à partir des données reçues
         owner_id = place_data.get("owner_id")
         if not owner_id:
@@ -117,20 +130,21 @@ class HBnBFacade:
         return place
 
     def get_place(self, place_id):
-        """ fonction qui ajoute un nouveau lieu"""
+        """ function that displays a specific location"""
         return self.place_repo.get(place_id)
 
     def get_all_places(self):
-        """ fonction qui ajoute plusieurs lieux """
+        """ function that displays multiple locations """
         places = self.place_repo.get_all()
         return [place.to_dict() for place in places]
 
     def update_place(self, place_id, place_data):
+        """ Update a place """
         # Récupérer le lieu à mettre à jour à partir de son identifiant
         place = self.get_place(place_id)
         if not place:
             # Si le lieu n'existe pas, lever une exception
-            raise ValueError("Place introuvable")
+            raise ValueError("Place not found")
 
         # Extraire la liste des identifiants d'amenities si elle est fournie
         # On la retire du dictionnaire pour éviter de l'envoyer à update()
@@ -154,7 +168,7 @@ class HBnBFacade:
         return place
 
     def get_place_by_id(self, place_id):
-        """Récupère un utilisateur par son identifiant unique"""
+        """ Retrieves a user by their unique ID """
         return self.place_repo.get_by_attribute('id', place_id)
 
 #---------------------------------------------------------------------------#
@@ -162,6 +176,7 @@ class HBnBFacade:
 #---------------------------------------------------------------------------#
 
     def create_review(self, review_data):
+        """ Creates a new review based on the data provided (user et place) """
         # Récupérer les IDs dans les données reçues
         user_id = review_data.get('user_id')
         place_id = review_data.get('place_id')
@@ -195,14 +210,17 @@ class HBnBFacade:
         return review
 
     def get_review(self, review_id):
+        """ list a specific review"""
         # Espace réservé pour la logique de récupération d’un avis par son ID
         return self.review_repo.get(review_id)
 
     def get_all_reviews(self):
+        """ resume the lists of all reviews """
         reviews = self.review_repo.get_all()
         return [review.to_dict() for review in reviews]
 
     def get_reviews_by_place(self, place_id):
+        """ obtain a review by the place who choosen"""
         # Espace réservé pour la logique de récupération de tous les avis pour un lieu spécifique
         all_reviews = self.review_repo.get_all()
         filtered_reviews = []
@@ -214,12 +232,14 @@ class HBnBFacade:
         return filtered_reviews
 
     def update_review(self, review_id, review_data):
+        """ update a review """
         # Espace réservé pour la logique de mise à jour d’un avis
         self.review_repo.update(review_id, review_data)
         review = self.review_repo.get(review_id)
         return review
 
     def delete_review(self, review_id):
+        """ delete a review """
         # Espace réservé pour la logique de suppression d’un avis
         # Vérifie d'abord si la review existe
         review = self.review_repo.get(review_id)

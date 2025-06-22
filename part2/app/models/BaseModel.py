@@ -24,8 +24,9 @@ class BaseModel:
         self.save()  # Update the updated_at timestamp
 
     def valid_place_id(self):
+        """ Ensure that the object's ID is a valid non-empty string """
         if not isinstance(self.id, str):
             raise ValueError(
-                "L'identifiant doit être une chaîne de caractères")
+                "The ID must be a string")
         if self.id.strip() == "":
-            raise ValueError("L'identifiant ne peut pas être vide")
+            raise ValueError("The ID cannot be empty")

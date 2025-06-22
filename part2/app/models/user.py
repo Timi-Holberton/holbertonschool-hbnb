@@ -3,23 +3,23 @@ from email_validator import validate_email, EmailNotValidError
 from app.models.BaseModel import BaseModel
 import re
 """
-class User : hérite de BaseModel.
-methode : validation des données et exigeances
-Cardinalité : User peut posséder plusieurs Place
+class User: inherits from BaseModel.
+method: data validation and requirements
+Cardinality: User can have multiple Places
 """
 
 
 class User(BaseModel):
     """
-    Class User : hérite de BaseModel.
-    methode : validation des données et exigeances
+    Class User: inherits from BaseModel.
+    Method: data validation and requirements
     """
 
     def __init__(self, first_name, last_name, email, is_admin=False):
         """
-        Récupère id, created_at et update_at de la class BaseModel
-        Initialise first_name, last_name, email, is_admin avec
-        des méthodes de validation
+        Retrieve id, created_at, and update_at from the BaseModel class.
+        Initialise first_name, last_name, email, and is_admin with
+        validation methods.
         """
         super().__init__()
         self.first_name = self.validate_name(first_name, "first_name")
@@ -31,24 +31,25 @@ class User(BaseModel):
         self.reviews = []  # Liste pour stocker les avis liés
 
     def validate_name(self, name, field="Name"):
+        """ function that manages the validation conditions for the first name """
         if not isinstance(name, str):
-            raise ValueError(f"{field} doit être une chaîne de caractères.")
+            raise ValueError(f"{field} must be a string.")
         name = name.strip()
         if not name:
             raise ValueError(
-                f"{field} non valide, veuillez entrer des caractères.")
+                f"{field} Invalid, please enter characters.")
         if not (1 <= len(name) <= 50):
             raise ValueError(
-                f"{field} doit contenir entre 1 et 50 caractères.")
+                f"{field} must contain between 1 and 50 characters.")
         if not re.match("^[a-zA-ZÀ-ÿ-]+$", name):
             raise ValueError(
-                f"{field} ne doit contenir que des lettres ou des traits d’union.")
+                f"{field} must contain only letters or hyphens.")
         return name
 
     def validate_email(self, email):
         """
-        Méthode de validation qui vérifie si l'email est valide
-        en utilisant la librairie email-validator (requirement)
+        Validation method that checks whether the email address is valid
+        using the email-validator library (requirement)
         """
         try:
             validate = validate_email(email)
@@ -56,18 +57,48 @@ class User(BaseModel):
             return validate.normalized
         # si l'email est valide il renvoie l'email(en version propre)
         except EmailNotValidError as email_error:
-            raise ValueError(f"Erreur email invalide : {email_error}")
+            raise ValueError(f"Error, invalid email : {email_error}")
 
     def validate_is_admin(self, is_admin):
         """
-        Méthode de validation qui vérifie si l'utilisateur est un admin
-        ou non, par défaut = False
+        Validation method that checks whether the user is an admin
+        or not, default = False
         """
         if not isinstance(is_admin, bool):
-            raise ValueError("is_admin doit être un booléen")
+            raise ValueError("is_admin must be an booleen")
         return is_admin
 
+    def update(self, data):
+        """ It applies strict validation to certain sensitive fields (email, first_name, last_name, is_admin). """
+        # Si la clé 'email' est présente dans les données reçues
+        if 'email' in data:
+            # On utilise la méthode de validation d'email pour s'assurer que l'adresse est valide
+            self.email = self.validate_email(data['email'])
+
+        # Si la clé 'first_name' est présente dans les données reçues
+        if 'first_name' in data:
+            # On valide et met à jour le prénom via la méthode validate_name
+            self.first_name = self.validate_name(data['first_name'], "first_name")
+
+        # Si la clé 'last_name' est présente dans les données reçues
+        if 'last_name' in data:
+            # On valide et met à jour le nom de famille via la méthode validate_name
+            self.last_name = self.validate_name(data['last_name'], "last_name")
+
+        # Si la clé 'is_admin' est présente dans les données reçues
+        if 'is_admin' in data:
+            # On valide que c’est un booléen et on met à jour
+            self.is_admin = self.validate_is_admin(data['is_admin'])
+
+        # Pour toutes les autres clés présentes dans data (non listées ci-dessus)
+        for key, value in data.items():
+            # On ignore celles déjà traitées pour éviter d'écraser avec des valeurs non validées
+            if key not in ['email', 'first_name', 'last_name', 'is_admin']:
+                # Mise à jour directe de l’attribut sans validation supplémentaire
+                setattr(self, key, value)
+
     def add_review(self, review):
+        """ function that allows you to add a Review object to an internal list """
         # sert à vérifier que l’objet passé est bien un Review.
         # empêche d'ajouter des types inattendus.
         # La liste reviews ne contient que des objets Review.
@@ -78,6 +109,7 @@ class User(BaseModel):
         self.reviews.append(review)
 
     def add_place(self, place):
+        """ It allows you to add a Place object to an internal list. """
         from app.models.place import Place
         if not isinstance(place, Place):
             raise TypeError("Expected argument 'place' to "
@@ -85,5 +117,6 @@ class User(BaseModel):
         self.places.append(place)
 
     def to_dict(self):
+        """ Convert a user object (User) into a Python dictionary """
         # transforme une liste de user en dico
         return {'id': self.id, 'first_name': self.first_name, 'last_name': self.last_name, 'email': self.email, }
