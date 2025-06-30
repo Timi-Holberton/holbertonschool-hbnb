@@ -52,8 +52,6 @@ class Place(BaseModel):
         """ function price for the place"""
         if not isinstance(price, (int, float)):
             raise ValueError("The price must be a number")
-        if price.strip() == "":
-            raise ValueError("price is required")
         if price < 0:
             raise ValueError("The price must be superior than 0")
         return price

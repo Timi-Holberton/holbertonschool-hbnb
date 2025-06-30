@@ -38,6 +38,9 @@ class Review(BaseModel):
         if not isinstance(text, str):
             raise ValueError(
                 "The comment must be a string of characters.")
+        if not text:
+            raise ValueError("text is required")
+
         if len(text) > 400:
             raise ValueError(
                 "The comment must not exceed 400 characters.")
