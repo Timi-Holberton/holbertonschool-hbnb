@@ -3,9 +3,9 @@
 """
 Module defining the User class.
 
-This class represents a user with personal information 
-(first name, last name, email) and their administrator status. 
-It includes rigorous validation methods to ensure data integrity, 
+This class represents a user with personal information
+(first name, last name, email) and their administrator status.
+It includes rigorous validation methods to ensure data integrity,
 as well as methods to manage relationships with places and reviews associated with the user.
 
 Main features:
@@ -25,6 +25,7 @@ from email_validator import validate_email, EmailNotValidError
 from app.models.BaseModel import BaseModel
 import re
 from flask_bcrypt import Bcrypt
+from app import db
 
 # from app.extensions import db
 
@@ -36,7 +37,7 @@ class User(BaseModel):
     Method: data validation and requirements
     """
 
-    def __init__(self, first_name, last_name, email, is_admin=False):
+    def __init__(self, first_name, last_name, email, password, is_admin=False):
         """
         Retrieve id, created_at, and update_at from the BaseModel class.
         Initialise first_name, last_name, email, and is_admin with
@@ -46,7 +47,7 @@ class User(BaseModel):
         self.first_name = self.validate_name(first_name, "first_name")
         self.last_name = self.validate_name(last_name, "last_name")
         self.email = self.validate_email(email)
-        # self.password = self.verify_password(password)
+        self.password = self.hash_password(password)
         self.is_admin = self.validate_is_admin(is_admin)
         self.places = []  # Liste pour stocker les Hébergements liés
         self.reviews = []  # Liste pour stocker les avis liés
@@ -145,6 +146,7 @@ class User(BaseModel):
     def hash_password(self, password):
         """Hashes the password before storing it."""
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+        print(self.password)
 
     def verify_password(self, password):
         """Verifies if the provided password matches the hashed password."""
