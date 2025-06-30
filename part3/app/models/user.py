@@ -24,6 +24,9 @@ Exceptions are raised to ensure validation robustness.
 from email_validator import validate_email, EmailNotValidError
 from app.models.BaseModel import BaseModel
 import re
+from flask_bcrypt import Bcrypt
+
+bcrypt = Bcrypt()
 
 class User(BaseModel):
     """
@@ -41,7 +44,7 @@ class User(BaseModel):
         self.first_name = self.validate_name(first_name, "first_name")
         self.last_name = self.validate_name(last_name, "last_name")
         self.email = self.validate_email(email)
-        # self.__password_hashé = self.validate_password(password)
+        self.password = self.verify_password(password)
         self.is_admin = self.validate_is_admin(is_admin)
         self.places = []  # Liste pour stocker les Hébergements liés
         self.reviews = []  # Liste pour stocker les avis liés
@@ -136,3 +139,11 @@ class User(BaseModel):
         """ Convert a user object (User) into a Python dictionary """
         # transforme une liste de user en dico
         return {'id': self.id, 'first_name': self.first_name, 'last_name': self.last_name, 'email': self.email, }
+
+    def hash_password(self, password):
+        """Hashes the password before storing it."""
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def verify_password(self, password):
+        """Verifies if the provided password matches the hashed password."""
+        return bcrypt.check_password_hash(self.password, password)
