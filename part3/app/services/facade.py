@@ -33,7 +33,7 @@ from app.models.place import Place
 from app.models.review import Review
 from app.models.amenity import Amenity
 
-from app.persistence.repository import SQLAlchemyRepository
+from app.persistence.repository import InMemoryRepository
 
 class HBnBFacade:
 
@@ -41,10 +41,10 @@ class HBnBFacade:
 
     def __init__(self):
         """ Initialises the HBnBFacade object with in-memory repositories for each entity. """
-        self.user_repository = SQLAlchemyRepository(User)  # Switched to SQLAlchemyRepository
-        self.place_repository = SQLAlchemyRepository(Place)
-        self.review_repository = SQLAlchemyRepository(Review)
-        self.amenity_repository = SQLAlchemyRepository(Amenity)
+        self.user_repository = InMemoryRepository()  # Switched to SQLAlchemyRepository
+        self.place_repository = InMemoryRepository()
+        self.review_repository = InMemoryRepository()
+        self.amenity_repository = InMemoryRepository()
 
     def create_user(self, user_data):
         """ Creates a new user based on the data provided """

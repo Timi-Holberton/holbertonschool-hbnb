@@ -3,9 +3,9 @@
 """
 Module defining the BaseModel class.
 
-This class serves as a base for other data models by providing 
-a unique identifier (UUID), creation and update timestamps, 
-as well as methods to save (update the modification date) 
+This class serves as a base for other data models by providing
+a unique identifier (UUID), creation and update timestamps,
+as well as methods to save (update the modification date)
 and dynamically update an instance's attributes.
 
 Main features:
@@ -20,9 +20,10 @@ Exceptions are raised to ensure data integrity.
 
 import uuid
 from datetime import datetime
+from app import db
 
 
-class BaseModel:
+class BaseModel():
     def __init__(self):
         self.id = str(uuid.uuid4())
 # nous stockons le UUIDgénéré sous forme de fichier a String pour éviter les
