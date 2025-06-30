@@ -1,0 +1,944 @@
+{
+  "info": {
+    "name": "HBnB API Complete Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "hbnb-complete-tests-0001"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:5000/api/v1" },
+    { "key": "user_id_1", "value": "" },
+    { "key": "user_id_2", "value": "" },
+    { "key": "user_id_3", "value": "" },
+    { "key": "amenity_id_1", "value": "" },
+    { "key": "amenity_id_2", "value": "" },
+    { "key": "amenity_id_3", "value": "" },
+    { "key": "place_id_1", "value": "" },
+    { "key": "place_id_2", "value": "" },
+    { "key": "place_id_3", "value": "" },
+    { "key": "review_id_1", "value": "" },
+    { "key": "review_id_2", "value": "" },
+    { "key": "review_id_3", "value": "" },
+    { "key": "review_id_4", "value": "" },
+    { "key": "review_id_5", "value": "" },
+    { "key": "review_id_6", "value": "" },
+    { "key": "review_id_7", "value": "" },
+    { "key": "review_id_8", "value": "" },
+    { "key": "review_id_9", "value": "" }
+  ],
+  "item": [
+
+    {
+      "name": "Create User 1 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type","value": "application/json"}],
+        "body": {"mode": "raw","raw": "{\"first_name\": \"Alice\",\"last_name\": \"Dupont\",\"email\": \"alice.dupont@gmail.com\"}"},
+        "url": {"raw": "{{base_url}}/users","host": ["{{base_url}}"],"path": ["users"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"user_id_1\", json.id);",
+            "pm.test(\"Response has user ID\", () => pm.expect(json).to.have.property('id'));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create User 2 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type","value": "application/json"}],
+        "body": {"mode": "raw","raw": "{\"first_name\": \"Bob\",\"last_name\": \"Martin\",\"email\": \"bob.martin@gmail.com\"}"},
+        "url": {"raw": "{{base_url}}/users","host": ["{{base_url}}"],"path": ["users"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"user_id_2\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create User 3 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type","value": "application/json"}],
+        "body": {"mode": "raw","raw": "{\"first_name\": \"Clara\",\"last_name\": \"Lemoine\",\"email\": \"clara.lemoine@gmail.com\"}"},
+        "url": {"raw": "{{base_url}}/users","host": ["{{base_url}}"],"path": ["users"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"user_id_3\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create User - Negative duplicate email",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type","value": "application/json"}],
+        "body": {"mode": "raw","raw": "{\"first_name\": \"Alice\",\"last_name\": \"Dupont\",\"email\": \"alice.dupont@gmail.com\"}"},
+        "url": {"raw": "{{base_url}}/users","host": ["{{base_url}}"],"path": ["users"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 400 for duplicate email\", () => pm.response.to.have.status(400));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+
+    {
+      "name": "Get User 1 by ID - Valid",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{base_url}}/users/{{user_id_1}}","host": ["{{base_url}}"],"path": ["users","{{user_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Response contains correct user ID\", () => pm.expect(json.id).to.eql(pm.environment.get('user_id_1')));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Get User by ID - Not Found",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{base_url}}/users/unknown_id","host": ["{{base_url}}"],"path": ["users","unknown_id"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 404\", () => pm.response.to.have.status(404));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Get All Users",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{base_url}}/users","host": ["{{base_url}}"],"path": ["users"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Response is an array\", () => pm.expect(json).to.be.an('array'));",
+            "pm.test(\"Contains at least 3 users\", () => pm.expect(json.length).to.be.at.least(3));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update User 1 - Valid",
+      "request": {
+        "method": "PUT",
+        "header": [{"key": "Content-Type","value": "application/json"}],
+        "body": {"mode": "raw","raw": "{\"first_name\": \"Alicia\",\"last_name\": \"Dupont\",\"email\": \"alicia.dupont@gmail.com\"}"},
+        "url": {"raw": "{{base_url}}/users/{{user_id_1}}","host": ["{{base_url}}"],"path": ["users","{{user_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Updated email is correct\", () => pm.expect(json.email).to.eql('alicia.dupont@gmail.com'));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update User - Not Found",
+      "request": {
+        "method": "PUT",
+        "header": [{"key": "Content-Type","value": "application/json"}],
+        "body": {"mode": "raw","raw": "{\"first_name\": \"John\",\"last_name\": \"Doe\",\"email\": \"john.doe@gmail.com\"}"},
+        "url": {"raw": "{{base_url}}/users/unknown_id","host": ["{{base_url}}"],"path": ["users","unknown_id"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 404\", () => pm.response.to.have.status(404));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update User - Invalid Data (Bad Email)",
+      "request": {
+        "method": "PUT",
+        "header": [{"key": "Content-Type","value": "application/json"}],
+        "body": {"mode": "raw","raw": "{\"first_name\": \"John\",\"last_name\": \"Doe\",\"email\": \"invalid-email\"}"},
+        "url": {"raw": "{{base_url}}/users/{{user_id_1}}","host": ["{{base_url}}"],"path": ["users","{{user_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 400\", () => pm.response.to.have.status(400));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+
+    {
+      "name": "Create Amenity 1 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode": "raw","raw": "{\"name\": \"Wi-Fi\"}"},
+        "url": {"raw": "{{base_url}}/amenities","host":["{{base_url}}"],"path":["amenities"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"amenity_id_1\", json.id);",
+            "pm.test(\"Response has id\", () => pm.expect(json).to.have.property('id'));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Amenity 2 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode": "raw","raw": "{\"name\": \"Piscine\"}"},
+        "url": {"raw": "{{base_url}}/amenities","host":["{{base_url}}"],"path":["amenities"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"amenity_id_2\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Amenity 3 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode": "raw","raw": "{\"name\": \"Parking\"}"},
+        "url": {"raw": "{{base_url}}/amenities","host":["{{base_url}}"],"path":["amenities"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"amenity_id_3\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Amenity - Negative Invalid Data",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode": "raw","raw": "{\"name\": \"\"}"},
+        "url": {"raw": "{{base_url}}/amenities","host":["{{base_url}}"],"path":["amenities"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 400 for invalid data\", () => pm.response.to.have.status(400));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Get Amenity 1 by ID - Valid",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{base_url}}/amenities/{{amenity_id_1}}","host":["{{base_url}}"],"path":["amenities","{{amenity_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Correct id\", () => pm.expect(json.id).to.eql(pm.environment.get('amenity_id_1')));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Get Amenity by ID - Not Found",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{base_url}}/amenities/unknown_id","host":["{{base_url}}"],"path":["amenities","unknown_id"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 404\", () => pm.response.to.have.status(404));"],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Get All Amenities",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{base_url}}/amenities","host":["{{base_url}}"],"path":["amenities"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Array of amenities\", () => pm.expect(json).to.be.an('array'));",
+            "pm.test(\"At least 3 amenities\", () => pm.expect(json.length).to.be.at.least(3));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update Amenity 1 - Valid",
+      "request": {
+        "method": "PUT",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"name\": \"Air Conditioning\"}"},
+        "url": {"raw":"{{base_url}}/amenities/{{amenity_id_1}}","host":["{{base_url}}"],"path":["amenities","{{amenity_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Message updated\", () => pm.expect(json.message).to.include('updated'));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update Amenity - Not Found",
+      "request": {
+        "method": "PUT",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"name\": \"New Name\"}"},
+        "url": {"raw":"{{base_url}}/amenities/unknown_id","host":["{{base_url}}"],"path":["amenities","unknown_id"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 404\", () => pm.response.to.have.status(404));"],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update Amenity - Invalid Data",
+      "request": {
+        "method": "PUT",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"name\": \"\"}"},
+        "url": {"raw":"{{base_url}}/amenities/{{amenity_id_1}}","host":["{{base_url}}"],"path":["amenities","{{amenity_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 400\", () => pm.response.to.have.status(400));"],
+          "type": "text/javascript"
+        }
+      }]
+    },
+
+    {
+      "name": "Create Place 1 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\":\"Cozy Apartment\",\"description\":\"Nice and clean\",\"price\":100.0,\"latitude\":37.7749,\"longitude\":-122.4194,\"owner_id\":\"{{user_id_1}}\"}"
+        },
+        "url": {"raw":"{{base_url}}/places","host":["{{base_url}}"],"path":["places"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"place_id_1\", json.id);",
+            "pm.test(\"Has id\", () => pm.expect(json).to.have.property('id'));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Place 2 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\":\"Modern Condo\",\"description\":\"Spacious\",\"price\":150.0,\"latitude\":40.7128,\"longitude\":-74.0060,\"owner_id\":\"{{user_id_2}}\"}"
+        },
+        "url": {"raw":"{{base_url}}/places","host":["{{base_url}}"],"path":["places"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"place_id_2\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Place 3 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\":\"Beach House\",\"description\":\"Near the sea\",\"price\":200.0,\"latitude\":34.0195,\"longitude\":-118.4912,\"owner_id\":\"{{user_id_1}}\"}"
+        },
+        "url": {"raw":"{{base_url}}/places","host":["{{base_url}}"],"path":["places"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"place_id_3\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Place - Negative Invalid Data",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode": "raw","raw": "{\"title\": \"\",\"description\": \"\",\"price\": -5,\"latitude\": 1000,\"longitude\": -200,\"owner_id\": \"invalid_id\"}"},
+        "url": {"raw":"{{base_url}}/places","host":["{{base_url}}"],"path":["places"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 400 for invalid data\", () => pm.response.to.have.status(400));"],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Get Place 1 by ID - Valid",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw":"{{base_url}}/places/{{place_id_1}}","host":["{{base_url}}"],"path":["places","{{place_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Correct place ID\", () => pm.expect(json.id).to.eql(pm.environment.get('place_id_1')));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Get Place by ID - Not Found",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw":"{{base_url}}/places/unknown_id","host":["{{base_url}}"],"path":["places","unknown_id"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 404\", () => pm.response.to.have.status(404));"],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Get All Places",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw":"{{base_url}}/places","host":["{{base_url}}"],"path":["places"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Array of places\", () => pm.expect(json).to.be.an('array'));",
+            "pm.test(\"At least 3 places\", () => pm.expect(json.length).to.be.at.least(3));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update Place 1 - Valid",
+      "request": {
+        "method": "PUT",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"title\": \"Luxury Apartment\",\"description\": \"Updated description\",\"price\": 180.0}"},
+        "url": {"raw":"{{base_url}}/places/{{place_id_1}}","host":["{{base_url}}"],"path":["places","{{place_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Update confirmation\", () => pm.expect(json.message).to.include('updated'));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update Place - Not Found",
+      "request": {
+        "method": "PUT",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"title\":\"Invalid\"}"},
+        "url": {"raw":"{{base_url}}/places/unknown_id","host":["{{base_url}}"],"path":["places","unknown_id"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 404\", () => pm.response.to.have.status(404));"],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update Place - Invalid Data",
+      "request": {
+        "method": "PUT",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"price\": -50}"},
+        "url": {"raw":"{{base_url}}/places/{{place_id_1}}","host":["{{base_url}}"],"path":["places","{{place_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 400\", () => pm.response.to.have.status(400));"],
+          "type": "text/javascript"
+        }
+      }]
+    },
+
+    {
+      "name": "Create Review 1 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\": \"Great place!\",\"rating\": 5,\"user_id\": \"{{user_id_1}}\",\"place_id\": \"{{place_id_1}}\"}"},
+        "url": {"raw":"{{base_url}}/reviews","host":["{{base_url}}"],"path":["reviews"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"review_id_1\", json.id);",
+            "pm.test(\"Review has id\", () => pm.expect(json).to.have.property('id'));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Review 2 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\": \"Nice and cozy.\",\"rating\": 4,\"user_id\": \"{{user_id_2}}\",\"place_id\": \"{{place_id_1}}\"}"},
+        "url": {"raw":"{{base_url}}/reviews","host":["{{base_url}}"],"path":["reviews"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"review_id_2\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Review 3 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\": \"Could be better.\",\"rating\": 3,\"user_id\": \"{{user_id_3}}\",\"place_id\": \"{{place_id_1}}\"}"},
+        "url": {"raw":"{{base_url}}/reviews","host":["{{base_url}}"],"path":["reviews"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"review_id_3\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+
+    {
+      "name": "Create Review 4 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\": \"Amazing stay!\",\"rating\": 5,\"user_id\": \"{{user_id_1}}\",\"place_id\": \"{{place_id_2}}\"}"},
+        "url": {"raw":"{{base_url}}/reviews","host":["{{base_url}}"],"path":["reviews"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"review_id_4\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Review 5 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\": \"Very comfortable.\",\"rating\": 4,\"user_id\": \"{{user_id_2}}\",\"place_id\": \"{{place_id_2}}\"}"},
+        "url": {"raw":"{{base_url}}/reviews","host":["{{base_url}}"],"path":["reviews"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"review_id_5\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Review 6 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\": \"Good location.\",\"rating\": 4,\"user_id\": \"{{user_id_3}}\",\"place_id\": \"{{place_id_2}}\"}"},
+        "url": {"raw":"{{base_url}}/reviews","host":["{{base_url}}"],"path":["reviews"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"review_id_6\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+
+    {
+      "name": "Create Review 7 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\": \"Loved the beach!\",\"rating\": 5,\"user_id\": \"{{user_id_1}}\",\"place_id\": \"{{place_id_3}}\"}"},
+        "url": {"raw":"{{base_url}}/reviews","host":["{{base_url}}"],"path":["reviews"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"review_id_7\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Review 8 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\": \"Relaxing and peaceful.\",\"rating\": 4,\"user_id\": \"{{user_id_2}}\",\"place_id\": \"{{place_id_3}}\"}"},
+        "url": {"raw":"{{base_url}}/reviews","host":["{{base_url}}"],"path":["reviews"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"review_id_8\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Review 9 - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\": \"Nice view.\",\"rating\": 4,\"user_id\": \"{{user_id_3}}\",\"place_id\": \"{{place_id_3}}\"}"},
+        "url": {"raw":"{{base_url}}/reviews","host":["{{base_url}}"],"path":["reviews"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.environment.set(\"review_id_9\", json.id);"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Create Review - Negative Invalid Data",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\": \"\",\"rating\": 6,\"user_id\": \"invalid_id\",\"place_id\": \"invalid_place_id\"}"},
+        "url": {"raw":"{{base_url}}/reviews","host":["{{base_url}}"],"path":["reviews"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 400\", () => pm.response.to.have.status(400));"],
+          "type": "text/javascript"
+        }
+      }]
+    },
+
+    {
+      "name": "Get Review 1 by ID - Valid",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw":"{{base_url}}/reviews/{{review_id_1}}","host":["{{base_url}}"],"path":["reviews","{{review_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Correct review ID\", () => pm.expect(json.id).to.eql(pm.environment.get('review_id_1')));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Get Review by ID - Not Found",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw":"{{base_url}}/reviews/unknown_id","host":["{{base_url}}"],"path":["reviews","unknown_id"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 404\", () => pm.response.to.have.status(404));"],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Get All Reviews",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw":"{{base_url}}/reviews","host":["{{base_url}}"],"path":["reviews"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Array of reviews\", () => pm.expect(json).to.be.an('array'));",
+            "pm.test(\"At least 9 reviews\", () => pm.expect(json.length).to.be.at.least(9));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update Review 1 - Valid",
+      "request": {
+        "method": "PUT",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\": \"Updated review text.\",\"rating\": 4}"},
+        "url": {"raw":"{{base_url}}/reviews/{{review_id_1}}","host":["{{base_url}}"],"path":["reviews","{{review_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Update confirmation\", () => pm.expect(json.message).to.include('updated'));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update Review - Not Found",
+      "request": {
+        "method": "PUT",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\":\"No review\",\"rating\": 1}"},
+        "url": {"raw":"{{base_url}}/reviews/unknown_id","host":["{{base_url}}"],"path":["reviews","unknown_id"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 404\", () => pm.response.to.have.status(404));"],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Update Review - Invalid Data",
+      "request": {
+        "method": "PUT",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\"text\":\"\",\"rating\": 10}"},
+        "url": {"raw":"{{base_url}}/reviews/{{review_id_1}}","host":["{{base_url}}"],"path":["reviews","{{review_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 400\", () => pm.response.to.have.status(400));"],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Delete Review 1 - Valid",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {"raw":"{{base_url}}/reviews/{{review_id_1}}","host":["{{base_url}}"],"path":["reviews","{{review_id_1}}"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test(\"Message confirms deletion\", () => pm.expect(json.message).to.include('deleted'));"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    {
+      "name": "Delete Review - Not Found",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {"raw":"{{base_url}}/reviews/unknown_id","host":["{{base_url}}"],"path":["reviews","unknown_id"]}
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test(\"Status 404\", () => pm.response.to.have.status(404));"],
+          "type": "text/javascript"
+        }
+      }]
+    }
+
+  ]
+}
