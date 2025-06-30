@@ -52,6 +52,8 @@ class Place(BaseModel):
         """ function price for the place"""
         if not isinstance(price, (int, float)):
             raise ValueError("The price must be a number")
+        if price.strip() == "":
+            raise ValueError("price is required")
         if price < 0:
             raise ValueError("The price must be superior than 0")
         return price
@@ -114,6 +116,8 @@ class Place(BaseModel):
         """ Validate the title of the place """
         if not isinstance(title, str):
             raise ValueError("Title must be a string")
+        if title.strip() == "":
+            raise ValueError("Title is required")
         if len(title) > 100:
             raise ValueError("Title must not exceed 100 characters")
         return title
@@ -124,6 +128,8 @@ class Place(BaseModel):
             if not isinstance(description, str):
                 raise ValueError(
                     "Description must be a string")
+            if description.strip() == "":
+                raise ValueError("Description is required")
             if len(description) > 4000:
                 raise ValueError("Description must not exceed 4000 characters")
         return description

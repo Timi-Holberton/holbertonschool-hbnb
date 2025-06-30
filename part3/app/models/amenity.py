@@ -46,6 +46,8 @@ class Amenity(BaseModel):
             if not isinstance(data['name'], str) or not data['name'].strip():
                 # Si la validation échoue, lève une exception pour indiquer que le nom est invalide
                 raise ValueError("Invalid amenity name")
+            if data.strip() == "":
+                raise ValueError("Amenity name is required")
             # Si la validation est ok, met à jour l'attribut 'name' sans espaces en début/fin grâce à strip
             self.name = data['name'].strip()
 
