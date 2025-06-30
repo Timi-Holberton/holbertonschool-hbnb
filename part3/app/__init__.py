@@ -1,19 +1,20 @@
 from flask import Flask
-from flask_restx import Api
-from app.api.v1.users import api as users_ns
-from app.api.v1.places import api as places_ns
-from app.api.v1.amenities import api as amenities_ns
-from app.api.v1.reviews import api as reviews_ns
+# from flask_restx import Api
+# from app.api.v1.users import api as users_ns
+# from app.api.v1.places import api as places_ns
+# from app.api.v1.amenities import api as amenities_ns
+# from app.api.v1.reviews import api as reviews_ns
+from flask_bcrypt import Bcrypt
 
-
-# tu transformes ton app flask en API REST documentée
+bcrypt = Bcrypt()
 
 def create_app(config_class="config.DevelopmentConfig"):
-    """ function who Create and configure the Flask application with the RESTX API. """
+    """ A REFAIRE EN ANGLAIS ! """
 
     app = Flask(__name__)
     app.config.from_object(config_class)
-
+    
+    bcrypt.init_app(app)
     # Placeholder for API namespaces (endpoints will be added later)
     # Additional namespaces for places, reviews, and amenities will be added later
 
@@ -24,7 +25,7 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(places_ns, path='/api/v1/places')
     api.add_namespace(amenities_ns, path='/api/v1/amenities')
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
-    return app
     """
+    return app
 # ce code enregistre l'espace de noms des utilisateur, ce qui permet aux routes
 # définies dans api/v1/users.py d'être accessibls via/api/v1/users
