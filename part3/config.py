@@ -16,7 +16,7 @@ class Config:
 # Il affiche juste un message générique : "Une erreur est survenue" (ou une page 500).
 # Cela protège tes données sensibles, ton code source et empêche les pirates de comprendre la structure de ton app.
 # alors que le debug True est plus utilisé dans un cadre de développement sans de grosse sécurité
-
+    
 
 class DevelopmentConfig(Config):
 
@@ -27,11 +27,10 @@ class DevelopmentConfig(Config):
     - Inherits from Config, so also retrieves the SECRET_KEY.
     """
 
+    DEBUG = True
+    # True servira juste pour la partie développement pour les tests du développeur
 
-DEBUG = True
-# True servira juste pour la partie développement pour les tests du développeur
-
-# Dictionnaire permettant de choisir la configuration selon l'environnement
+    # Dictionnaire permettant de choisir la configuration selon l'environnement
 config = {
     'development': DevelopmentConfig,
     'default': DevelopmentConfig

@@ -26,6 +26,8 @@ from app.models.BaseModel import BaseModel
 import re
 from flask_bcrypt import Bcrypt
 
+# from app.extensions import db
+
 bcrypt = Bcrypt()
 
 class User(BaseModel):
@@ -44,7 +46,7 @@ class User(BaseModel):
         self.first_name = self.validate_name(first_name, "first_name")
         self.last_name = self.validate_name(last_name, "last_name")
         self.email = self.validate_email(email)
-        self.password = self.verify_password(password)
+        # self.password = self.verify_password(password)
         self.is_admin = self.validate_is_admin(is_admin)
         self.places = []  # Liste pour stocker les Hébergements liés
         self.reviews = []  # Liste pour stocker les avis liés

@@ -28,13 +28,12 @@ Note:
 - The facade abstracts persistence details from higher-level API layers.
 """
 
-
-from app.persistence.repository import InMemoryRepository
 from app.models.user import User
-from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
-from sqlalchemy import SQLAlchemyRepository
+from app.models.amenity import Amenity
+
+from app.persistence.repository import SQLAlchemyRepository
 
 class HBnBFacade:
 
