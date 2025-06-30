@@ -16,18 +16,21 @@ class Config:
 # Il affiche juste un message générique : "Une erreur est survenue" (ou une page 500).
 # Cela protège tes données sensibles, ton code source et empêche les pirates de comprendre la structure de ton app.
 # alors que le debug True est plus utilisé dans un cadre de développement sans de grosse sécurité
-    
+
 
 class DevelopmentConfig(Config):
 
-    """ 
+    """
     Configuration class specific to development.
 
     - DEBUG enabled: displays detailed errors to facilitate testing.
     - Inherits from Config, so also retrieves the SECRET_KEY.
     """
-
     DEBUG = True
+    SECRET_KEY = os.getenv("SECRET_KEY", "default-secret")
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///development.db'  # ✅ Nécessaire
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
     # True servira juste pour la partie développement pour les tests du développeur
 
     # Dictionnaire permettant de choisir la configuration selon l'environnement
