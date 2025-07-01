@@ -12,7 +12,18 @@ db = SQLAlchemy()
 
 def create_app(config_class="config.DevelopmentConfig"):
     """
-    A FAIRE EN ANGLAIS
+    Create and configure the Flask application instance.
+
+    This factory function initializes the Flask app with the specified configuration class.
+    It sets up extensions including JWTManager, Bcrypt for password hashing, and SQLAlchemy for ORM.
+    Additionally, it registers the API namespaces for users, places, amenities, reviews, and authentication,
+    organizing the application routes under the versioned API prefix.
+
+    Args:
+        config_class (str): The configuration class to use for the app settings (default: 'config.DevelopmentConfig').
+
+    Returns:
+        Flask: The fully configured Flask application instance ready to run.
     """
 
     app = Flask(__name__)

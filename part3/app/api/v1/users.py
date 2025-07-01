@@ -30,6 +30,7 @@ This module enforces strict input validation
 from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 # Namespace : permet de créer des groupe logique d'url et de ressources pour API
 # Ressource : Classe de base pour définir les point de terminaison (endpoints) d'une API REST
@@ -47,7 +48,7 @@ user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user'),
-    # 'password': fields.String(requiered=True, description='Password of the user')
+    #'password': fields.String(requiered=True, description='Password of the user')
 })
 
 
@@ -128,24 +129,32 @@ class UserResource(Resource):
             'email': user.email
         }, 200
         # si utilisateur est trouvé, l'API retoiurne ses données dans un dico JSON avec code
-
+    @jwt_required()
     def put(self, user_id):
         data = request.json
-        # le serveur reçoit la requêteet le coprs de la requête contient des
-        # données au format JSON
-        # parsing automatique du corps de la requête pour obtenir un dictionnaire Python (ou objet) correspondant au JSON envoyé.
         if not data:
             return {"error": "Data not found"}, 400
+
+        current_user = get_jwt_identity()
+        if str(current_user["id"]) != str(user_id):
+            return {'error': "Unauthorized action"}, 403
+
+        user = facade.get_user(user_id)
+        if not user:
+            return {"error": "User not found"}, 404
+
+        # Autoriser email et password si inchangés
+        if ("email" in data and data["email"] != user.email):
+            return {'error': "You cannot change your email address or password"}, 400
+
         try:
             user = facade.update_user(user_id, data)
         except ValueError as error:
             return {'error': str(error)}, 400
-        if user:
-            return {
-                'id': user.id,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'email': user.email
-            }, 200
-        else:
-            return {"error": "User don't exist"}, 404
+
+        return {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email
+        }, 200

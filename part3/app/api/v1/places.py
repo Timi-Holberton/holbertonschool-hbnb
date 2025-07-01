@@ -30,6 +30,7 @@ HTTP status codes used:
 from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 # Create a namespace for place-related endpoints
 api = Namespace('places', description='Place operations')
@@ -73,17 +74,22 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def post(self):
         """Register a new place"""
         place_data = api.payload
         # Check if a place with the same title already exists
+
+        current_user = get_jwt_identity()
+        place_data['owner_id'] = current_user['id']
+
         title = place_data.get('title')
         existing_place = facade.get_place(title)
+
         if existing_place:
             return {'error': 'the place already exists'}, 409
             
-        owner_id = place_data.get('owner_id')
-        user = facade.get_user_by_id(owner_id)
+        user = facade.get_user_by_id(current_user['id'])
         if not user:
             return {'error': "owner not found"}, 400
 
@@ -148,13 +154,23 @@ class PlaceResource(Resource):
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, place_id):
         """Update the details of a specific place"""
         # Récupérer les données JSON envoyées dans la requête
         data = request.json
-        # si aucune données n'est envoyé dans postman ou autre
         if not data:
             return {"error": "data not found"}, 400
+        # si aucune données n'est envoyé dans postman ou autre
+
+        current_user = get_jwt_identity()
+        place = facade.get_place(place_id)
+        if not place:
+            return {"error": "Place not found"}, 404
+
+        if str(place.owner_id) != str(current_user['id']):
+            return {'error': 'Unauthorized action'}, 403
+
 
         try:
             # essaie de mettre à jour le lieu

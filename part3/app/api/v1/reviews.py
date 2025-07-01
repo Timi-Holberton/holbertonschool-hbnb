@@ -33,6 +33,7 @@ and the 'text' field.
 from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # Create a namespace for review-related endpoints
 api = Namespace('reviews', description='Review operations')
@@ -41,7 +42,7 @@ api = Namespace('reviews', description='Review operations')
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
     'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
-    'user_id': fields.String(required=True, description='ID of the user'),
+    # 'user_id': fields.String(required=True, description='ID of the user'),
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
@@ -51,36 +52,42 @@ class ReviewList(Resource):
     @api.expect(review_model)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def post(self):
         """Register a new review"""
         # Récupération des données envoyées dans le corps de la requête (format JSON)
         review_data = api.payload
         
         # Extraction des champs 'user_id' et 'place_id' des données de la review car ils seront utilisés
-        user_id = review_data.get('user_id')
+        user_id = get_jwt_identity()["id"]
         place_id = review_data.get('place_id')
 
         # présence de l'id du lieu et de l'utilisateur obligatoire
         if not user_id or not place_id:
-            return {'error': 'user_id ou place_id manquant'}, 400
+            return {'error': 'user_id or place_id missing'}, 400
 
         # on vérifie que le l'utilisateur existe sinon on retourne une erreur
         user = facade.get_user_by_id(user_id)
         if not user:
-            return {'error': 'Utilisateur non trouvé'}, 400
-
-        # on vérifie que le le lieu existe sinon on retourne une erreur
+            return {'error': 'User not found'}, 400
+        
+        # on vérifie que le lieu existe sinon on retourne une erreur
         place = facade.get_place(place_id)
         if not place:
-            return {'error': 'Lieu non trouvé'}, 400
+            return {'error': 'Place not found'}, 400
+
+        # **Vérification que l'utilisateur n'est pas propriétaire du lieu**
+        # (adapter l'attribut 'owner' selon ton modèle Place)
+        if hasattr(place, 'owner') and str(place.owner.id) == str(user_id):
+            return {'error': 'You cannot evaluate your own location.'}, 400
 
         # Récupère toutes les reviews existantes pour ce lieu
         existing_reviews = facade.get_reviews_by_place(place_id) or []
 
         # Vérifie si l'utilisateur a déjà posté une review pour ce lieu
         for rev in existing_reviews:
-            if rev.user and rev.user.id == user_id:
-                return {'error': 'Review déjà enregistrée par cet utilisateur'}, 400
+            if rev.user and str(rev.user.id) == str(user_id):
+                return {'error': 'You have already reviewed this place'}, 400
         # Si tout est bon, crée une nouvelle review avec les données fournies
         try:
             new_review = facade.create_review(review_data)
@@ -137,6 +144,7 @@ class ReviewResource(Resource):
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, review_id):
         """Update a review's information"""
         review_data = request.json
@@ -147,6 +155,10 @@ class ReviewResource(Resource):
         review = facade.get_review(review_id)
         if not review:
             return {'error': 'Review not found'}, 404
+        
+        user_id = get_jwt_identity()["id"]
+        if not review.user or str(review.user.id) != str(user_id):
+            return {"error": "Unauthorised action"}, 403
 
         # 2. Valider les données fournies
         if 'rating' in review_data:
@@ -180,10 +192,21 @@ class ReviewResource(Resource):
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
+    @api.response(403, 'Unauthorized to delete this review')
+    @jwt_required()
     def delete(self, review_id):
         """Delete a review by its ID"""
-        review_delete = facade.delete_review(review_id)
+        # Étape 1 : Récupérer la review
+        review_delete = facade.get_review(review_id)
         if not review_delete:
-            return {'error': 'The review does not exist'}, 404
-        else:
-            return {'message': 'Review deleted successfully'}, 200
+            return {'error': 'Review not found'}, 404
+
+        # Étape 2 : Vérifier que l'utilisateur connecté est bien le propriétaire
+        user_id = get_jwt_identity()["id"]
+        if not review_delete.user or str(review_delete.user.id) != str(user_id):
+            return {"error": " Unauthorised action"}, 403
+
+        # Étape 3 : delete the review
+        facade.delete_review(review_id)
+        return {'message': 'Review deleted successfully'}, 200
+
