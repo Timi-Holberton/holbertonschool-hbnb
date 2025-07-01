@@ -28,7 +28,7 @@ class DevelopmentConfig(Config):
     """
     DEBUG = True
     SECRET_KEY = os.getenv("SECRET_KEY", "default-secret")
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///development.db'  # ✅ Nécessaire
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///development.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # True servira juste pour la partie développement pour les tests du développeur

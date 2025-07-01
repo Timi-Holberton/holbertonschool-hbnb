@@ -4,3 +4,4 @@ email_validator
 SQLAlchemy
 flask-bcrypt
 flask_sqlalchemy
+flask-jwt-extended==2.8.0
