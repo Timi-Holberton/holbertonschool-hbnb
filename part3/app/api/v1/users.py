@@ -48,7 +48,7 @@ user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user'),
-    #'password': fields.String(requiered=True, description='Password of the user')
+    # 'password': fields.String(required=True, description='Password of the user')
 })
 
 
@@ -58,7 +58,6 @@ user_model = api.model('User', {
 class UserList(Resource):
     # @api.expect :indique que la requête doit contenir un JSON conforme à 'user_model'
     @api.expect(user_model, validate=True)  # Active la validation automatique,
-    # @api.response : Spécifie les réponses possibles pour Swagger
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
@@ -84,7 +83,7 @@ class UserList(Resource):
             'first_name': new_user.first_name,
             'last_name': new_user.last_name,
             'email': new_user.email,
-            # 'password': new_user.password
+            # 'password': new_user.password ne jamais l'affiché
             }, 201
 
         # Résumé du code :
@@ -122,6 +121,7 @@ class UserResource(Resource):
         # Si l'utilisateur n'xiste pas (None ou équivalent) l'API retourne message d'erreur et code
         if not user:
             return {'error': 'User not found'}, 404
+
         return {
             'id': user.id,
             'first_name': user.first_name,
@@ -130,6 +130,7 @@ class UserResource(Resource):
         }, 200
         # si utilisateur est trouvé, l'API retoiurne ses données dans un dico JSON avec code
     @jwt_required()
+    @api.doc(security='Bearer Auth')
     def put(self, user_id):
         data = request.json
         if not data:
@@ -143,9 +144,12 @@ class UserResource(Resource):
         if not user:
             return {"error": "User not found"}, 404
 
-        # Autoriser email et password si inchangés
+        # Autoriser email si inchangés
         if ("email" in data and data["email"] != user.email):
-            return {'error': "You cannot change your email address or password"}, 400
+            return {'error': "You cannot change your email adress"}, 400
+        # Empêcher la modification de l’email ou du mot de passe
+        if "password" in data:
+            return {'error': "You cannot change your password"}, 400
 
         try:
             user = facade.update_user(user_id, data)

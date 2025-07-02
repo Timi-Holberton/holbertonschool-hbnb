@@ -1,10 +1,9 @@
 from flask import Flask
 from flask_restx import Api
-# from app import create_app
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
-from config import DevelopmentConfig
 from flask_jwt_extended import JWTManager
+from config import DevelopmentConfig
 
 jwt = JWTManager()
 bcrypt = Bcrypt()
@@ -33,9 +32,27 @@ def create_app(config_class="config.DevelopmentConfig"):
     bcrypt.init_app(app)
     db.init_app(app)
 
-    api = Api(app, version='1.0', title='HBnB API',
-              description='HBnB Application API', doc='/api/v1/')
+    # Déclaration de la sécurité Swagger (JWT token dans l'en-tête Authorization)
+    authorizations = {
+        'Bearer Auth': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+            'description': 'JWT Authorization header using the Bearer scheme. Exemple : Bearer <votre_token>'
+        }
+    }
 
+    api = Api(
+        app,
+        version='1.0',
+        title='HBnB API',
+        description='HBnB Application API',
+        doc='/api/v1/',  # Swagger UI accessible ici
+        authorizations=authorizations,
+        security='Bearer Auth'  # Appliqué par défaut à toutes les routes (sauf si on override)
+    )
+
+    # Importation et enregistrement des namespaces
     from app.api.v1.users import api as users_ns
     from app.api.v1.places import api as places_ns
     from app.api.v1.reviews import api as reviews_ns
@@ -47,6 +64,5 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(amenities_ns, path='/api/v1/amenities')
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     api.add_namespace(auth_ns, path='/api/v1/auth')
+
     return app
-
-
