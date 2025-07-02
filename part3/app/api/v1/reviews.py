@@ -53,6 +53,7 @@ class ReviewList(Resource):
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
     @jwt_required()
+    @api.doc(security='Bearer Auth')
     def post(self):
         """Register a new review"""
         # Récupération des données envoyées dans le corps de la requête (format JSON)
@@ -145,6 +146,7 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
     @jwt_required()
+    @api.doc(security='Bearer Auth')
     def put(self, review_id):
         """Update a review's information"""
         review_data = request.json
@@ -194,6 +196,7 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     @api.response(403, 'Unauthorized to delete this review')
     @jwt_required()
+    @api.doc(security='Bearer Auth')
     def delete(self, review_id):
         """Delete a review by its ID"""
         # Étape 1 : Récupérer la review

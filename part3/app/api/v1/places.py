@@ -75,6 +75,7 @@ class PlaceList(Resource):
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
     @jwt_required()
+    @api.doc(security='Bearer Auth')
     def post(self):
         """Register a new place"""
         place_data = api.payload
@@ -155,6 +156,7 @@ class PlaceResource(Resource):
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
     @jwt_required()
+    @api.doc(security='Bearer Auth')
     def put(self, place_id):
         """Update the details of a specific place"""
         # Récupérer les données JSON envoyées dans la requête

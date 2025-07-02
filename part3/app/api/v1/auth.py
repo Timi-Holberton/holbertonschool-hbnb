@@ -43,6 +43,7 @@ class Login(Resource):
 @api.route('/protected')
 class ProtectedResource(Resource):
     @jwt_required()
+    @api.doc(security='Bearer Auth')
     def get(self):
         """A protected endpoint that requires a valid JWT token"""
         current_user = get_jwt_identity()  # Récupérer l'identité de l'utilisateur à partir du jeton
