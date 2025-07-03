@@ -24,6 +24,7 @@ This design abstracts persistence mechanisms and enables easy swapping or extens
 from abc import ABC, abstractmethod
 from app.models import User, Place, Review, Amenity  # Import your models
 
+# from app import db  # Assuming you have set up SQLAlchemy in your Flask app
 
 class Repository(ABC):
     @abstractmethod
@@ -50,7 +51,7 @@ class Repository(ABC):
     def get_by_attribute(self, attr_name, attr_value):
         pass
 
-
+"""
 class InMemoryRepository(Repository):
     def __init__(self):
         self._storage = {}
@@ -87,8 +88,7 @@ class InMemoryRepository(Repository):
         # on veux récupérer un utilisateur dont l’email est par ex "alice@gmail.com" sans connaître son identifiant.
         # la méthode va regarder tous les objets stockés et retournerle premier utilisateur dont
         # l'attribut email correspond à "alice@gmail.com"
-
-# from app import db  # Assuming you have set up SQLAlchemy in your Flask app
+"""
 
 class SQLAlchemyRepository(Repository):
     def __init__(self, model):

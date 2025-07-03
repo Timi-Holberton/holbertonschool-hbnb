@@ -28,7 +28,9 @@ class DevelopmentConfig(Config):
     """
     DEBUG = True
     SECRET_KEY = os.getenv("SECRET_KEY", "default-secret")
+    # Définit l'URI de la base de données SQLite
     SQLALCHEMY_DATABASE_URI = 'sqlite:///development.db'
+    # Désactive le suivi des modifications d'objet, une fonctionnalité qui peut consommer de la mémoire supplémentaire.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)  # ou modifie à 60 pour 1 heure par exemple
     # True servira juste pour la partie développement pour les tests du développeur
