@@ -30,7 +30,7 @@ This module enforces strict input validation
 from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 
 # Namespace : permet de créer des groupe logique d'url et de ressources pour API
 # Ressource : Classe de base pour définir les point de terminaison (endpoints) d'une API REST
@@ -48,7 +48,8 @@ user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user'),
-    # 'password': fields.String(required=True, description='Password of the user')
+    'is_admin': fields.Boolean(required=False, description='Administrator status'),
+    'password': fields.String(required=True, description='Password of the user')
 })
 
 
@@ -64,6 +65,7 @@ class UserList(Resource):
     def post(self):
         """Register a new user"""
         # api.payload : Récupère le corps JSONde la requête sous forme de dico
+
         user_data = api.payload
 
         # Simuler la vérification de l'unicité des e-mails (à remplacer par une véritable validation avec persistance)
@@ -83,6 +85,7 @@ class UserList(Resource):
             'first_name': new_user.first_name,
             'last_name': new_user.last_name,
             'email': new_user.email,
+            'is_admin': new_user.is_admin
             # 'password': new_user.password ne jamais l'affiché
             }, 201
 
@@ -126,7 +129,8 @@ class UserResource(Resource):
             'id': user.id,
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'email': user.email
+            'email': user.email,
+            'is_admin': user.is_admin
         }, 200
         # si utilisateur est trouvé, l'API retoiurne ses données dans un dico JSON avec code
     @jwt_required()
@@ -137,6 +141,7 @@ class UserResource(Resource):
             return {"error": "Data not found"}, 400
 
         current_user = get_jwt_identity()
+
         if str(current_user["id"]) != str(user_id):
             return {'error': "Unauthorized action"}, 403
 
@@ -160,5 +165,6 @@ class UserResource(Resource):
             'id': user.id,
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'email': user.email
+            'email': user.email,
+            'is-admin': user.is_admin
         }, 200
