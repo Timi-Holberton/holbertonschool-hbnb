@@ -33,9 +33,9 @@ from app.models.place import Place
 from app.models.review import Review
 from app.models.amenity import Amenity
 from app.persistence.repository import SQLAlchemyRepository
+from app.persistence.user_repository import UserRepository
 
-
-from app.persistence.repository import InMemoryRepository
+# from app.persistence.repository import InMemoryRepository
 
 class HBnBFacade:
 
@@ -43,49 +43,50 @@ class HBnBFacade:
 
     def __init__(self):
         """ Initialises the HBnBFacade object with in-memory repositories for each entity. """
-        self.user_repository = SQLAlchemyRepository()  # Switched to SQLAlchemyRepository
-        self.place_repository = SQLAlchemyRepository()
-        self.review_repository = SQLAlchemyRepository()
-        self.amenity_repository = SQLAlchemyRepository()
+        self.user_repo = UserRepository()  # Switched to SQLAlchemyRepository
+        self.place_repo = SQLAlchemyRepository()
+        self.review_repo = SQLAlchemyRepository()
+        self.amenity_repo = SQLAlchemyRepository()
 
     def create_user(self, user_data):
         """ Creates a new user based on the data provided """
         user = User(**user_data)
-        self.user_repository.add(user)
+        user.hash_password(user_data['password'])
+        self.user_repo.add(user)
         return user
 
     def get_user(self, user_id):
         """ Retrieves a user by their unique ID """
-        return self.user_repository.get(user_id)
+        return self.user_repo.get(user_id)
         # on retourne un utilisateur par son ID
 
     def get_all(self):
         """ Returns a list of all users in the form of dictionaries."""
-        users = self.user_repository.get_all()
+        users = self.user_repo.get_all()
         return [user.to_dict() for user in users]
         # on retourne une liste
 
     def get_user_by_email(self, email):
         """ Search for a user based on their email address """
-        return self.user_repository.get_by_attribute('email', email)
+        return self.user_repo.get_by_attribute('email', email)
         # Permet de chercher un utilisateurà partir de son email
 
     def update_user(self, user_id, data):
         """ Updates the data of an existing user """
         # Appelle la méthode 'update' du repository pour modifier l'utilisateur existant
         # Cette méthode modifie directement l'objet en mémoire, mais ne retourne rien
-        self.user_repository.update(user_id, data)
+        self.user_repo.update(user_id, data)
 
         # Une fois les données mises à jour, on récupère l'objet utilisateur actualisé
         # Cela permet de s'assurer qu'on renvoie bien les nouvelles données à l'API
-        user = self.user_repository.get(user_id)
+        user = self.user_repo.get(user_id)
 
         # Retourne l'utilisateur mis à jour à l'appelant (typiquement, l'API)
         return user
 
     def get_user_by_id(self, user_id):
         """Récupère un utilisateur par son identifiant unique"""
-        return self.user_repository.get_by_attribute('id', user_id)
+        return self.user_repo.get_by_attribute('id', user_id)
 
 #---------------------------------------------------------------------------#
 #------------------------------Anenities------------------------------------#
@@ -94,22 +95,22 @@ class HBnBFacade:
     def create_amenity(self, amenity_data):
         """ Creates a new amenity based on the data provided """
         amenity = Amenity(**amenity_data)
-        self.amenity_repository.add(amenity)
+        self.amenity_repo.add(amenity)
         return amenity
 
     def get_amenity(self, amenity_id):
         """ return a specific amenities with ID """
-        return self.amenity_repository.get(amenity_id)
+        return self.amenity_repo.get(amenity_id)
 
     def get_all_amenities(self):
         """ return all of amenities """
-        amenities = self.amenity_repository.get_all()
+        amenities = self.amenity_repo.get_all()
         return [amenity.to_dict() for amenity in amenities]
 
     def update_amenity(self, amenity_id, amenity_data):
         """ update a amenity """
         # Récupère l'amenity en mémoire à partir de son ID
-        amenity = self.amenity_repository.get(amenity_id)
+        amenity = self.amenity_repo.get(amenity_id)
         if not amenity:
             # Pas trouvé donc on retourne None = ID inconnu
             return None
@@ -155,18 +156,18 @@ class HBnBFacade:
                 place.add_amenity(amenity)
 
         # Enregistre la nouvelle place dans le dépôt (base de données ou autre persistance)
-        self.place_repository.add(place)
+        self.place_repo.add(place)
 
         # Retourne l'objet place nouvellement créé
         return place
 
     def get_place(self, place_id):
         """ function that displays a specific location"""
-        return self.place_repository.get(place_id)
+        return self.place_repo.get(place_id)
 
     def get_all_places(self):
         """ function that displays multiple locations """
-        places = self.place_repository.get_all()
+        places = self.place_repo.get_all()
         return [place.to_dict() for place in places]
 
     def update_place(self, place_id, place_data):
@@ -200,7 +201,7 @@ class HBnBFacade:
 
     def get_place_by_id(self, place_id):
         """ Retrieves a user by their unique ID """
-        return self.place_repository.get_by_attribute('id', place_id)
+        return self.place_repo.get_by_attribute('id', place_id)
 
 #---------------------------------------------------------------------------#
 #-------------------------------review--------------------------------------#
@@ -235,7 +236,7 @@ class HBnBFacade:
         review = Review(text=text, rating=rating, user=user, place=place)
 
         # Ajouter la review dans le dépôt (base de données ou autre persistance)
-        self.review_repository.add(review)
+        self.review_repo.add(review)
 
         # Retourner l’objet Review créé
         return review
@@ -243,17 +244,17 @@ class HBnBFacade:
     def get_review(self, review_id):
         """ list a specific review"""
         # Espace réservé pour la logique de récupération d’un avis par son ID
-        return self.review_repository.get(review_id)
+        return self.review_repo.get(review_id)
 
     def get_all_reviews(self):
         """ resume the lists of all reviews """
-        reviews = self.review_repository.get_all()
+        reviews = self.review_repo.get_all()
         return [review.to_dict() for review in reviews]
 
     def get_reviews_by_place(self, place_id):
         """ obtain a review by the place who choosen"""
         # Espace réservé pour la logique de récupération de tous les avis pour un lieu spécifique
-        all_reviews = self.review_repository.get_all()
+        all_reviews = self.review_repo.get_all()
         filtered_reviews = []
 
         for review in all_reviews:
@@ -265,20 +266,20 @@ class HBnBFacade:
     def update_review(self, review_id, review_data):
         """ update a review """
         # Espace réservé pour la logique de mise à jour d’un avis
-        self.review_repository.update(review_id, review_data)
-        review = self.review_repository.get(review_id)
+        self.review_repo.update(review_id, review_data)
+        review = self.review_repo.get(review_id)
         return review
 
     def delete_review(self, review_id):
         """ delete a review """
         # Espace réservé pour la logique de suppression d’un avis
         # Vérifie d'abord si la review existe
-        review = self.review_repository.get(review_id)
+        review = self.review_repo.get(review_id)
         if not review:
             return False  # Ne rien supprimer si l'ID est inconnu
 
         # Supprime la review
-        self.review_repository.delete(review_id)
+        self.review_repo.delete(review_id)
 
         # Confirme qu'elle n'existe plus
         return True

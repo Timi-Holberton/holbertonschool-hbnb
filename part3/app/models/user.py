@@ -26,6 +26,7 @@ from app.models.BaseModel import BaseModel
 import re
 from flask_bcrypt import Bcrypt
 from app import db
+from sqlalchemy.orm import validates
 
 # from app.extensions import db
 
@@ -36,6 +37,13 @@ class User(BaseModel):
     Class User: inherits from BaseModel.
     Method: data validation and requirements
     """
+    __tablename__ = 'users'
+
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+    password = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
 
     def __init__(self, first_name, last_name, email, password, is_admin=False):
         """
@@ -52,6 +60,7 @@ class User(BaseModel):
         self.places = []  # Liste pour stocker les Hébergements liés
         self.reviews = []  # Liste pour stocker les avis liés
 
+    @validates('name')
     def validate_name(self, name, field="Name"):
         """ function that manages the validation conditions for the first name """
         if not isinstance(name, str):
@@ -68,6 +77,7 @@ class User(BaseModel):
                 f"{field} must contain only letters or hyphens.")
         return name
 
+    @validates('email')
     def validate_email(self, email):
         """
         Validation method that checks whether the email address is valid
@@ -81,6 +91,7 @@ class User(BaseModel):
         except EmailNotValidError as email_error:
             raise ValueError(f"Error, invalid email : {email_error}")
 
+    @validates('is_admin')
     def validate_is_admin(self, is_admin):
         """
         Validation method that checks whether the user is an admin

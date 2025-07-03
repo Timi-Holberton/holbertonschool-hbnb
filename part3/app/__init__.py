@@ -1,9 +1,15 @@
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import config
+
 from flask import Flask
 from flask_restx import Api
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
-import config
+
 
 jwt = JWTManager()
 bcrypt = Bcrypt()
