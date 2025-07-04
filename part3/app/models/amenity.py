@@ -16,17 +16,21 @@ Main features:
 Exceptions are raised for invalid data to ensure the integrity of Amenity objects.
 """
 
-
 from app.models.BaseModel import BaseModel
-
+from app import db
+from sqlalchemy.orm import validates
 
 class Amenity(BaseModel):
     """ amenity class that contains simple data about a comment on equipment and how it will be validated """
+
+    name = db.Column(db.String(50), nullable=False)
+
     def __init__(self, name):
         super().__init__()
-        self.name = self.validate_amenity_name(name)
+        self.name = self.validate_amenity_name('name', name)
 
-    def validate_amenity_name(self, name):
+    @validates('name')
+    def validate_amenity_name(self, _key, name):
         """ Validate the name of the amenity """
         if not isinstance(name, str):
             raise ValueError(

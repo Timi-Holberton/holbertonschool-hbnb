@@ -20,23 +20,57 @@ Main features:
 Exceptions are raised to ensure data integrity and modification security.
 """
 
-
 from app.models.BaseModel import BaseModel
-
+from app import db
+from sqlalchemy.orm import validates
 
 class Place(BaseModel):
     """ Classe Place who contains all of exception and the information about this"""
+    __tablename__ = 'places'
+    
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(4000), nullable=False)
+    _price = db.Column(db.Float, nullable=False)
+    _latitude = db.Column(db.Float, nullable=False)
+    _longitude = db.Column(db.Float, nullable=False)
+    owner_id = db.Column(db.String(50), db.ForeignKey('users.id'), nullable=False)
+    # owner = db.relationship('User', backref='places')
+
     def __init__(self, title, description, price, latitude, longitude, owner_id):
         """ constructor to declare all the attributes necessary"""
         super().__init__()
-        self.title = self.validate_title(title)
-        self.description = self.validate_description(description)
-        self.price = self.validate_price(price)
-        self.latitude = self.validate_latitude(latitude)
-        self.longitude = self.validate_longitude(longitude)
+        self.title = self.validate_title('title', title)
+        self.description = self.validate_description('description', description)
+        self.price = price
+        self.latitude = latitude
+        self.longitude = longitude
         self.owner_id = owner_id
         self.reviews = []  # List to store related reviews
         self.amenities = []  # List to store related amenities
+
+    @validates('title')
+    def validate_title(self, _key, title):
+        """ Validate the title of the place """
+        if not isinstance(title, str):
+            raise ValueError("Title must be a string")
+        if title.strip() == "":
+            raise ValueError("Title is required")
+        if len(title) > 100:
+            raise ValueError("Title must not exceed 100 characters")
+        return title
+    
+    @validates('description')
+    def validate_description(self, _key, description):
+        """ Validate the description of the place """
+        if description is not None:
+            if not isinstance(description, str):
+                raise ValueError(
+                    "Description must be a string")
+            if description.strip() == "":
+                raise ValueError("Description is required")
+            if len(description) > 4000:
+                raise ValueError("Description must not exceed 4000 characters")
+        return description
 
     @property
     def price(self):
@@ -57,25 +91,6 @@ class Place(BaseModel):
         return price
 
     @property
-    def longitude(self):
-        """ returns the stored latitude """
-        return self._longitude
-    
-    @longitude.setter
-    def longitude(self, longitude):
-        """ validate longitude before setting it"""
-        self._longitude = self.validate_longitude(longitude)
-
-    def validate_longitude(self, longitude):
-        """ check for the longitude """
-        if not isinstance(longitude, (int, float)):
-            raise ValueError("Longitude must be a number")
-        if not -180.0 <= longitude <= 180.0:
-            raise ValueError(
-                "Longitude must be between -180 and 180 °C")
-        return longitude
-
-    @property
     def latitude(self):
         """ Returns the stored latitude """
         return self._latitude
@@ -94,6 +109,46 @@ class Place(BaseModel):
                 "Latitude must be between -90.0 and 90.0")
         return latitude
 
+    @property
+    def longitude(self):
+        """ returns the stored latitude """
+        return self._longitude
+    
+    @longitude.setter
+    def longitude(self, longitude):
+        """ validate longitude before setting it"""
+        self._longitude = self.validate_longitude(longitude)
+
+    def validate_longitude(self, longitude):
+        """ check for the longitude """
+        if not isinstance(longitude, (int, float)):
+            raise ValueError("Longitude must be a number")
+        if not -180.0 <= longitude <= 180.0:
+            raise ValueError(
+                "Longitude must be between -180 and 180 °C")
+        return longitude
+
+    @validates('owner_id')
+    def validate_owner_id(self, _key, owner_id):
+        # Ici, tu peux valider le format UUID, par exemple (import uuid)
+        import uuid
+        try:
+            uuid.UUID(str(owner_id))
+        except ValueError:
+            raise ValueError("owner_id must be a valid UUID string")
+        return owner_id
+
+    def check_owner_permission(self, user):
+        """Check if a user has permission to modify this place"""
+        from .user import User
+        if not isinstance(user, User):
+            raise ValueError("User must be an instance of User")
+        if not hasattr(user, 'id') or not user.id:
+            raise ValueError("User must have a valid ID")
+        if self.owner_id != user.id:
+            raise PermissionError(
+                "You are not authorized to modify this place")
+
     def add_review(self, review):
         """ Add a review to the place """
         from app.models.review import Review
@@ -109,49 +164,6 @@ class Place(BaseModel):
             raise TypeError("Expected argument 'amenity' to "
                             "be an instance of Amenity.")
         self.amenities.append(amenity)
-
-    def validate_title(self, title):
-        """ Validate the title of the place """
-        if not isinstance(title, str):
-            raise ValueError("Title must be a string")
-        if title.strip() == "":
-            raise ValueError("Title is required")
-        if len(title) > 100:
-            raise ValueError("Title must not exceed 100 characters")
-        return title
-
-    def validate_description(self, description):
-        """ Validate the description of the place """
-        if description is not None:
-            if not isinstance(description, str):
-                raise ValueError(
-                    "Description must be a string")
-            if description.strip() == "":
-                raise ValueError("Description is required")
-            if len(description) > 4000:
-                raise ValueError("Description must not exceed 4000 characters")
-        return description
-
-    def validate_owner(self, user):
-        """Validate that the owner is a proper User instance"""
-        from .user import User
-        if not isinstance(user, User):
-            raise ValueError("Owner must be an instance of User")
-        if not hasattr(user, 'id') or not user.id:
-            raise ValueError(
-                "Owner must have a valid ID")
-        return user  # qu'on assignera ensuite à self.owner
-
-    def check_owner_permission(self, user):
-        """Check if a user has permission to modify this place"""
-        from .user import User
-        if not isinstance(user, User):
-            raise ValueError("User must be an instance of User")
-        if not hasattr(user, 'id') or not user.id:
-            raise ValueError("User must have a valid ID")
-        if self.owner.id != user.id:
-            raise PermissionError(
-                "You are not authorized to modify this place")
 
     def to_dict(self):
         """ Convert this Place object to a dictionary (used for API responses) """
