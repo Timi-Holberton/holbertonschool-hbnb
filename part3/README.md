@@ -21,3 +21,9 @@ The application should now be running.
 ## Purpose of each directory and file
 
 ![Structure du projet](structure.png)
+
+# >>> from app import create_app, db
+# >>> app = create_app()
+# >>> app.app_context().push()  # <-- Active le contexte Flask
+# >>> db.create_all()  # <-- Fonctionne maintenant !
+pour la créaton d'une base de donnée
