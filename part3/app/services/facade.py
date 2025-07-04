@@ -44,9 +44,9 @@ class HBnBFacade:
     def __init__(self):
         """ Initialises the HBnBFacade object with in-memory repositories for each entity. """
         self.user_repo = UserRepository()  # Switched to SQLAlchemyRepository
-        self.place_repo = SQLAlchemyRepository()
-        self.review_repo = SQLAlchemyRepository()
-        self.amenity_repo = SQLAlchemyRepository()
+        self.place_repo = SQLAlchemyRepository(Place)
+        self.review_repo = SQLAlchemyRepository(Review)
+        self.amenity_repo = SQLAlchemyRepository(Amenity)
 
     def create_user(self, user_data):
         """ Creates a new user based on the data provided """

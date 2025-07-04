@@ -52,47 +52,51 @@ class User(BaseModel):
         validation methods.
         """
         super().__init__()
-        self.first_name = self.validate_name(first_name, "first_name")
-        self.last_name = self.validate_name(last_name, "last_name")
-        self.email = self.validate_email(email)
+        # attention avec l'utilisation des décorateurs validates, la position
+        # des arguments pour first_name + last_name + is_admin à changer avec
+        # l'ajout de l'argument key
+        self.first_name = self.validate_name("first_name", first_name)
+        self.last_name = self.validate_name("last_name", last_name)
+        self.email = email
         self.hash_password(password)
-        self.is_admin = self.validate_is_admin(is_admin)
+        self.is_admin = self.validate_is_admin("is_admin", is_admin)
         self.places = []  # Liste pour stocker les Hébergements liés
         self.reviews = []  # Liste pour stocker les avis liés
 
-    @validates('name')
-    def validate_name(self, name, field="Name"):
+    @validates('first_name', 'last_name')
+    def validate_name(self, key, name):
         """ function that manages the validation conditions for the first name """
         if not isinstance(name, str):
-            raise ValueError(f"{field} must be a string.")
+            raise ValueError(f"{key} must be a string.")
         name = name.strip()
         if not name:
             raise ValueError(
-                f"{field} Invalid, please enter characters.")
+                f"{key} Invalid, please enter characters.")
+        print(repr(name))
         if not (1 <= len(name) <= 50):
             raise ValueError(
-                f"{field} must contain between 1 and 50 characters.")
-        if not re.match("^[a-zA-ZÀ-ÿ-]+$", name):
+                f"{key} must contain between 1 and 50 characters.")
+        if not re.fullmatch(r"[a-zA-ZÀ-ÿ-]+", name):
             raise ValueError(
-                f"{field} must contain only letters or hyphens.")
+                f"{key} must contain only letters or hyphens.")
         return name
 
     @validates('email')
-    def validate_email(self, email):
+    def validation_e_mail(self, _key, email):
         """
         Validation method that checks whether the email address is valid
         using the email-validator library (requirement)
         """
         try:
-            validate = validate_email(email)
+            valid = validate_email(email)
             # on appelle la bibliothèque validate_email et on la valide
-            return validate.normalized
+            return valid.normalized
         # si l'email est valide il renvoie l'email(en version propre)
         except EmailNotValidError as email_error:
             raise ValueError(f"Error, invalid email : {email_error}")
 
     @validates('is_admin')
-    def validate_is_admin(self, is_admin):
+    def validate_is_admin(self, _key, is_admin):
         """
         Validation method that checks whether the user is an admin
         or not, default = False
@@ -106,7 +110,7 @@ class User(BaseModel):
         # Si la clé 'email' est présente dans les données reçues
         if 'email' in data:
             # On utilise la méthode de validation d'email pour s'assurer que l'adresse est valide
-            self.email = self.validate_email(data['email'])
+            self.email = self.validation_e_mail(data['email'])
 
         # Si la clé 'first_name' est présente dans les données reçues
         if 'first_name' in data:
