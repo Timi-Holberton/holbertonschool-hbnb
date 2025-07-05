@@ -12,10 +12,10 @@ Main functionalities:
 - PUT /reviews/<review_id>     : Update an existing review.
 - DELETE /reviews/<review_id>  : Delete a review by its ID.
 
-Each endpoint uses Flask-RESTx models for input validation 
+Each endpoint uses Flask-RESTx models for input validation
 and automatic API documentation (Swagger).
 
-Operations rely on the 'facade' service to handle business logic 
+Operations rely on the 'facade' service to handle business logic
 and data access.
 
 HTTP status codes used:
@@ -58,7 +58,7 @@ class ReviewList(Resource):
         """Register a new review"""
         # Récupération des données envoyées dans le corps de la requête (format JSON)
         review_data = api.payload
-        
+
         # Extraction des champs 'user_id' et 'place_id' des données de la review car ils seront utilisés
         user_id = get_jwt_identity()["id"]
         place_id = review_data.get('place_id')
@@ -71,11 +71,14 @@ class ReviewList(Resource):
         user = facade.get_user_by_id(user_id)
         if not user:
             return {'error': 'User not found'}, 400
-        
+
         # on vérifie que le lieu existe sinon on retourne une erreur
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 400
+
+        print(f"Utilisateur connecté: {user_id}")
+        print(f"Propriétaire du lieu: {place.owner.id}")
 
         # **Vérification que l'utilisateur n'est pas propriétaire du lieu**
         # (adapter l'attribut 'owner' selon ton modèle Place)
@@ -140,7 +143,7 @@ class ReviewResource(Resource):
             'user': user_data,
             'place': place_data
         }, 200
-    
+
     @api.expect(review_model)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
@@ -157,7 +160,7 @@ class ReviewResource(Resource):
         review = facade.get_review(review_id)
         if not review:
             return {'error': 'Review not found'}, 404
-        
+
         user_id = get_jwt_identity()["id"]
         if not review.user or str(review.user.id) != str(user_id):
             return {"error": "Unauthorised action"}, 403
