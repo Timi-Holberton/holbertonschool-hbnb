@@ -3,7 +3,7 @@
 """
 Module defining the Amenity class.
 
-This class represents an amenity or service available with a validated name 
+This class represents an amenity or service available with a validated name
 and methods for updating and converting to a dictionary.
 
 It inherits from the BaseModel class which provides a unique identifier and common functionalities.
@@ -17,13 +17,17 @@ Exceptions are raised for invalid data to ensure the integrity of Amenity object
 """
 
 from app.models.BaseModel import BaseModel
+from app.models.association_tables import place_amenity
+
 from app import db
 from sqlalchemy.orm import validates
 
 class Amenity(BaseModel):
     """ amenity class that contains simple data about a comment on equipment and how it will be validated """
-
+    __tablename__ = 'amenities' # Purée on a oublier ca !!!! Pffff
     name = db.Column(db.String(50), nullable=False)
+
+    places = db.relationship('Place', secondary=place_amenity, back_populates='amenities')
 
     def __init__(self, name):
         super().__init__()
@@ -52,7 +56,6 @@ class Amenity(BaseModel):
                 raise ValueError("Invalid amenity name")
             # Si la validation est ok, met à jour l'attribut 'name' sans espaces en début/fin grâce à strip
             self.name = data['name'].strip()
-
 
     def to_dict(self):
         """Convert the amenity object into a dictionary format"""
