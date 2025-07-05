@@ -34,6 +34,9 @@ from app.models.review import Review
 from app.models.amenity import Amenity
 from app.persistence.repository import SQLAlchemyRepository
 from app.persistence.user_repository import UserRepository
+from sqlalchemy.exc import IntegrityError # pour interdire doublon place
+from app import db
+
 
 # from app.persistence.repository import InMemoryRepository
 
@@ -53,6 +56,7 @@ class HBnBFacade:
         user = User(**user_data)
         user.hash_password(user_data['password'])
         self.user_repo.add(user)
+        db.session.commit()
         return user
 
     def get_user(self, user_id):
@@ -80,7 +84,7 @@ class HBnBFacade:
         # Une fois les données mises à jour, on récupère l'objet utilisateur actualisé
         # Cela permet de s'assurer qu'on renvoie bien les nouvelles données à l'API
         user = self.user_repo.get(user_id)
-
+        db.session.commit()
         # Retourne l'utilisateur mis à jour à l'appelant (typiquement, l'API)
         return user
 
@@ -96,6 +100,7 @@ class HBnBFacade:
         """ Creates a new amenity based on the data provided """
         amenity = Amenity(**amenity_data)
         self.amenity_repo.add(amenity)
+        db.session.commit()
         return amenity
 
     def get_amenity(self, amenity_id):
@@ -121,6 +126,7 @@ class HBnBFacade:
             # Relance l'exception pour que l'API la gère
             raise error
         # si ok, retourne amenity modifié
+        db.session.commit()
         return amenity
 
 #---------------------------------------------------------------------------#
@@ -140,6 +146,11 @@ class HBnBFacade:
         if not user:
             raise ValueError("Aucun utilisateur trouvé avec cet ID")
 
+        # Vérification avant création pour éviter doublon
+        existing_place = Place.query.filter_by(title=place_data['title'], owner_id=owner_id).first()
+        if existing_place:
+            raise ValueError("This Place already exist for this owner.")
+
         # Extraire la liste des identifiants des commodités (amenities) depuis les données
         # On les retire du dictionnaire pour éviter de les passer au constructeur de Place
         amenity_ids = place_data.pop("amenities", [])
@@ -157,7 +168,26 @@ class HBnBFacade:
 
         # Enregistre la nouvelle place dans le dépôt (base de données ou autre persistance)
         self.place_repo.add(place)
+##---------------------------------------------------------------------------##
+##---------------------------------------------------------------------------##
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            raise ValueError("Place already exist with this title for this owner")
 
+# Tente de valider les modifications dans la base de données avec commit().
+# Si une contrainte d'intégrité est violée (par exemple un doublon unique),
+# une exception IntegrityError est levée.
+# On effectue alors un rollback() pour annuler la transaction en cours,
+# ce qui permet de garder la session SQLAlchemy propre et prête à d'autres opérations.
+# Enfin, on lève une ValueError avec un message clair pour informer l'utilisateur
+# que la donnée existe déjà et éviter un message d'erreur technique brut.
+
+##---------------------------------------------------------------------------##
+##---------------------------------------------------------------------------##
+
+        db.session.commit()
         # Retourne l'objet place nouvellement créé
         return place
 
@@ -196,6 +226,8 @@ class HBnBFacade:
                     # Ajouter l'amenity à la liste de la place
                     place.add_amenity(amenity)
 
+        db.session.commit()
+
         # Retourner l'objet place mis à jour
         return place
 
@@ -232,12 +264,13 @@ class HBnBFacade:
         text = review_data.get('text')
         rating = review_data.get('rating')
 
-        # Créer l’objet Review avec des objets User et Place
-        review = Review(text=text, rating=rating, user=user, place=place)
+        # Création d'une instance Review avec le texte, la note,
+        # l'identifiant utilisateur (UUID) et l'identifiant lieu (UUID) récupérés depuis les objets user et place
+        review = Review(text=text, rating=rating, user_id=user.id, place_id=place.id)
 
         # Ajouter la review dans le dépôt (base de données ou autre persistance)
         self.review_repo.add(review)
-
+        db.session.commit()
         # Retourner l’objet Review créé
         return review
 
@@ -268,6 +301,7 @@ class HBnBFacade:
         # Espace réservé pour la logique de mise à jour d’un avis
         self.review_repo.update(review_id, review_data)
         review = self.review_repo.get(review_id)
+        db.session.commit()
         return review
 
     def delete_review(self, review_id):
@@ -280,7 +314,7 @@ class HBnBFacade:
 
         # Supprime la review
         self.review_repo.delete(review_id)
-
+        db.session.commit()
         # Confirme qu'elle n'existe plus
         return True
 
