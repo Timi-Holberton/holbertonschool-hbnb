@@ -10,7 +10,7 @@ Main functionalities:
 - GET /users/<user_id>       : Retrieve a user by their ID.
 - PUT /users/<user_id>       : Update user information.
 
-Each endpoint uses Flask-RESTx models for input validation and 
+Each endpoint uses Flask-RESTx models for input validation and
 API documentation via Swagger.
 
 Operations rely on the 'facade' service to handle business logic
@@ -22,7 +22,7 @@ HTTP status codes used:
 - 400 : Invalid data or email already registered.
 - 404 : User not found.
 
-This module enforces strict input validation 
+This module enforces strict input validation
 (first name, last name, email) and provides interactive documentation via Swagger UI.
 """
 
