@@ -38,6 +38,13 @@ def create_app(config_class=config.DevelopmentConfig):
     bcrypt.init_app(app)
     db.init_app(app)
 
+    from app.models.user import User
+    from app.models.place import Place
+    from app.models.amenity import Amenity
+    from app.models.review import Review
+    from app.models.association_tables import place_amenity
+
+
     # Déclaration de la sécurité Swagger (JWT token dans l'en-tête Authorization)
     authorizations = {
         'Bearer Auth': {
@@ -72,5 +79,8 @@ def create_app(config_class=config.DevelopmentConfig):
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     api.add_namespace(auth_ns, path='/api/v1/auth')
     api.add_namespace(admin_ns, path='/api/v1/admin')
+
+    with app.app_context():
+        db.create_all()
 
     return app
