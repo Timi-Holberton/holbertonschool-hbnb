@@ -3,12 +3,12 @@
 """
 Module defining the Place class.
 
-This class represents a place with its main attributes: title, description, price, 
-geographical coordinates (latitude, longitude), owner, as well as its relationships 
+This class represents a place with its main attributes: title, description, price,
+geographical coordinates (latitude, longitude), owner, as well as its relationships
 with reviews and amenities.
 
-The class includes strict validations for each attribute, 
-methods to add reviews and amenities, 
+The class includes strict validations for each attribute,
+methods to add reviews and amenities,
 and authorization checks related to the owner.
 
 Main features:
@@ -21,21 +21,39 @@ Exceptions are raised to ensure data integrity and modification security.
 """
 
 from app.models.BaseModel import BaseModel
+from app.models.association_tables import place_amenity
 from app import db
 from sqlalchemy.orm import validates
+from sqlalchemy import UniqueConstraint # pour utiliser des contraintes pour empêcher doublons
+
 
 class Place(BaseModel):
     """ Classe Place who contains all of exception and the information about this"""
     __tablename__ = 'places'
-    
+
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(4000), nullable=False)
     _price = db.Column(db.Float, nullable=False)
     _latitude = db.Column(db.Float, nullable=False)
     _longitude = db.Column(db.Float, nullable=False)
     owner_id = db.Column(db.String(50), db.ForeignKey('users.id'), nullable=False)
-    # owner = db.relationship('User', backref='places')
 
+    owner = db.relationship('User', back_populates='places')
+    amenities = db.relationship('Amenity', secondary=place_amenity, back_populates='places')
+    reviews = db.relationship('Review', back_populates='place', lazy=True, cascade='all, delete-orphan')
+
+##---------------------------------------------------------------------------##
+##---------------------------------------------------------------------------##
+    __table_args__ = (
+        UniqueConstraint('title', 'owner_id', name='unique_place_title_owner'),
+    )
+    # __table_args__ doit être soit un tuple ou un dictionnaire.
+    # crée une contrainte d’unicité sur une ou plusieurs colonnes dans la base de données.
+    # Cela signifie que la base refusera l’insertion d’une ligne si la combinaison
+    # des valeurs de title et de l'owner existe déjà.
+    # La combinaison de title et owner doit être unique sinon erreur
+##---------------------------------------------------------------------------##
+##---------------------------------------------------------------------------##
     def __init__(self, title, description, price, latitude, longitude, owner_id):
         """ constructor to declare all the attributes necessary"""
         super().__init__()
@@ -58,7 +76,7 @@ class Place(BaseModel):
         if len(title) > 100:
             raise ValueError("Title must not exceed 100 characters")
         return title
-    
+
     @validates('description')
     def validate_description(self, _key, description):
         """ Validate the description of the place """
@@ -113,7 +131,7 @@ class Place(BaseModel):
     def longitude(self):
         """ returns the stored latitude """
         return self._longitude
-    
+
     @longitude.setter
     def longitude(self, longitude):
         """ validate longitude before setting it"""
