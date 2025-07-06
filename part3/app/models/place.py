@@ -104,7 +104,7 @@ class Place(BaseModel):
         """ function price for the place"""
         if not isinstance(price, (int, float)):
             raise ValueError("The price must be a number")
-        if price < 0:
+        if price <= 0:
             raise ValueError("The price must be superior than 0")
         return price
 
@@ -193,5 +193,6 @@ class Place(BaseModel):
             'latitude': self.latitude,
             'longitude': self.longitude,
             'owner_id': self.owner_id,
-            'amenities': [a.to_dict() for a in self.amenities if hasattr(a, 'to_dict')]
+            'amenities': [a.to_dict() for a in self.amenities if hasattr(a, 'to_dict')],
+            'reviews': [review.to_dict() for review in self.reviews]
         }

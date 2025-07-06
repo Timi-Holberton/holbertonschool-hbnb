@@ -139,6 +139,7 @@ class PlaceResource(Resource):
 
         # Fetch amenities related to the place
         amenities_data = [a.to_dict() for a in place.amenities]
+        reviews_data = [a.to_dict() for a in place.reviews]
 
         return {
             'id': place.id,
@@ -148,7 +149,8 @@ class PlaceResource(Resource):
             'latitude': place.latitude,
             'longitude': place.longitude,
             'owner': owner_data,
-            'amenities': amenities_data
+            'amenities': amenities_data,
+            'reviews': reviews_data
         }, 200
 
     @api.expect(place_model)

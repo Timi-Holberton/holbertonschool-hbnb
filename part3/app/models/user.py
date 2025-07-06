@@ -78,7 +78,7 @@ class User(BaseModel):
         if not name:
             raise ValueError(
                 f"{key} Invalid, please enter characters.")
-        print(repr(name))
+
         if not (1 <= len(name) <= 50):
             raise ValueError(
                 f"{key} must contain between 1 and 50 characters.")
@@ -121,12 +121,12 @@ class User(BaseModel):
         # Si la clé 'first_name' est présente dans les données reçues
         if 'first_name' in data:
             # On valide et met à jour le prénom via la méthode validate_name
-            self.first_name = self.validate_name(data['first_name'], "first_name")
+            self.first_name = self.validate_name("first_name", data['first_name'])
 
         # Si la clé 'last_name' est présente dans les données reçues
         if 'last_name' in data:
             # On valide et met à jour le nom de famille via la méthode validate_name
-            self.last_name = self.validate_name(data['last_name'], "last_name")
+            self.last_name = self.validate_name("last_name", data['last_name'])
 
         # Si la clé 'is_admin' est présente dans les données reçues
         if 'is_admin' in data:
@@ -162,7 +162,14 @@ class User(BaseModel):
     def to_dict(self):
         """ Convert a user object (User) into a Python dictionary """
         # transforme une liste de user en dico
-        return {'id': self.id, 'first_name': self.first_name, 'last_name': self.last_name, 'email': self.email, }
+        return {
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'reviews': [review.to_dict() for review in self.reviews],
+            'places': [place.to_dict() for place in self.places]
+        }
 
     def hash_password(self, password):
         """Hashes the password before storing it."""

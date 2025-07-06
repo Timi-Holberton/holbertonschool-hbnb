@@ -77,9 +77,6 @@ class ReviewList(Resource):
         if not place:
             return {'error': 'Place not found'}, 400
 
-        print(f"Utilisateur connecté: {user_id}")
-        print(f"Propriétaire du lieu: {place.owner.id}")
-
         # **Vérification que l'utilisateur n'est pas propriétaire du lieu**
         # (adapter l'attribut 'owner' selon ton modèle Place)
         if hasattr(place, 'owner') and str(place.owner.id) == str(user_id):

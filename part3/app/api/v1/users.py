@@ -130,7 +130,9 @@ class UserResource(Resource):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'email': user.email,
-            'is_admin': user.is_admin
+            'is_admin': user.is_admin,
+            'reviews': [review.to_dict() for review in user.reviews],
+            'places': [place.to_dict() for place in user.places]
         }, 200
         # si utilisateur est trouvé, l'API retoiurne ses données dans un dico JSON avec code
     @jwt_required()

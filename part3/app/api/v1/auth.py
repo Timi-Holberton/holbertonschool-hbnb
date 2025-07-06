@@ -22,11 +22,6 @@ class Login(Resource):
 
         # Étape 1 : Récupérer l'utilisateur à partir de l'email fourni et on 
         user = facade.get_user_by_email(credentials['email'])
-        print(f"user found: {user}")
-        print(f"user.password: {user.password}")
-        print(f"password provided: {credentials['password']}")
-        if user:
-            print(f"password verify: {user.verify_password(credentials['password'])}")
 
         # Étape 2 : Vérifier que l'utilisateur existe et que le mot de passe est correct
         
