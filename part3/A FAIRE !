@@ -1,0 +1,16 @@
+Reste à faire :
+
+## Finir de tester les opérations CRUD (tâche 10)
+> Tester les opérations CRUD :
+> Utilisez les instructions SELECT, INSERT, UPDATEet DELETEpour tester l’intégrité des données et la fonctionnalité CRUD pour chaque table.
+> Vérifiez que l'utilisateur administrateur est créé avec is_admin = TRUEet que les équipements sont correctement insérés.
+
+## Tâche 11 à faire
+
+## Mettre en ordre la documentation Swagger
+
+## PLUS
+- Regarder si tout est en anglais
+- commentaire Ok
+
+## Finaliser le README
