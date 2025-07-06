@@ -27,3 +27,7 @@ The application should now be running.
 # >>> app.app_context().push()  # <-- Active le contexte Flask
 # >>> db.create_all()  # <-- Fonctionne maintenant !
 pour la créaton d'une base de donnée
+
+## Commande pour le lancement du script SQL
+
+sqlite3 instance/development.db < app/database/schema.sql
