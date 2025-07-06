@@ -37,6 +37,11 @@ class AdminUserCreate(Resource):
         #---------------------------------------------------------------------
         """Register a new user"""
         
+        # Vérification manuelle du mot de passe (vide)
+        password = user_data.get('password', '').strip()
+        if not password:
+            return {'error': 'Password cannot be empty'}, 400
+
         # Hachage du mot de passe
         user_data['password'] = generate_password_hash(user_data['password'])
 
