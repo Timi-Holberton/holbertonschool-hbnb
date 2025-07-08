@@ -63,7 +63,7 @@ Clear separation of concerns across routes, models, and controllers.
    sqlite3 instance/development.db < app/database/schema.sql
    ```
 
-6. The application should now be running with the SQL script implemented. You can now launch the application and open your web browser, then go to http://127.0.0.1:5000
+6. The application should now be running with the SQL script implemented. You can now launch the application and open your web browser, then go to http://127.0.0.1:5000/api/v1
 
 ---
 
@@ -189,7 +189,12 @@ erDiagram
     PLACES ||--o{ USER_PLACE_RESERVATION : booked_for
     USERS ||--o{ USER_PLACE_RESERVATION : makes
 ```
+
+## Tests
+
+All our tests were performed using Postman and Swagger, covering all CRUD operations.
+
 ## Author
 
 👩‍💻 Thérèse-Marie Lefoulon & Robin David
-🚀 Developer in training - Holberton School Laval
+🚀 Full-Stack Web Developer in training at Holberton School Laval — project-based and peer-learning curriculum
