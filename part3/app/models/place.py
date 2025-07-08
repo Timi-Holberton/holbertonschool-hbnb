@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 
 """
-Module defining the Place class.
+Module defining the Place class using SQLAlchemy ORM.
 
-This class represents a place with its main attributes: title, description, price,
-geographical coordinates (latitude, longitude), owner, as well as its relationships
-with reviews and amenities.
+This class represents a place entity stored in a relational database, with
+attributes such as title, description, price, geographical coordinates (latitude and longitude),
+and owner reference. It manages relationships with other entities like reviews and amenities.
 
-The class includes strict validations for each attribute,
-methods to add reviews and amenities,
-and authorization checks related to the owner.
+Key features include:
+- Definition of database table columns and constraints via SQLAlchemy.
+- Validation of attribute data using SQLAlchemy's @validates decorator and property setters.
+- Relationship management to related tables/models (User, Review, Amenity) with back_populates.
+- Enforcement of uniqueness constraints at the database level (e.g., unique title per owner).
+- Methods for adding related objects while ensuring type safety.
+- Permission checks based on owner ownership.
+- Serialization of the Place instance to a dictionary, including related objects, for API responses.
 
-Main features:
-- Validation of data (title, description, price, latitude, longitude).
-- Management of relationships with reviews and amenities.
-- User permission control for modifications.
-- Conversion to dictionary for API serialization.
-
-Exceptions are raised to ensure data integrity and modification security.
+This design leverages SQLAlchemy ORM capabilities to ensure data integrity, 
+manage relationships efficiently, and provide a clear mapping between Python objects and database tables.
 """
 
 from app.models.BaseModel import BaseModel

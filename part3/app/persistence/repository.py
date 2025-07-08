@@ -1,5 +1,6 @@
 """
-Defines an abstract base class and an in-memory implementation for a generic repository pattern.
+Provides an abstract base class and a SQLAlchemy-based implementation
+for a generic repository pattern in the HBnB application.
 
 Classes:
 - Repository (ABC): Abstract base class specifying the interface for a repository managing CRUD operations.
@@ -13,10 +14,10 @@ Responsibilities:
 - delete(obj_id): Remove an object by its identifier.
 - get_by_attribute(attr_name, attr_value): Retrieve an object matching a specific attribute value.
 
-Details:
-- InMemoryRepository stores objects in a dictionary keyed by their 'id' attribute.
-- The update method assumes the stored objects implement their own update(data) method.
-- get_by_attribute enables lookup by arbitrary attribute, useful for searching without knowing the ID.
+Implementation Notes:
+- SQLAlchemyRepository expects that each model has a primary key named 'id'.
+- The update method uses setattr and assumes model instances can be updated dynamically.
+- get_by_attribute enables flexible filtering without knowing the object's ID.
 
 This design abstracts persistence mechanisms and enables easy swapping or extension with other storage backends.
 """
@@ -59,6 +60,24 @@ class Repository(ABC):
 
 
 class SQLAlchemyRepository(Repository):
+    """
+    A generic repository class for performing CRUD operations using SQLAlchemy.
+
+    This class provides a reusable implementation of the Repository pattern
+    for any SQLAlchemy model. It abstracts common database interactions such as
+    adding, retrieving, updating, and deleting records, and supports filtering by attributes.
+
+    Attributes:
+        model: The SQLAlchemy model class this repository manages.
+
+    Methods:
+        add(obj): Adds a new record to the database.
+        get(obj_id): Retrieves a record by its primary key.
+        get_all(): Retrieves all records for the model.
+        update(obj_id, data): Updates a record with new data.
+        delete(obj_id): Deletes a record by its ID.
+        get_by_attribute(attr_name, attr_value): Finds a record by a specific attribute's value.
+    """
     def __init__(self, model):
         self.model = model
 

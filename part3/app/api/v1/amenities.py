@@ -1,9 +1,8 @@
 """
 Amenity management module via a RESTful API.
 
-This module defines a Flask-RESTx namespace for managing amenities, 
-providing endpoints for creating, retrieving, updating, 
-and listing amenities.
+This module defines a Flask-RESTx namespace for managing amenities,
+providing endpoints to create, retrieve, update, and list amenities.
 
 Available endpoints:
 - POST /amenities/       : Create a new amenity.
@@ -11,16 +10,18 @@ Available endpoints:
 - GET /amenities/<id>    : Retrieve a specific amenity by its ID.
 - PUT /amenities/<id>    : Update an existing amenity.
 
-Each endpoint uses input validation through Flask-RESTx models 
-and returns appropriate HTTP status codes based on the result of operations.
+Each endpoint uses input validation through Flask-RESTx models
+and returns appropriate HTTP status codes based on operation results.
 
-The module relies on the 'facade' service for data access and management.
+The module relies on the 'facade' service for data access and business logic.
 
-Handled exceptions:
-- Returns 400 for invalid data.
-- Returns 404 if the amenity is not found.
-- Returns 400 if t
+Handled exceptions and responses:
+- 201 : Resource successfully created.
+- 200 : Successful retrieval or update.
+- 400 : Invalid input data or amenity already exists.
+- 404 : Amenity not found.
 """
+
 
 from flask import request
 from flask_restx import Namespace, Resource, fields
@@ -39,7 +40,7 @@ amenity_model = api.model('Amenity', {
 class AmenityList(Resource):
     @api.expect(amenity_model)
     @api.response(201, 'Amenity successfully created')
-    @api.response(400, 'Invalid input data')
+    @api.response(400, 'Invalid input data or amenity already exists')
     def post(self):
         """Register a new amenity"""
         # Retrieve the JSON payload from the request

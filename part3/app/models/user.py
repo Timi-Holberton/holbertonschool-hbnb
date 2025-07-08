@@ -1,25 +1,25 @@
-#!/usr/bin/env python3
-
 """
-Module defining the User class.
+User model definition and data validation logic.
 
-This class represents a user with personal information
-(first name, last name, email) and their administrator status.
-It includes rigorous validation methods to ensure data integrity,
-as well as methods to manage relationships with places and reviews associated with the user.
+This module defines the User class, which inherits from BaseModel.
+It includes fields such as first_name, last_name, email, password, and is_admin.
+The model manages relationships with Place and Review models, ensuring data integrity.
 
-Main features:
-- Validation of names (first and last) with rules on length and allowed characters.
-- Email validation using the external email-validator library.
-- Management of administrator status (boolean).
-- Data updating with strict validation for sensitive fields.
-- Association of Review and Place objects to the user.
-- Conversion of the object to a dictionary for serialization.
+Core functionalities:
+- Field validation (name, email, admin flag)
+- Password hashing and verification
+- Relationship management with places and reviews
+- Conversion to dictionary for serialization
+- Update method with strict validation on sensitive fields
 
-Exceptions are raised to ensure validation robustness.
+Libraries used:
+- SQLAlchemy for ORM mapping
+- email_validator for email validation
+- bcrypt (via Flask-Bcrypt) for secure password hashing
+
+This model enforces data quality and supports secure user management 
+in the HBnB application backend.
 """
-
-
 
 from email_validator import validate_email, EmailNotValidError
 from app.models.BaseModel import BaseModel

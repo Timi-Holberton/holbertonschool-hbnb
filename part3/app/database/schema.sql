@@ -51,11 +51,12 @@ CREATE TABLE IF NOT EXISTS place_amenity (
 	FOREIGN KEY (amenity_id) REFERENCES amenities(id) ON DELETE CASCADE
 );
 
+-- INSERT for places_amenity Table
 INSERT INTO place_amenity (place_id, amenity_id)
 VALUES ('c1a4b9de-7fcb-4df4-89c7-9a7f62c5f3b2', 'ec8cc2a0-a295-4a8f-b13a-b7f6c04a35f1');
 
--- Données de base
--- users de base (Administrateur avec mot de passe hacé génréréavec https://bcrypt-generator.com)
+-- INSERT for users Table
+-- users de base (Administrateur avec mot de passe hacé génréré avec https://bcrypt-generator.com)
 INSERT INTO users (id, first_name, last_name, email, password, is_admin, created_at)
 VALUES(
 	'36c9050e-ddd3-4c3b-9731-9f487208bbc1',
@@ -90,7 +91,7 @@ VALUES(
 );
 
 
--- Amenities de base
+-- INSERT for amenities Table
 INSERT INTO amenities (id, name, created_at) VALUES 
 	('ec8cc2a0-a295-4a8f-b13a-b7f6c04a35f1', 'Wi-Fi', datetime('now')), 
 	('64adf0cd-0e00-4f53-85b3-26744c8e52e2', 'Piscine', datetime('now')), 
@@ -98,8 +99,7 @@ INSERT INTO amenities (id, name, created_at) VALUES
 	('2f3b62b8-c01d-4a6e-9fe2-c3c1d6f601d7', 'Vieille Télévision à changer', datetime('now')),
 	('8b0a9e13-4de6-41f4-86bb-cde4d68b6e6b', 'Cafetière cassé à supprimer', datetime('now'));
 
-
--- places de base
+-- INSERT for places Table
 INSERT INTO places (id, title, description, _price, _latitude, _longitude, owner_id, created_at)
 VALUES(
 	'c1a4b9de-7fcb-4df4-89c7-9a7f62c5f3b2',
@@ -137,7 +137,7 @@ VALUES(
 );
 
 
--- reviews de base
+-- INSERT for reviews Table
 INSERT INTO reviews (id, text, rating, user_id, place_id, created_at)
 VALUES(
 	'3c4e2c9d-1b80-4023-9f9b-d7b3d238de70',
@@ -169,7 +169,7 @@ VALUES(
 );
 
 
--- Selectionner des tables
+-- Select for some tables
 SELECT * FROM users;
 SELECT * FROM places;
 SELECT * FROM reviews;
@@ -177,7 +177,7 @@ SELECT * FROM amenities;
 SELECT * FROM place_amenity;
 
 
--- UPDATE
+-- UPDATE for some tables
 UPDATE users
 SET first_name = 'Isildur',
 	updated_at = CURRENT_TIMESTAMP
@@ -199,7 +199,7 @@ SET text = 'à fuir !!',
 WHERE rating = 3;
 
 
--- Delete
+-- Delete for some tables
 DELETE FROM reviews WHERE rating = 1;
 DELETE FROM amenities WHERE name = 'Cafetière cassé à supprimer';
 DELETE FROM places WHERE title = 'Mordor';

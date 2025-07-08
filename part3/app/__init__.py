@@ -80,6 +80,7 @@ def create_app(config_class=config.DevelopmentConfig):
     api.add_namespace(auth_ns, path='/api/v1/auth')
     api.add_namespace(admin_ns, path='/api/v1/admin')
 
+    #Crée toutes les tables en base si elles n’existent pas déjà.
     with app.app_context():
         db.create_all()
 

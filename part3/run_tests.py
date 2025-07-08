@@ -1,3 +1,14 @@
+"""
+Test suite runner.
+
+Loads and executes all unit tests from the specified test modules:
+- tests.test_users
+- tests.test_amenities
+- tests.test_places
+- tests.test_reviews
+
+Uses unittest framework with verbosity level 2.
+"""
 import unittest
 
 loader = unittest.TestLoader()

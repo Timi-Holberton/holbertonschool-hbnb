@@ -1,27 +1,21 @@
-#!/usr/bin/env python3
-
 """
-Module defining the BaseModel class.
+BaseModel definition for all models in the application.
 
-This class serves as a base for other data models by providing
-a unique identifier (UUID), creation and update timestamps,
-as well as methods to save (update the modification date)
-and dynamically update an instance's attributes.
+This abstract base class provides common attributes and methods for all 
+SQLAlchemy models in the application, including:
 
-Main features:
-- Automatic generation of a UUID identifier as a string.
-- Management of creation (`created_at`) and update (`updated_at`) dates.
-- `save()` method to refresh the update timestamp.
-- `update(data)` method to update attributes from a dictionary.
-- Identifier validation via `valid_place_id()`.
+- A universally unique identifier (UUID) as primary key.
+- Timestamps for object creation (`created_at`) and last update (`updated_at`).
+- Utility methods for saving, updating, and validating the object.
 
-Exceptions are raised to ensure data integrity.
+Classes that inherit from BaseModel automatically gain these fields and behaviors.
+
+Note: This class is abstract and does not generate a database table.
 """
 
 from app import db
 import uuid
 from datetime import datetime, UTC # Pour les fuseaux horaires
-
 
 
 class BaseModel(db.Model):

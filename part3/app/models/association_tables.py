@@ -1,13 +1,18 @@
 """
-Defines the association table between places and amenities.
+Association table for many-to-many relationship between Place and Amenity.
 
-This module declares a many-to-many relationship between the Place and Amenity models
-using a SQLAlchemy association table. Each entry in the table links one place to one amenity.
+This module defines the `place_amenity` table, which connects the `places`
+and `amenities` tables in a many-to-many relationship using SQLAlchemy's `db.Table`.
 
-Main features:
-- Enables multiple amenities to be associated with multiple places.
-- Ensures uniqueness of each (place_id, amenity_id) pair using composite primary key.
+Each entry in this table represents a link between a specific Place and an Amenity.
+
+Structure:
+- place_id: Foreign key referencing the `places.id`, also part of the primary key.
+- amenity_id: Foreign key referencing the `amenities.id`, also part of the primary key.
+
+Used in the Place and Amenity models to enable bidirectional relationships.
 """
+
 from app import db
 
 # Table d'association pour la relation plusieurs-à-plusieurs entre Place et Amenity

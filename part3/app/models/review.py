@@ -1,17 +1,24 @@
-#!/usr/bin/env python3
 """
-Module defining the Review class.
+Review model definition and validation logic.
 
-This class represents a review left by a user on a place, with text
-and a rating between 1 and 5. It validates each attribute's data
-and maintains relationships via user_id and place_id UUID strings.
+This module defines the Review class, which inherits from BaseModel.
+A review is associated with a user and a place, and contains a comment (text)
+and a numerical rating (1 to 5). 
 
-Main features:
-- Validation of the text (type and max length).
-- Validation of the rating (integer between 1 and 5).
-- Validation that user_id and place_id are UUID strings of length 36.
-- Relationships to User and Place models.
+Core functionalities:
+- Field validation for text, rating, user_id, and place_id
+- ORM relationships to User and Place models
+- Dictionary serialization for API output
 
+Each review is linked to:
+- A user (via user_id)
+- A place (via place_id)
+
+This model ensures strong data integrity and enforces constraints 
+on comment length, rating range, and UUID formatting.
+
+Used libraries:
+- SQLAlchemy for ORM and validation
 """
 
 from app.models.BaseModel import BaseModel

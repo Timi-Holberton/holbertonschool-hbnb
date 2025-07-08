@@ -1,20 +1,24 @@
-#!/usr/bin/env python3
-
 """
-Module defining the Amenity class.
+Amenity model definition and validation logic.
 
-This class represents an amenity or service available with a validated name
-and methods for updating and converting to a dictionary.
+This module defines the Amenity class, which inherits from BaseModel.
+Each amenity represents a feature or equipment offered by a place 
+(e.g., Wi-Fi, parking, pool).
 
-It inherits from the BaseModel class which provides a unique identifier and common functionalities.
+Core functionalities:
+- Field validation for the amenity name (non-empty, max 50 characters)
+- Many-to-many relationship with the Place model
+- Update logic with validation
+- Dictionary serialization for API use
 
-Main features:
-- Strict validation of the name (type, presence, max length 50).
-- Secure attribute updating via the update() method.
-- Conversion to dictionary via to_dict() to facilitate serialization.
+The Amenity model is associated with places through the `place_amenity` 
+association table and ensures consistent formatting of amenity data 
+through validation.
 
-Exceptions are raised for invalid data to ensure the integrity of Amenity objects.
+Used libraries:
+- SQLAlchemy for ORM and validation
 """
+
 
 from app.models.BaseModel import BaseModel
 from app.models.association_tables import place_amenity

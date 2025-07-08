@@ -1,31 +1,35 @@
 """
-User management module (users) via a RESTful API.
+User management module via a RESTful API using Flask-RESTx.
 
 This module defines a Flask-RESTx namespace dedicated to user-related operations,
-with endpoints to create, retrieve, and update users registered in the application.
+providing endpoints to create, retrieve, and update users registered in the application.
 
 Main functionalities:
 - POST /users/               : Create a new user.
 - GET /users/                : Retrieve the list of all users.
 - GET /users/<user_id>       : Retrieve a user by their ID.
-- PUT /users/<user_id>       : Update user information.
+- PUT /users/<user_id>       : Update user information (authenticated users can update only their own data).
 
-Each endpoint uses Flask-RESTx models for input validation and
-API documentation via Swagger.
+Each endpoint uses Flask-RESTx models for input validation
+and automatic API documentation via Swagger.
 
 Operations rely on the 'facade' service to handle business logic
-and data access, including checking for email uniqueness.
+and data access, including checking email uniqueness.
+
+Security:
+- JWT authentication is required for updating user information.
+- Users cannot change their email or password through the update endpoint.
 
 HTTP status codes used:
 - 200 : Successful operation.
 - 201 : Resource successfully created.
-- 400 : Invalid data or email already registered.
+- 400 : Invalid input data or email already registered.
+- 403 : Unauthorized action.
 - 404 : User not found.
 
 This module enforces strict input validation
 (first name, last name, email) and provides interactive documentation via Swagger UI.
 """
-
 
 from flask import request
 from flask_restx import Namespace, Resource, fields
@@ -48,8 +52,16 @@ user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user'),
-    'is_admin': fields.Boolean(required=False, description='Administrator status'),
-    'password': fields.String(required=True, description='Password of the user')
+    'password': fields.String(required=True, description='Password of the user'),
+    'is_admin': fields.Boolean(required=False, description='Administrator status')
+})
+
+user_response_model = api.model('UserResponse', {
+    'id': fields.String(description='User ID'),
+    'first_name': fields.String(description='First name of the user'),
+    'last_name': fields.String(description='Last name of the user'),
+    'email': fields.String(description='Email of the user'),
+    'is_admin': fields.Boolean(description='Administrator status'),
 })
 
 
@@ -58,10 +70,10 @@ user_model = api.model('User', {
 # gère les requêtes HTTP POST
 class UserList(Resource):
     # @api.expect :indique que la requête doit contenir un JSON conforme à 'user_model'
-    @api.expect(user_model, validate=True)  # Active la validation automatique,
+    @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully created')
-    @api.response(400, 'Email already registered')
-    @api.response(400, 'Invalid input data')
+    @api.response(400, 'Email already registered or invalid input data')
+    @api.doc(description="Register a new user")
     def post(self):
         """Register a new user"""
         # api.payload : Récupère le corps JSONde la requête sous forme de dico
@@ -98,8 +110,9 @@ class UserList(Resource):
         # Le code suivant définti un endpoint GET
         # pour récupérer les infos d'un utilisateur à partir de son ID
 
-    @api.response(200, 'List user print')
-    @api.response(404, 'User not found')
+    @api.response(200, 'List of users retrieved')
+    @api.response(404, 'No users found')
+    @api.doc(description="Retrieve the list of all users")
     def get(self):
         """ return the lists of users """
         users = facade.get_all()
@@ -110,12 +123,10 @@ class UserList(Resource):
 # créer une route de type /users/12345 par exemple, <user_id est une valeur dynamique extraite directement de l'URL
 # la classe 'UserRessosurce' est lié à cette route et va gérer les requêtes comme GET, PUT, DELETE
 class UserResource(Resource):
-    # Pour Swagger, cela indique les codes de réponses possible.
     @api.response(200, 'User details retrieved successfully')
     @api.response(400, 'Invalid input data')
     @api.response(404, 'User not found')
-    # Cette méthode s'éxecute quand une requête GET est faite sur /users/<user_id>
-    # user_id est automatiquement passé en argument, récpéré par l'URL
+    @api.doc(description="Get user details by ID")
     def get(self, user_id):
         """Get user details by ID"""
         # Appelle la méthode get_user du module facade, en lui passant l'ID demandé
@@ -136,7 +147,11 @@ class UserResource(Resource):
         }, 200
         # si utilisateur est trouvé, l'API retoiurne ses données dans un dico JSON avec code
     @jwt_required()
-    @api.doc(security='Bearer Auth')
+    @api.doc(security='Bearer Auth', description="Update user details (user can update only own data, except email and password)")
+    @api.response(200, 'User successfully updated')
+    @api.response(400, 'Invalid input data or forbidden field modification')
+    @api.response(403, 'Unauthorized action')
+    @api.response(404, 'User not found')
     def put(self, user_id):
         data = request.json
         if not data:

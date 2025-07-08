@@ -1,3 +1,24 @@
+"""
+Admin management module.
+
+This module provides RESTful API endpoints for administrative operations
+such as creating and updating users, amenities, and places.
+
+Endpoints require JWT authentication and restrict access to users
+with admin privileges where applicable.
+
+Features include:
+- Admin user creation and modification.
+- Amenity creation and modification.
+- Place modification accessible to admins or place owners.
+
+All input data are validated using Flask-RESTx models and
+appropriate HTTP status codes are returned to indicate success or errors.
+
+The module relies on a facade service layer to encapsulate
+business logic and data access.
+"""
+
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request
@@ -10,18 +31,35 @@ user_model = api.model('admin', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user'),
-    'is_admin': fields.Boolean(required=False, description='Administrator status'),
-    'password': fields.String(required=True, description='Password of the user')
+    'password': fields.String(required=True, description='Password of the user'),
+    'is_admin': fields.Boolean(required=False, description='Administrator status')
+})
+
+amenity_model = api.model('AmenityModel', {
+    'name': fields.String(required=True, description='Name of the amenity')
+})
+
+place_update_model = api.model('admin_place_update', {
+    'title': fields.String(description="Title of the place (max 100 characters)"),
+    'description': fields.String(description="Description of the place (max 4000 characters)"),
+    'price': fields.Float(description="Price per night, must be positive"),
+    'latitude': fields.Float(description="Latitude between -90.0 and 90.0"),
+    'longitude': fields.Float(description="Longitude between -180.0 and 180.0"),
+    'amenity_ids': fields.List(fields.String, description="List of amenity UUIDs to associate")
 })
 
 @api.route('/users/')
 class AdminUserCreate(Resource):
-    @jwt_required()    
+    @jwt_required()
     @api.expect(user_model, validate=True)  # Active la validation automatique,
     @api.response(201, 'User_admin successfully created')
     @api.response(400, 'Email already registered')
-    @api.response(403, 'Invalid input data')
+    @api.response(403, 'Admin privileges required')
+    @api.doc(description="Register a new user (admin only)")
     def post(self):
+        """
+        Create a new user with admin privileges.
+        """
         current_user = get_jwt_identity()
         # Vérification des droits d'administration
         if not current_user.get('is_admin'):
@@ -61,7 +99,16 @@ class AdminUserCreate(Resource):
 @api.route('/users/<user_id>')
 class AdminUserModify(Resource):
     @jwt_required()
+    @api.expect(user_model, validate=True)
+    @api.response(200, 'User successfully updated')
+    @api.response(400, 'Invalid data or email already in use')
+    @api.response(403, 'Admin privileges required')
+    @api.response(404, 'User not found')
+    @api.doc(description="Update an existing user (admin only)")
     def put(self, user_id):
+        """
+        Update details of an existing user.
+        """
 #--------------------------Code donnée de user--------------------------------#
 
         current_user = get_jwt_identity()
@@ -110,7 +157,15 @@ class AdminUserModify(Resource):
 @api.route('/amenities/')
 class AdminAmenityCreate(Resource):
     @jwt_required()
+    @api.expect(amenity_model, validate=True)
+    @api.response(201, 'Amenity created successfully')
+    @api.response(400, 'Amenity already registered')
+    @api.response(403, 'Admin privileges required')
+    @api.doc(description="Create a new amenity (admin only)")
     def post(self):
+        """
+        Create a new amenity.
+        """
         current_user = get_jwt_identity()
         if not current_user.get('is_admin'):
             return {'error': 'Admin privileges required'}, 403
@@ -136,7 +191,16 @@ class AdminAmenityCreate(Resource):
 @api.route('/amenities/<amenity_id>')
 class AdminAmenityModify(Resource):
     @jwt_required()
+    @api.expect(amenity_model, validate=True)
+    @api.response(200, 'Amenity updated successfully')
+    @api.response(400, 'Missing or invalid data')
+    @api.response(403, 'Admin privileges required')
+    @api.response(404, 'Amenity not found')
+    @api.doc(description="Update an existing amenity (admin only)")
     def put(self, amenity_id):
+        """
+        Update an existing amenity.
+        """
         current_user = get_jwt_identity()
         if not current_user.get('is_admin'):
             return {'error': 'Admin privileges required'}, 403
@@ -161,7 +225,16 @@ class AdminAmenityModify(Resource):
 @api.route('/places/<place_id>')
 class AdminPlaceModify(Resource):
     @jwt_required()
+    @api.expect(place_update_model, validate=True)
+    @api.response(200, 'Place updated successfully')
+    @api.response(400, 'Invalid or missing data')
+    @api.response(403, 'Unauthorized action')
+    @api.response(404, 'Place not found')
+    @api.doc(description="Update a place as admin or as the owner")
     def put(self, place_id):
+        """
+        Update details of a place.
+        """
         current_user = get_jwt_identity()
 
         # Set is_admin default to False if not exists

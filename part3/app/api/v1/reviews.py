@@ -1,33 +1,35 @@
 """
-Review management module (reviews) via a RESTful API.
+Review management module via a RESTful API using Flask-RESTx.
 
-This module defines a Flask-RESTx namespace dedicated to review operations,
-with endpoints that allow the creation, retrieval, update, and deletion
-of reviews associated with places and users.
+This module defines a Flask-RESTx namespace dedicated to CRUD operations
+on reviews, with endpoints to create, retrieve, update, and delete reviews
+associated with places and users.
 
-Main functionalities:
-- POST /reviews/               : Create a new review.
-- GET /reviews/                : Retrieve the list of all reviews.
-- GET /reviews/<review_id>     : Retrieve a review by its ID.
-- PUT /reviews/<review_id>     : Update an existing review.
-- DELETE /reviews/<review_id>  : Delete a review by its ID.
+Main features:
+- POST /reviews/              : Create a new review (JWT authentication required).
+- GET /reviews/               : Retrieve the list of all reviews.
+- GET /reviews/<review_id>    : Retrieve a review by its ID.
+- PUT /reviews/<review_id>    : Update an existing review (JWT authentication required).
+- DELETE /reviews/<review_id> : Delete a review (JWT authentication required).
 
-Each endpoint uses Flask-RESTx models for input validation
-and automatic API documentation (Swagger).
+Each endpoint uses Flask-RESTx models to validate input data
+and automatically generate Swagger documentation.
 
-Operations rely on the 'facade' service to handle business logic
-and data access.
+Business logic and data access are handled by the 'facade' service,
+ensuring separation of concerns.
 
-HTTP status codes used:
-- 200 : Operation successful.
-- 201 : Resource successfully created.
-- 400 : Invalid or missing data.
-- 404 : Resource not found.
+Security relies on JWT (JSON Web Tokens) for authentication,
+with authorization checks (e.g., only review owners can update or delete their reviews).
 
-Error handling includes checking for the existence of associated users and places,
-as well as validating the 'rating' field (must be an integer between 1 and 5)
-and the 'text' field.
+HTTP status codes cover success cases (200, 201),
+validation errors (400), resource not found (404),
+and forbidden actions (403).
+
+The module also includes specific checks,
+such as preventing users from reviewing their own place
+or posting multiple reviews for the same place.
 """
+
 
 
 from flask import request
@@ -46,11 +48,40 @@ review_model = api.model('Review', {
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
+review_response_model = api.model('ReviewResponse', {
+    'id': fields.String(description='Review ID'),
+    'text': fields.String(description='Review text'),
+    'rating': fields.Integer(description='Rating value'),
+    'user_id': fields.String(description='ID of the user who posted the review'),
+    'place_id': fields.String(description='ID of the reviewed place')
+})
+
+user_brief = api.model('UserBrief', {
+    'id': fields.String(description='User ID'),
+    'first_name': fields.String(description='User first name'),
+    'last_name': fields.String(description='User last name'),
+    'email': fields.String(description='User email')
+})
+
+place_brief = api.model('PlaceBrief', {
+    'id': fields.String(description='Place ID'),
+    'title': fields.String(description='Place title'),
+    'description': fields.String(description='Place description')
+})
+
+review_detailed_response = api.model('ReviewDetailedResponse', {
+    'id': fields.String(description='Review ID'),
+    'text': fields.String(description='Review text'),
+    'rating': fields.Integer(description='Rating value'),
+    'user': fields.Nested(user_brief, description='User who posted the review'),
+    'place': fields.Nested(place_brief, description='Place being reviewed')
+})
+
 
 @api.route('/')
 class ReviewList(Resource):
-    @api.expect(review_model)
-    @api.response(201, 'Review successfully created')
+    @api.expect(review_model, validate=True)
+    @api.response(201, 'Review successfully created', model=review_response_model)
     @api.response(400, 'Invalid input data')
     @jwt_required()
     @api.doc(security='Bearer Auth')
@@ -114,7 +145,7 @@ class ReviewList(Resource):
 
 @api.route('/<review_id>')
 class ReviewResource(Resource):
-    @api.response(200, 'Review details retrieved successfully')
+    @api.response(200, 'Review details retrieved successfully', model=review_detailed_response)
     @api.response(404, 'Review not found')
     def get(self, review_id):
         """Retrieve a review by its ID"""
@@ -141,10 +172,11 @@ class ReviewResource(Resource):
             'place': place_data
         }, 200
 
-    @api.expect(review_model)
+    @api.expect(review_model, validate=True)
     @api.response(200, 'Review updated successfully')
-    @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')
+    @api.response(404, 'Review not found')
     @jwt_required()
     @api.doc(security='Bearer Auth')
     def put(self, review_id):
@@ -193,8 +225,8 @@ class ReviewResource(Resource):
         }, 200
 
     @api.response(200, 'Review deleted successfully')
-    @api.response(404, 'Review not found')
     @api.response(403, 'Unauthorized to delete this review')
+    @api.response(404, 'Review not found')
     @jwt_required()
     @api.doc(security='Bearer Auth')
     def delete(self, review_id):

@@ -37,9 +37,6 @@ from app.persistence.user_repository import UserRepository
 from sqlalchemy.exc import IntegrityError # pour interdire doublon place
 from app import db
 
-
-# from app.persistence.repository import InMemoryRepository
-
 class HBnBFacade:
 
     """ Front end for managing business operations related to the HBnB application."""

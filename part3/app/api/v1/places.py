@@ -1,31 +1,33 @@
 """
-Place management module (places) via a RESTful API.
+Place management module (places) via a RESTful API using Flask-RESTx.
 
-This module defines a Flask-RESTx namespace for managing places, 
-with endpoints allowing the creation, retrieval, update, 
-and access to reviews associated with each place.
+This module defines a namespace dedicated to managing places,
+providing endpoints for creating, retrieving, updating places,
+and accessing reviews associated with each place.
 
 Main functionalities:
-- POST /places/                  : Create a new place.
+- POST /places/                  : Create a new place (authentication required).
 - GET /places/                   : Retrieve the list of all places.
 - GET /places/<place_id>         : Retrieve details of a place by its ID.
-- PUT /places/<place_id>         : Update an existing place.
+- PUT /places/<place_id>         : Update an existing place (only allowed by the owner, authentication required).
 - GET /places/<place_id>/reviews : Retrieve all reviews linked to a place.
 
-Each resource uses Flask-RESTx models for data validation 
-and automatic API documentation (Swagger).
+Data validation and API documentation are managed via Flask-RESTx models.
 
-Operations rely on the 'facade' service to handle business logic 
-and data access.
+Business logic and data access are delegated to the 'facade' service.
+
+Security:
+- JWT authentication is required to create or update places.
+- Only the owner of a place can update its details.
 
 HTTP status codes used:
 - 200 : Operation successful.
 - 201 : Resource successfully created.
 - 400 : Invalid or missing data.
+- 403 : Unauthorized action.
 - 404 : Resource not found.
-- 409 : Conflict (e.g., place already exists).
+- 409 : Conflict (e.g., place title already exists).
 """
-
 
 from flask import request
 from flask_restx import Namespace, Resource, fields
@@ -48,7 +50,6 @@ user_model = api.model('PlaceUser', {
     'email': fields.String(description='Email of the owner')
 })
 
-# Adding the review model
 review_model = api.model('PlaceReview', {
     'id': fields.String(description='Review ID'),
     'text': fields.String(description='Text of the review'),
@@ -68,12 +69,12 @@ place_model = api.model('Place', {
     'reviews': fields.List(fields.Nested(review_model), description='List of reviews')
 })
 
-
 @api.route('/')
 class PlaceList(Resource):
-    @api.expect(place_model)
+    @api.expect(place_model, validate=True)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @api.response(409, 'The place already exists')
     @jwt_required()
     @api.doc(security='Bearer Auth')
     def post(self):
@@ -121,7 +122,7 @@ class PlaceList(Resource):
 
 @api.route('/<place_id>')
 class PlaceResource(Resource):
-    @api.response(200, 'Place details retrieved successfully')
+    @api.response(200, 'Place details retrieved successfully', model=place_model)
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Retrieve a specific place by ID"""
@@ -153,10 +154,11 @@ class PlaceResource(Resource):
             'reviews': reviews_data
         }, 200
 
-    @api.expect(place_model)
+    @api.expect(place_model, validate=True)
     @api.response(200, 'Place updated successfully')
-    @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')
+    @api.response(404, 'Place not found')
     @jwt_required()
     @api.doc(security='Bearer Auth')
     def put(self, place_id):
@@ -192,7 +194,7 @@ class PlaceResource(Resource):
 
 @api.route('/<place_id>/reviews')
 class PlaceReviewList(Resource):
-    @api.response(200, 'List of reviews for the place retrieved successfully')
+    @api.response(200, 'List of reviews for the place retrieved successfully', model=[review_model])
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Retrieve all reviews for a specific place"""
