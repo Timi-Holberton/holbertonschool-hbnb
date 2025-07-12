@@ -69,7 +69,7 @@ Clear separation of concerns across routes, models, and controllers.
 
 ## Purpose of Each Directory and File
 
-![Structure du projet](structure.png)
+![Structure du projet](part3/structure.png)
 
 
 ## API Endpoints
