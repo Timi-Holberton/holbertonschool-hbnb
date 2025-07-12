@@ -74,7 +74,7 @@ class AdminUserCreate(Resource):
             return {'error': 'Email already registered'}, 400
         #---------------------------------------------------------------------
         """Register a new user"""
-        
+
         # Vérification manuelle du mot de passe (vide)
         password = user_data.get('password', '').strip()
         if not password:
@@ -147,7 +147,7 @@ class AdminUserModify(Resource):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'email': user.email,
-            'is-admin': user.is_admin
+            'is_admin': user.is_admin
         }, 200
 
 #-----------------------------------------------------------------------------#
@@ -258,7 +258,7 @@ class AdminPlaceModify(Resource):
         except ValueError as error:
             message = str(error)
             # si le message retour contient not found, retourne 404 .lower évite les erreurs de case
-            if "not found" in message.lower(): 
+            if "not found" in message.lower():
                 return {'error': message}, 404
             # pour les autres erreurs renvoie 400
             return {'error': message}, 400
