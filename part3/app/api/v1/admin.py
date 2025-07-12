@@ -45,7 +45,7 @@ place_update_model = api.model('admin_place_update', {
     'price': fields.Float(description="Price per night, must be positive"),
     'latitude': fields.Float(description="Latitude between -90.0 and 90.0"),
     'longitude': fields.Float(description="Longitude between -180.0 and 180.0"),
-    'amenity_ids': fields.List(fields.String, description="List of amenity UUIDs to associate")
+    'amenities': fields.List(fields.String, description="List of amenity UUIDs to associate")
 })
 
 @api.route('/users/')
@@ -242,6 +242,9 @@ class AdminPlaceModify(Resource):
         user_id = current_user.get('id')
 
         place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
+
         if not is_admin and place.owner_id != user_id:
             return {'error': 'Unauthorized action'}, 403
 
