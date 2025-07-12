@@ -80,9 +80,6 @@ class AdminUserCreate(Resource):
         if not password:
             return {'error': 'Password cannot be empty'}, 400
 
-        # Hachage du mot de passe
-        user_data['password'] = generate_password_hash(user_data['password'])
-
         try:
             new_user_admin = facade.create_user(user_data)
         except ValueError as error :
