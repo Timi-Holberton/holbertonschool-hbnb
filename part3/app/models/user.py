@@ -17,7 +17,7 @@ Libraries used:
 - email_validator for email validation
 - bcrypt (via Flask-Bcrypt) for secure password hashing
 
-This model enforces data quality and supports secure user management 
+This model enforces data quality and supports secure user management
 in the HBnB application backend.
 """
 
@@ -167,6 +167,7 @@ class User(BaseModel):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
+            'is_admin': self.is_admin,
             'reviews': [review.to_dict() for review in self.reviews],
             'places': [place.to_dict() for place in self.places]
         }
