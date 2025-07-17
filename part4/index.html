@@ -9,7 +9,11 @@
 <body>
     <header>
         <nav>
-            <a href="login.html" id="login-link">Login</a>
+            <img src="images/logo.png" class="logo" alt="Logo HBnB, Mixte du logo de AirBnB et l'hippocampe de Holberton School" title="Logo HBnB">
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="login.html" id="login-link" class="login-button">Login</a></li>
+            </ul>
         </nav>
     </header>
     <main>
@@ -21,8 +25,41 @@
         </section>
         <section id="places-list">
             <!-- List of places will be populated dynamically -->
+            <div class="place-card">
+                <h2>Minas Tirith</h2>
+                <p>Prix par nuit : 120€</p>
+                <a href="place.html?id=1" class="details-button">Détails du bien</a>
+            </div>
+            <div class="place-card">
+                <h2>Gouffre du Helm</h2>
+                <p>Prix par nuit : 50€</p>
+                <a href="place.html?id=2" class="details-button">Détails du bien</a>
+            </div>
+            <div class="place-card">
+                <h2>Foncombe</h2>
+                <p>Prix par nuit : 100€</p>
+                <a href="place.html?id=3" class="details-button">Détails du bien</a>
+            </div>
+            <div class="place-card">
+                <h2>Mordor</h2>
+                <p>Prix par nuit : 10€</p>
+                <a href="place.html?id=4" class="details-button">Détails du bien</a>
+            </div>
+            <div class="place-card">
+                <h2>Mine de la Moria</h2>
+                <p>Pride par nuit : 70€</p>
+                <a href="place.html?id=5" class="details-button">Détails du bien</a>
+            </div>
+            <div class="place-card">
+                <h2>Auberge du Poney Fringant</h2>
+                <p>Prix par nuit : 80€</p>
+                <a href="place.html?id=6" class="details-button">Détails du bien</a>
+            </div>
         </section>
     </main>
+    <footer>
+        <p>&copy; 2025 - HBnB - All rights reserved</p>
+    </footer>
     <script src="scripts.js"></script>
 </body>
 </html>
