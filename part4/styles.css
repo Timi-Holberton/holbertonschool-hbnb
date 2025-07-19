@@ -13,6 +13,8 @@
   --text-noir-vert: #253930;
   --text-clair: #FFFFF4;
   --text-moyen: #7DC2A5;
+  --color-star: #DAA520;
+  --font-script1: 
 }
 
 /* Base Reset - Réinitialisation globale */
@@ -73,14 +75,15 @@ nav {
 /* Navigation - Liens */
 .nav-links li a {
     text-decoration: none;/* supprime le soulignement des liens */
-    color: var(--text-noir-vert); /* couleur du texte */
+    color: var(--color-fonce); /* couleur du texte */
     font-weight: bold; /* texte en gras */
 }
 
 /* Navigation - Liens au survol */
 .nav-links li a:hover {
-  background-color: var(--color-fonce); /* change le fond au survol */
-  color: var(--text-clair); /* change la couleur du texte au survol */
+    background-color: var(--color-fonce); /* change le fond au survol */
+    color: var(--text-clair); /* change la couleur du texte au survol */
+    transition: background-color 0.3s; /* Animation douce du changement de couleur */
 }
 
 /* Bouton de connexion */
@@ -118,12 +121,89 @@ main {
     margin-bottom: 20px; /* espace sous le filtre */
 }
 
-/* Liste des lieux */
+/* Liste des lieux par id# */
 #places-list {
     display: flex; /* affiche les cartes en ligne */
     flex-wrap: wrap; /* permet le retour à la ligne si nécessaire */
     gap: 20px; /* espace entre les cartes */
     justify-content: center; /* centre les cartes horizontalement */
+}
+
+/* Détails d’un hébergement */
+#place-details {
+    display: flex; /* Active le modèle Flexbox */
+    flex-wrap: wrap; /* Autorise les éléments à passer à la ligne si nécessaire */
+    gap: 20px; /* Espacement entre les éléments */
+    justify-content: center; /* Centre les éléments horizontalement */
+    margin-bottom: 2rem; /* Marge en bas de la section */
+}
+
+/* Informations sur le lieu */
+.place-info {
+    background-color: var(--color-clair); /* Fond clair (variable CSS) */
+    border: 1px solid var(--color-moyen-fonce); /* Bordure fine de couleur moyenne foncée */
+    border-radius: 10px; /* Coins arrondis */
+    padding: 15px; /* Espacement intérieur */
+    width: 400px; /* Largeur fixe des cartes */
+    box-shadow: 5px 5px 3px rgba(0,0,0,0.05); /* Légère ombre portée */
+}
+
+/* Titres des lieux */
+.place-info h2 {
+    font-size: 1.4em; /* Taille de police augmentée */
+    margin-bottom: 10px; /* Espace sous le titre */
+    text-align: center; /* Titre centré */
+    color: var(--color-fonce); /* Couleur foncée (variable CSS) */
+}
+
+/* Description paragraphe */
+.place-info p {
+    margin-bottom: 10px; /* Marge en dessous des paragraphes */
+    text-align: left; /* formatage du texte */
+    line-height: 1.4; /* Hauteur de ligne pour meilleure lisibilité */
+}
+
+/* Liste équipements  */
+.place-info ul {
+    list-style-type: circle; /* style Puces */
+    margin-left: 20px; /* Décalage vers la droite de la liste */
+    margin-bottom: 10px; /* Espace sous la liste */
+}
+
+/* Titre amenities */
+.place-info h3 {
+    margin-top: 15px; /* Espace au-dessus */
+    margin-bottom: 8px; /* Espace en dessous */
+    color: var(--color-moyen-fonce); /* Couleur moyenne foncée */
+    text-align: left; /* formatage texte */
+}
+
+.host {
+    font-weight: bold; /* Définit l'épaisseur de la police */
+    color: var(--color-moyen-fonce); /* Définit la couleur du texte */
+    font-size: 1.2em;
+}
+
+.description {
+    font-weight: bold; /* Définit l'épaisseur de la police */
+    color: var(--color-moyen-fonce); /* Définit la couleur du texte */
+    font-size: 1.2em;
+}
+
+/* Apparence de bouton pour le prix */
+.price {
+    display: inline-block; /* Nécessaire pour padding et border */
+    padding: 0.3em 0.6em; /* Espace intérieur */
+    background-color: var(--color-blanc-clair); /* Couleur de fond */
+    border-radius: 8px; /* Bords arrondis */
+    color: var(--text-noir-vert); /* Couleur du texte */
+    font-weight: bold; /* Texte gras */
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.1); /* Léger effet d'ombre */
+    transition: background-color 0.3s ease;
+}
+
+.price:hover {
+    background-color: var(--color-moyen-fonce); /* Effet au survol */
 }
 
 /* Carte de lieu */
@@ -141,21 +221,12 @@ main {
     font-size: 1.2em; /* taille de titre */
     margin-bottom: 5px; /* espace sous le titre */
     text-align: center; /* centre le texte horizontalement */
-
 }
 
 /* Carte de lieu - Texte */
 .place-card p {
     margin: 5px 0; /* espace vertical autour des paragraphes */
         text-align: center;
-}
-
-/* Informations sur le lieu */
-.place-info {
-    margin: 20px; /* espace extérieur autour des infos du lieu */
-    padding: 10px; /* espace intérieur autour du contenu */
-    border: 1px solid #ddd; /* bordure grise claire */
-    border-radius: 10px; /* coins arrondis */
 }
 
 /* Bouton de détails, View détails */
@@ -171,12 +242,109 @@ main {
     box-shadow: 2px 2px 3px rgba(0,0,0,0.05); /* Ombre droite, bas, intensité, couleur */
 }
 
+/* Avis */
+#reviews {
+    max-width: 900px; /* Limite la largeur */
+    margin: 0 auto 2rem; /* Centre la section et ajoute une marge en bas */
+}
+
+/* Titre section avis */
+#reviews h2 {
+    text-align: center; /* Centre le texte */
+    margin-bottom: 1rem; /* Espace en dessous du titre */
+    color: var(--color-fonce); /* Couleur foncée */
+}
+
+/* avis utilisateur */
+.review-user {
+    font-weight: bold; /* Définit l'épaisseur de la police */
+    color: var(--color-fonce); /* Couleur personnalisée pour distinguer l'auteur */
+    font-size: 1.1em; /* taille text */
+}
+
+.review-comment {
+    margin: 0.5em 0; /* Espacement vertical autour du commentaire */
+    font-style: italic; /* Applique un style italique au texte */
+}
+
+.review-rating {
+    color: var(--color-star); /* Couleur des étoiles */
+    font-size: 1.1em; /* taille text */
+}
+
 /* Carte d’avis utilisateur */
 .review-card {
-    margin: 20px; /* espace extérieur autour de la carte d’avis */
-    padding: 10px; /* espace intérieur autour du contenu */
-    border: 1px solid #ddd; /* bordure grise claire */
-    border-radius: 10px; /* coins arrondis */
+    background-color: var(--color-blanc-clair); /* Fond très clair */
+    border: 5px inset var(--color-moyen-fonce); /* Bordure grise claire */
+    border-radius: 10px; /* Coins arrondis */
+    padding: 15px; /* Espacement intérieur */
+    margin-bottom: 15px; /* Espace entre les cartes */
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.05); /* Légère ombre */
+}
+
+/* Paragraphes avis*/
+.review-card p {
+    margin-bottom: 8px; /* Marge sous le paragraphe */
+    line-height: 1.4; /* Hauteur de ligne augmentée */
+}
+
+/* Formulaire ajout avis */
+#add-review {
+    max-width: 600px; /* Largeur maximale du formulaire */
+    margin: 0 auto 3rem; /* Centré horizontalement, marge en bas */
+    padding: 1rem; /* Espacement intérieur */
+    background-color: var(--color-clair-moyen); /* Fond moyen clair */
+    border-radius: 10px; /* Coins arrondis */
+    box-shadow: 3px 3px 5px rgba(0,0,0,0.1); /* Ombre douce */
+}
+
+/* Titre formulaire ajout avis */
+#add-review h2 {
+    text-align: center; /* Centrage du texte */
+    margin-bottom: 1rem; /* Marge en dessous */
+    color: var(--color-fonce); /* Couleur foncée */
+}
+
+/* Formulaire */
+#review-form {
+    display: flex; /* Flexbox */
+    flex-direction: column; /* Alignement vertical */
+    gap: 10px; /* Espace entre les éléments */
+}
+
+/* Labels du formulaire - petit titre */
+#review-form label {
+    font-weight: bold; /* Texte en gras */
+    color: var(--color-fonce); /* Couleur foncée */
+}
+
+/* Zone de texte */
+#review-text {
+    resize: vertical; /* Redimensionnement vertical */
+    min-height: 100px; /* Hauteur minimale */
+    padding: 8px; /* Espacement intérieur */
+    border: 1px solid var(--color-moyen-fonce); /* Bordure foncée */
+    border-radius: 5px; /* Coins légèrement arrondis */
+    font-family: inherit; /* Hérite de la police du parent */
+    font-size: 1em; /* Taille de police normale */
+}
+
+/* Bouton soumettre */
+#review-form button {
+    align-self: flex-start; /* Aligne le bouton à gauche */
+    padding: 8px 16px; /* Espacement intérieur horizontal/vertical */
+    background-color: var(--color-moyen-fonce); /* Couleur de fond du bouton */
+    color: var(--color-blanc-clair); /* Texte en blanc clair */
+    border: none; /* Pas de bordure */
+    border-radius: 8px; /* Coins arrondis */
+    cursor: pointer; /* Curseur pointeur au survol */
+    font-weight: bold; /* Texte en gras */
+    transition: background-color 0.3s; /* Animation douce du changement de couleur */
+}
+
+/* Bouton soumettre au survol */
+#review-form button:hover {
+    background-color: var(--color-fonce); /* Couleur de fond foncée au survol */
 }
 
 /* Footer - Pied de page */
