@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Place Details</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
         <header>
@@ -19,135 +20,191 @@
     <main>
         <section id="place-details">
             <!-- Place details will be populated dynamically -->
-            <article class="place-info">
+            <article class="place-info" data-place-name="Minas Tirith">
                 <h2>Minas Tirith</h2>
-                <p>Host: Aragorn, son of Arathorn</p>
-                <p>7 floors, no elevator, but a breathtaking view of the battles! Perfect for lovers of white stone, dramatic balconies, and orc neighbors that get a little too close.</p>
+                <h3></h3>
+                <p><span class="host">Host:</span> Aragorn, son of Arathorn</p>
+                <p><span class="description">Description:</span> 7 floors, no elevator, but a breathtaking view of the battles! Perfect for lovers of white stone, dramatic balconies, and orc neighbors that get a little too close.</p>
                 <h3>Amenities</h3>
-                    <ul>
-                        <li>Panoramic anti-orc balcony</li>
-                        <li>100% natural cardio stairs</li>
-                        <li>Emergency bell (crisis included)</li>
-                        <li>Wi-Fi launched straight from Osgiliath</li>
-                        <li>Nazgûl-proof certified stone wall</li>
-                    </ul>
-                <p>Price by night : 120€</p>
+                <ul>
+                    <li>Panoramic anti-orc balcony</li>
+                    <li>100% natural cardio stairs</li>
+                    <li>Emergency bell (crisis included)</li>
+                    <li>Wi-Fi launched straight from Osgiliath</li>
+                    <li>Nazgûl-proof certified stone wall</li>
+                </ul>
+                <p>Price by night : <span class="price">120€</span></p>
+                <div class="place-reviews">
+                </div>
             </article>
-            <article class="place-info">
+            <article class="place-info" data-place-name="Helm’s Deep">
                 <h2>Helm’s Deep</h2>
-                <p>Host: Éowyn</p>
-                <p>The perfect getaway if you like cold stone, tight spaces, and the thrill of imminent invasion. Thick walls, natural air conditioning, and complimentary catapult service. Ideal for cozy nights with 10,000 screaming Uruk-hai. Bonus: spacious cave in case of emergency exit.</p>
+                <p><span class="host">Host:</span> Éowyn</p>
+                <p><span class="description">Description:</span> The perfect getaway if you like cold stone, tight spaces, and the thrill of imminent invasion. Thick walls, natural air conditioning, and complimentary catapult service. Ideal for cozy nights with 10,000 screaming Uruk-hai. Bonus: spacious cave in case of emergency exit.</p>
                 <h3>Amenities</h3>
-                    <ul>
-                        <li>Vaulted halls with almost soundproofing</li>
-                        <li>Elf launch ramp (limited use)</li>
-                        <li>Optional troll cistern</li>
-                        <li>Built-in rainstorm during attacks</li>
-                        <li>Emergency cave-based exit system</li>
-                    </ul>
-                <p>Price by night : 50€</p>
+                <ul>
+                    <li>Vaulted halls with almost soundproofing</li>
+                    <li>Elf launch ramp (limited use)</li>
+                    <li>Optional troll cistern</li>
+                    <li>Built-in rainstorm during attacks</li>
+                    <li>Emergency cave-based exit system</li>
+                </ul>
+                <p>Price by night : <span class="price">50€</span></p>
+                <div class="place-reviews">
+                </div>
             </article>
-            <article class="place-info">
+            <article class="place-info" data-place-name="Foncombe">
                 <h2>Foncombe</h2>
-                <p>Host: Elrond</p>
-                <p>An upscale Elvish retreat, perfect for lovers of cryptic poetry, 24/7 harp concerts, and slow-motion stair walks. The ideal place to heal your wounds… or avoid your problems. Warning: high risk of philosophical monologues.</p>
+                <p><span class="host">Host:</span> Elrond</p>
+                <p><span class="description">Description:</span> An upscale Elvish retreat, perfect for lovers of cryptic poetry, 24/7 harp concerts, and slow-motion stair walks. The ideal place to heal your wounds… or avoid your problems. Warning: high risk of philosophical monologues.</p>
                 <h3>Amenities</h3>
-                    <ul>
-                        <li>Zen fountain with existential reflections</li>
-                        <li>Self-service harpists</li>
-                        <li>Elven library (endless scrolls included)</li>
-                        <li>Natural light filtered by ancient wisdom</li>
-                        <li>Beds that recite Lórien poetry at night</li>
-                    </ul>
-                <p>Price by night : 50€</p>
+                <ul>
+                    <li>Zen fountain with existential reflections</li>
+                    <li>Self-service harpists</li>
+                    <li>Elven library (endless scrolls included)</li>
+                    <li>Natural light filtered by ancient wisdom</li>
+                    <li>Beds that recite Lórien poetry at night</li>
+                </ul>
+                <p>Price by night : <span class="price">150€</span></p>
+                <div class="place-reviews">
+                </div>
             </article>
-            <article class="place-info">
+            <article class="place-info" data-place-name="Mordor">
                 <h2>Mordor</h2>
-                <p>Host: Sauron</p>
-                <p>A volcanic hotspot for fans of extreme heat, barren landscapes, and being constantly watched by a giant flaming eye. No sunlight, guaranteed toxic vibes. Perfect for introverts… and megalomaniac overlords.</p>
+                <p><span class="host">Host:</span> Sauron</p>
+                <p><span class="description">Description:</span> A volcanic hotspot for fans of extreme heat, barren landscapes, and being constantly watched by a giant flaming eye. No sunlight, guaranteed toxic vibes. Perfect for introverts… and megalomaniac overlords.</p>
                 <h3>Amenities</h3>
-                    <ul>
-                        <li>Direct view of Mount Doom (heating included)</li>
-                        <li>24/7 giant flaming eye surveillance</li>
-                        <li>Grass-free guaranteed lava floors</li>
-                        <li>Unfiltered sulfur-rich air</li>
-                        <li>Express mail service via Nazgûl</li>
-                    </ul>
-                <p>Price by night : 50€</p>
+                <ul>
+                    <li>Direct view of Mount Doom (heating included)</li>
+                    <li>24/7 giant flaming eye surveillance</li>
+                    <li>Grass-free guaranteed lava floors</li>
+                    <li>Unfiltered sulfur-rich air</li>
+                    <li>Express mail service via Nazgûl</li>
+                </ul>
+                <p>Price by night : <span class="price">10€</span></p>
+                <div class="place-reviews">
+                </div>
             </article>
-            <article class="place-info">
+            <article class="place-info" data-place-name="Moria">
                 <h2>Mine of Moria</h2>
-                <p>Host: Gimli, son of Glóin</p>
-                <p>Once a luxury mine, now a full-scale escape room experience. Ideal for echo lovers, creepy corridors, and things you really shouldn’t wake up. Comes with dust, darkness, and complimentary drums of doom.</p>
+                <p><span class="host">Host:</span> Gimli, son of Glóin</p>
+                <p><span class="description">Description:</span> Once a luxury mine, now a full-scale escape room experience. Ideal for echo lovers, creepy corridors, and things you really shouldn’t wake up. Comes with dust, darkness, and complimentary drums of doom.</p>
                 <h3>Amenities</h3>
-                    <ul>
-                        <li>10 km² grand entrance hall</li>
-                        <li>Pet Balrog (not house-trained)</li>
-                        <li>Deep drums in surround sound™</li>
-                        <li>Broken bridge (members only)</li>
-                        <li>Random staircases (no exit guaranteed)</li>
-                    </ul>
-                <p>Price by night : 50€</p>
+                <ul>
+                    <li>10 km² grand entrance hall</li>
+                    <li>Pet Balrog (not house-trained)</li>
+                    <li>Deep drums in surround sound™</li>
+                    <li>Broken bridge (members only)</li>
+                    <li>Random staircases (no exit guaranteed)</li>
+                </ul>
+                <p>Price by night : <span class="price">70€</span></p>
+                <div class="place-reviews">
+                </div>
             </article>
-            <article class="place-info">
+            <article class="place-info" data-place-name="Pony">
                 <h2>The Prancing Pony</h2>
-                <p>Host: The Butterpear Family</p>
-                <p>rustic charm in the heart of Bree. Warm ales, loud bards, and paper-thin walls. Great for laying low while on the run from Ringwraiths (black cloak not included).</p>
+                <p><span class="host">Host:</span> The Butterpear Family</p>
+                <p><span class="description">Description:</span> Rustic charm in the heart of Bree. Warm ales, loud bards, and paper-thin walls. Great for laying low while on the run from Ringwraiths (black cloak not included).</p>
                 <h3>Amenities</h3>
-                    <ul>
-                        <li>Unlimited semi-cold ale</li>
-                        <li>Hobbit songs at sunset</li>
-                        <li>Authentic squeaky wooden locks</li>
-                        <li>Guests: 50% mysterious, 50% drunk</li>
-                        <li>Unattended pony parking out back</li>
-                    </ul>
-                <p>Price by night : 50€</p>
+                <ul>
+                    <li>Unlimited semi-cold ale</li>
+                    <li>Hobbit songs at sunset</li>
+                    <li>Authentic squeaky wooden locks</li>
+                    <li>Guests: 50% mysterious, 50% drunk</li>
+                    <li>Unattended pony parking out back</li>
+                </ul>
+                <p>Price by night : <span class="price">80€</span></p>
+                <div class="place-reviews">
+                </div>
             </article>
         </section>
+
         <section id="reviews">
-            <!-- Reviews will be populated dynamically -->
             <h2>Reviews</h2>
-            <article class="review-card">
-                <p>Great stay at Minas Tirith! Between the 7 floors with no elevator and orcs screaming downstairs, I got in shape… and so did my screams! The panoramic balcony is perfect for watching battles, but avoid the Wi-Fi—it’s faster to send a raven. Would definitely do it again (with good sneakers)!</p>
-                <p>Rating: **** </p>
-                <p>User: Faramir</p>
+            <article class="review-card" data-place="Minas Tirith">
+                <p><span class="review-user">Boromir</span> a écrit :</p>
+                <p class="review-comment">Great stay at Minas Tirith! Between the 7 floors with no elevator and orcs screaming downstairs, I got in shape… and so did my screams! The panoramic balcony is perfect for watching battles, but avoid the Wi-Fi—it’s faster to send a raven. Would definitely do it again (with good sneakers)!</p>
+                <p class="review-rating">
+                    Rating:
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                </p>
+
+            <article class="review-card" data-place="Helm’s Deep">
+                <p><span class="review-user">Legolas</span> a écrit :</p>
+                <p class="review-comment">Helm’s Deep was the ultimate survival challenge! Thick walls, nonstop Uruk-hai screams, and the complimentary rain made it feel like home. Just don’t ask about the catapult service—it’s more of a “you’re on your own” kind of thing.</p>
+                <p class="review-rating">
+                    Rating:
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                </p>
             </article>
-            <article class="review-card">
-                <p>Helm’s Deep was the ultimate survival challenge! Thick walls, nonstop Uruk-hai screams, and the complimentary rain made it feel like home. Just don’t ask about the catapult service—it’s more of a “you’re on your own” kind of thing.</p>
-                <p>Rating: ***</p>
-                <p>User: Legolas</p>
+
+            <article class="review-card" data-place="Foncombe">
+                <p><span class="review-user">Samsagace Gamegie</span> a écrit :</p>
+                <p class="review-comment">Foncombe is lovely if you enjoy endless harp music and cryptic poetry that makes your head spin. The beds sing poems, which is cool… until you want to sleep. A great place to run away from your problems, or your relatives.</p>
+                <p class="review-rating">
+                    Rating:
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                </p>
             </article>
-            <article class="review-card">
-                <p>Foncombe is lovely if you enjoy endless harp music and cryptic poetry that makes your head spin. The beds sing poems, which is cool… until you want to sleep. A great place to run away from your problems, or your relatives.</p>
-                <p>Rating: ****</p>
-                <p>User: Samsagace Gamegie</p>
+
+            <article class="review-card" data-place="Mordor">
+                <p><span class="review-user">Gollum</span> a écrit :</p>
+                <p class="review-comment">Mordor’s heating system is top-notch (lava everywhere!), but the air quality? Not so much. The giant flaming eye is an interesting touch, but privacy is definitely not a thing here. Perfect for introverts who don’t mind a little apocalypse.</p>
+                <p class="review-rating">
+                    Rating:
+                    <i class="fas fa-star"></i>
+                </p>
             </article>
-            <article class="review-card">
-                <p>Mordor’s heating system is top-notch (lava everywhere!), but the air quality? Not so much. The giant flaming eye is an interesting touch, but privacy is definitely not a thing here. Perfect for introverts who don’t mind a little apocalypse.</p>
-                <p>Rating: **</p>
-                <p>User: Gollum</p>
+
+            <article class="review-card" data-place="Moria">
+                <p><span class="review-user">Gandalf</span> a écrit :</p>
+                <p class="review-comment">Moria is the place if you love echo, darkness, and surprise appearances by shadowy creatures. The pet Balrog isn’t exactly friendly, and the stairs keep you guessing. Not for the faint-hearted—but great for thrill seekers!</p>
+                <p class="review-rating">
+                    Rating:
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                </p>
             </article>
-            <article class="review-card">
-                <p>Moria is the place if you love echo, darkness, and surprise appearances by shadowy creatures. The pet Balrog isn’t exactly friendly, and the stairs keep you guessing. Not for the faint-hearted—but great for thrill seekers!</p>
-                <p>Rating: ***</p>
-                <p>User: Gandalf</p>
-            </article>
-            <article class="review-card">
-                <p>The Prancing Pony has charm and ale in abundance, though the walls are as thin as paper. Perfect for loud nights and mysterious guests. Just don’t expect a quiet stay if the hobbits get singing!</p>
-                <p>Rating: ****</p>
-                <p>User: Aragorn</p>
+
+            <article class="review-card" data-place="Pony">
+                <p><span class="review-user">Aragorn</span> a écrit :</p>
+                <p class="review-comment">The Prancing Pony has charm and ale in abundance, though the walls are as thin as paper. Perfect for loud nights and mysterious guests. Just don’t expect a quiet stay if the hobbits get singing!</p>
+                <p class="review-rating">
+                    Rating:
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                </p>
             </article>
         </section>
+
         <section id="add-review">
             <h2>Add a Review</h2>
             <form id="review-form">
                 <label for="review-text">Review:</label>
                 <textarea id="review-text" name="review-text" required></textarea>
-
                 <button type="submit">Submit</button>
             </form>
         </section>
     </main>
+
     <footer>
         <p>&copy; 2025 - HBnB - All rights reserved</p>
     </footer>
