@@ -14,7 +14,11 @@
   --text-clair: #FFFFF4;
   --text-moyen: #7DC2A5;
   --color-star: #DAA520;
-  --font-script1: 
+}
+
+@font-face {
+  font-family: 'Ringbearer';
+  src: url('fonts/Ringbearer.ttf') format('truetype');
 }
 
 /* Base Reset - Réinitialisation globale */
@@ -22,9 +26,7 @@
     box-sizing: border-box; /* inclut les bordures et paddings dans les dimensions */
     margin: 0; /* supprime les marges par défaut de tous les éléments */
     padding: 0; /* supprime les paddings par défaut */
-    font-family: Arial, sans-serif; /* définit la police principale */
 }
-
 
 html, body {
   height: 100%; /* hauteur totale de la fenêtre */
@@ -38,6 +40,11 @@ body {
     display: flex; /* active flexbox vertical */
     flex-direction: column; /* empile header, main, footer */
     min-height: 100vh; /* hauteur minimale = hauteur de la fenêtre */
+    font-family: Arial, sans-serif; /* définit la police principale */
+}
+
+a {
+  text-decoration: none;
 }
 
 /* Main - Zone de contenu flexible */
@@ -154,6 +161,12 @@ main {
     margin-bottom: 10px; /* Espace sous le titre */
     text-align: center; /* Titre centré */
     color: var(--color-fonce); /* Couleur foncée (variable CSS) */
+    font-family: 'Ringbearer', Arial, sans-serif;
+}
+
+h2 {
+    font-family: 'Ringbearer', Arial, sans-serif;
+    color: var(--color-fonce);
 }
 
 /* Description paragraphe */
