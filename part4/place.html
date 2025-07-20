@@ -20,7 +20,7 @@
     <main>
         <section id="place-details">
             <!-- Place details will be populated dynamically -->
-            <article class="place-info" data-place-name="Minas Tirith">
+            <article class="place-info" data-place-name="minas-tirith" id="minas-tirith">
                 <h2>Minas Tirith</h2>
                 <h3></h3>
                 <p><span class="host">Host:</span> Aragorn, son of Arathorn</p>
@@ -37,7 +37,7 @@
                 <div class="place-reviews">
                 </div>
             </article>
-            <article class="place-info" data-place-name="Helm’s Deep">
+            <article class="place-info" data-place-name="helm" id="helm">
                 <h2>Helm’s Deep</h2>
                 <p><span class="host">Host:</span> Éowyn</p>
                 <p><span class="description">Description:</span> The perfect getaway if you like cold stone, tight spaces, and the thrill of imminent invasion. Thick walls, natural air conditioning, and complimentary catapult service. Ideal for cozy nights with 10,000 screaming Uruk-hai. Bonus: spacious cave in case of emergency exit.</p>
@@ -53,7 +53,7 @@
                 <div class="place-reviews">
                 </div>
             </article>
-            <article class="place-info" data-place-name="Foncombe">
+            <article class="place-info" data-place-name="foncombe" id="foncombe">
                 <h2>Foncombe</h2>
                 <p><span class="host">Host:</span> Elrond</p>
                 <p><span class="description">Description:</span> An upscale Elvish retreat, perfect for lovers of cryptic poetry, 24/7 harp concerts, and slow-motion stair walks. The ideal place to heal your wounds… or avoid your problems. Warning: high risk of philosophical monologues.</p>
@@ -69,7 +69,7 @@
                 <div class="place-reviews">
                 </div>
             </article>
-            <article class="place-info" data-place-name="Mordor">
+            <article class="place-info" data-place-name="mordor" id="mordor">
                 <h2>Mordor</h2>
                 <p><span class="host">Host:</span> Sauron</p>
                 <p><span class="description">Description:</span> A volcanic hotspot for fans of extreme heat, barren landscapes, and being constantly watched by a giant flaming eye. No sunlight, guaranteed toxic vibes. Perfect for introverts… and megalomaniac overlords.</p>
@@ -85,8 +85,8 @@
                 <div class="place-reviews">
                 </div>
             </article>
-            <article class="place-info" data-place-name="Moria">
-                <h2>Mine of Moria</h2>
+            <article class="place-info" data-place-name="moria" id="moria">
+                <h2>Mines of Moria</h2>
                 <p><span class="host">Host:</span> Gimli, son of Glóin</p>
                 <p><span class="description">Description:</span> Once a luxury mine, now a full-scale escape room experience. Ideal for echo lovers, creepy corridors, and things you really shouldn’t wake up. Comes with dust, darkness, and complimentary drums of doom.</p>
                 <h3>Amenities</h3>
@@ -101,7 +101,7 @@
                 <div class="place-reviews">
                 </div>
             </article>
-            <article class="place-info" data-place-name="Pony">
+            <article class="place-info" data-place-name="pony" id="pony">
                 <h2>The Prancing Pony</h2>
                 <p><span class="host">Host:</span> The Butterpear Family</p>
                 <p><span class="description">Description:</span> Rustic charm in the heart of Bree. Warm ales, loud bards, and paper-thin walls. Great for laying low while on the run from Ringwraiths (black cloak not included).</p>
@@ -121,7 +121,7 @@
 
         <section id="reviews">
             <h2>Reviews</h2>
-            <article class="review-card" data-place="Minas Tirith">
+            <article class="review-card" data-place="minas-tirith">
                 <p><span class="review-user">Boromir</span> a écrit :</p>
                 <p class="review-comment">Great stay at Minas Tirith! Between the 7 floors with no elevator and orcs screaming downstairs, I got in shape… and so did my screams! The panoramic balcony is perfect for watching battles, but avoid the Wi-Fi—it’s faster to send a raven. Would definitely do it again (with good sneakers)!</p>
                 <p class="review-rating">
@@ -133,7 +133,7 @@
                     <i class="far fa-star"></i>
                 </p>
 
-            <article class="review-card" data-place="Helm’s Deep">
+            <article class="review-card" data-place="helm">
                 <p><span class="review-user">Legolas</span> a écrit :</p>
                 <p class="review-comment">Helm’s Deep was the ultimate survival challenge! Thick walls, nonstop Uruk-hai screams, and the complimentary rain made it feel like home. Just don’t ask about the catapult service—it’s more of a “you’re on your own” kind of thing.</p>
                 <p class="review-rating">
@@ -146,7 +146,7 @@
                 </p>
             </article>
 
-            <article class="review-card" data-place="Foncombe">
+            <article class="review-card" data-place="foncombe">
                 <p><span class="review-user">Samsagace Gamegie</span> a écrit :</p>
                 <p class="review-comment">Foncombe is lovely if you enjoy endless harp music and cryptic poetry that makes your head spin. The beds sing poems, which is cool… until you want to sleep. A great place to run away from your problems, or your relatives.</p>
                 <p class="review-rating">
@@ -159,7 +159,7 @@
                 </p>
             </article>
 
-            <article class="review-card" data-place="Mordor">
+            <article class="review-card" data-place="mordor">
                 <p><span class="review-user">Gollum</span> a écrit :</p>
                 <p class="review-comment">Mordor’s heating system is top-notch (lava everywhere!), but the air quality? Not so much. The giant flaming eye is an interesting touch, but privacy is definitely not a thing here. Perfect for introverts who don’t mind a little apocalypse.</p>
                 <p class="review-rating">
@@ -168,7 +168,7 @@
                 </p>
             </article>
 
-            <article class="review-card" data-place="Moria">
+            <article class="review-card" data-place="moria">
                 <p><span class="review-user">Gandalf</span> a écrit :</p>
                 <p class="review-comment">Moria is the place if you love echo, darkness, and surprise appearances by shadowy creatures. The pet Balrog isn’t exactly friendly, and the stairs keep you guessing. Not for the faint-hearted—but great for thrill seekers!</p>
                 <p class="review-rating">
@@ -181,7 +181,7 @@
                 </p>
             </article>
 
-            <article class="review-card" data-place="Pony">
+            <article class="review-card" data-place="pony">
                 <p><span class="review-user">Aragorn</span> a écrit :</p>
                 <p class="review-comment">The Prancing Pony has charm and ale in abundance, though the walls are as thin as paper. Perfect for loud nights and mysterious guests. Just don’t expect a quiet stay if the hobbits get singing!</p>
                 <p class="review-rating">
