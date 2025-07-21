@@ -1,0 +1,8 @@
+flask
+flask-restx
+email_validator
+sqlalchemy
+flask-bcrypt
+flask_sqlalchemy
+flask-jwt-extended
+PyJWT==2.8.0

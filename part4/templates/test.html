@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Place Details</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body id="place-page">
+  <header>
+    <img src="./images/logo.png" alt="Logo" class="logo" />
+    <nav>
+      <a href="index.html" class="login-button">Home</a>
+      <a href="login.html" class="login-button" id="login-link">Login</a>
+      <button id="logout-button" class="btn" style="display: none; margin-left: 1rem;">
+        Logout
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="place-details">
+      <h2 id="place-name">Place Name</h2>
+      <div class="place-info">
+        <p id="place-host">Host: ???</p>
+        <p id="place-price">Price: ???</p>
+        <p id="place-description">Description: ???</p>
+        <p id="place-amenities">Amenities: ???</p>
+        <img id="place-image" src="" alt="Place Image" style="max-width: 100%; margin-top: 1rem;" />
+      </div>
+    </section>
+
+    <section id="reviews">
+      <h3>Reviews</h3>
+      <p>Loading reviews...</p>
+    </section>
+
+    <!-- Add Review : visible pour tous -->
+    <section id="add-review">
+      <button id="add-review-button" class="btn">Add a Review</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>All rights reserved</p>
+  </footer>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
