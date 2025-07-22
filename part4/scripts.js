@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loginUser(email, password) {
-    const response = await fetch('http://localhost:5000/api/v1/login', {
+    const response = await fetch('http://localhost:5000/api/v1/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
