@@ -27,6 +27,10 @@ def create_app(config_class=config.DevelopmentConfig):
     bcrypt.init_app(app)
     db.init_app(app)
 
+    @app.route('/')
+    def index():
+        return 'Bienvenue sur l’API HBnB. Swagger est à /api/v1/'
+
     from app.models.user import User
     from app.models.place import Place
     from app.models.amenity import Amenity
