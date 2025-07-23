@@ -21,7 +21,12 @@ def create_app(config_class=config.DevelopmentConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    CORS(app)
+    CORS(app, supports_credentials=True, origins=["http://localhost:8000"])
+
+    # Désactive la distinction entre URLs avec ou sans slash final
+    # Permet d'éviter les redirections 308/301 qui posent problème
+    # notamment lors des requêtes CORS préflight OPTIONS
+    app.url_map.strict_slashes = False
 
     jwt.init_app(app)
     bcrypt.init_app(app)
