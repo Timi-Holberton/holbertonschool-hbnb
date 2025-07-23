@@ -90,14 +90,14 @@ class PlaceList(Resource):
 
         if existing_place:
             return {'error': 'the place already exists'}, 409
-            
+
         user = facade.get_user_by_id(current_user['id'])
         if not user:
             return {'error': "owner not found"}, 400
 
         try:
             new_place = facade.create_place(place_data)
-        # str(e) contient le texte du message d’erreur qui a été donné 
+        # str(e) contient le texte du message d’erreur qui a été donné
         # lors du raise de l’exception dans la classe model
         except ValueError as error:
             return {'error': str(error)}, 400
@@ -184,7 +184,7 @@ class PlaceResource(Resource):
         except ValueError as error:
             message = str(error)
             # si le message retour contient not found, retourne 404 .lower évite les erreurs de case
-            if "not found" in message.lower(): 
+            if "not found" in message.lower():
                 return {'error': message}, 404
             # pour les autres erreurs renvoie 400
             return {'error': message}, 400
