@@ -18,7 +18,7 @@
 
 @font-face {
   font-family: 'Ringbearer';
-  src: url('fonts/Ringbearer.ttf') format('truetype');
+  src: url('fonts/RINGM___.TTF') format('truetype');
 }
 
 /* Base Reset - Réinitialisation globale */
@@ -129,7 +129,7 @@ main {
 }
 
 /* Liste des lieux par id# */
-#places-list {
+#places-list div{
     display: flex; /* affiche les cartes en ligne */
     flex-wrap: wrap; /* permet le retour à la ligne si nécessaire */
     gap: 20px; /* espace entre les cartes */
