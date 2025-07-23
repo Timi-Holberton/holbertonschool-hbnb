@@ -110,6 +110,7 @@ function displayPlaces(places) {
 
     places.forEach(place => {
         const placeDiv = document.createElement('div'); // Crée un nouvel élément <div> pour le lieu
+        placeDiv.className='place-info';
         placeDiv.textContent = place.title; //affiche le titre des places
         placesList.appendChild(placeDiv); // Ajoute le div au conteneur principal
     })
