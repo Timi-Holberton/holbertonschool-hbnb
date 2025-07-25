@@ -161,7 +161,7 @@ main {
 label {
     font-size: 1.7em;
 }
-
+/*----------------------------------INDEX----------------------------------------------*/
 /* Liste des lieux par id# */
 #places-list {
     display: flex; /* affiche les cartes en ligne */
@@ -170,13 +170,65 @@ label {
     justify-content: center; /* centre les cartes horizontalement */
 }
 
+/* Carte de lieu */
+.place-list-index {
+    background-color: var(--color-clair); /* couleur fond */
+    border: 1px solid var(--color-moyen-fonce); /* bordure couleur*/
+    border-radius: 10px; /* coins arrondis */
+    padding: 10px; /* espace intérieur */
+    width: 300px; /* largeur fixe */
+    box-shadow: 5px 5px 3px rgba(0,0,0,0.05); /* Ombre droite, bas, intensité, couleur */
+}
+
+.place-list-index h2 {
+    font-size: 1.5em; /* taille de titre */
+    margin-bottom: 10px; /* espace sous le titre */
+    margin-top: 10px;
+    text-align: center; /* centre le texte horizontalement */
+    font-family: var(--font-titre);
+    color: var(--color-fonce);
+}
+
+/* Carte de lieu - Texte */
+.place-list-index p {
+    margin: 15px 15px; /* espace vertical autour des paragraphes */
+    text-align: center;
+    font-size: 1.6em;
+}
+
+.place-image-index {
+    width: 100%;
+    height: 190px; /* conserve les proportions */
+    object-fit: cover; /* garantie que l'image reste entière */
+    border-radius: 0.5rem; /* coins arrondis */
+    box-shadow: 5px 5px 3px rgba(0,0,0,0.05); /* Ombre droite, bas, intensité, couleur */
+}
+
+/* Bouton de détails, View détails */
+.details-button-index {
+    display: block; /* transforme le bouton en élément bloc */
+    margin: 10px auto 0; /* haut 10px, centrage auto, bas 0 */
+    background-color: var(--color-moyen-fonce); /* fond couleur */
+    color: var(--color-blanc-clair); /* texte blanc */
+    padding: 8px 12px; /* espace intérieur */
+    border: none; /* aucune bordure */
+    border-radius: 8px; /* coins arrondis */
+    cursor: pointer; /* curseur pointeur au survol */
+    box-shadow: 2px 2px 3px rgba(0,0,0,0.05); /* Ombre droite, bas, intensité, couleur */
+    font-size: 0.9em;
+    font-family: var(--font-titre);
+}
+
+/*-----------------------------------------Détail Place---------------------------------------*/
 /* Détails d’un hébergement */
 #place-details {
     display: flex; /* Active le modèle Flexbox */
     flex-wrap: wrap; /* Autorise les éléments à passer à la ligne si nécessaire */
+    flex-direction: column;
     gap: 20px; /* Espacement entre les éléments */
     justify-content: center; /* Centre les éléments horizontalement */
     margin-bottom: 2rem; /* Marge en bas de la section */
+    align-items: center;
 }
 
 /* Informations sur le lieu */
@@ -185,17 +237,18 @@ label {
     border: 1px solid var(--color-moyen-fonce); /* Bordure fine de couleur moyenne foncée */
     border-radius: 10px; /* Coins arrondis */
     padding: 15px; /* Espacement intérieur */
-    width: 400px; /* Largeur fixe des cartes */
+    width: 600px; /* Largeur fixe des cartes */
     box-shadow: 5px 5px 3px rgba(0,0,0,0.05); /* Légère ombre portée */
 }
 
-/* Titres des lieux */
-.place-info h2 {
-    font-size: 1.4em; /* Taille de police augmentée */
-    margin-bottom: 10px; /* Espace sous le titre */
-    text-align: center; /* Titre centré */
-    color: var(--color-fonce); /* Couleur foncée (variable CSS) */
+/* Carte de lieu - Titre */
+.titre-details-place {
+    font-size: 2em; /* taille de titre */
+    margin-bottom: 10px; /* espace sous le titre */
+    margin-top: 10px;
+    text-align: center; /* centre le texte horizontalement */
     font-family: var(--font-titre);
+    color: var(--color-fonce);
 }
 
 /* Description paragraphe */
@@ -212,6 +265,7 @@ label {
     list-style-type: circle; /* style Puces */
     margin-left: 20px; /* Décalage vers la droite de la liste */
     margin-bottom: 10px; /* Espace sous la liste */
+    font-size: 1.8em;
 }
 
 /* Titre amenities */
@@ -220,84 +274,32 @@ label {
     margin-bottom: 8px; /* Espace en dessous */
     color: var(--color-moyen-fonce); /* Couleur moyenne foncée */
     text-align: left; /* formatage texte */
+    font-size: 2em;
 }
 
-.label {
+.host-label {
     color: var(--color-moyen-fonce); /* Définit la couleur du texte */
-    font-size: 1.2em;
-}
-
-.value {
-    margin-left: 0.5rem;
-    color: var(--color-fonce);
+    font-size: 2em;
 }
 
 /* Apparence de bouton pour le prix */
-.price {
+.price-button {
     display: inline-block; /* Nécessaire pour padding et border */
-    padding: 0.3em 0.6em; /* Espace intérieur */
+    padding: 0.1em 0.3em; /* Espace intérieur */
     background-color: var(--color-blanc-clair); /* Couleur de fond */
     border-radius: 8px; /* Bords arrondis */
     color: var(--text-noir-vert); /* Couleur du texte */
     font-weight: bold; /* Texte gras */
     box-shadow: 1px 1px 5px rgba(0,0,0,0.1); /* Léger effet d'ombre */
     transition: background-color 0.3s ease;
+    margin: 0 auto 0; /* haut 10px, centrage auto, bas 0 */
 }
 
-.price:hover {
+.price-button:hover {
     background-color: var(--color-moyen-fonce); /* Effet au survol */
 }
 
-/* Carte de lieu */
-.place-card {
-    background-color: var(--color-clair); /* couleur fond */
-    border: 1px solid var(--color-moyen-fonce); /* bordure couleur*/
-    border-radius: 10px; /* coins arrondis */
-    padding: 10px; /* espace intérieur */
-    width: 250px; /* largeur fixe */
-    box-shadow: 5px 5px 3px rgba(0,0,0,0.05); /* Ombre droite, bas, intensité, couleur */
-}
-
-/* Carte de lieu - Titre */
-.titre-details-place {
-    font-size: 1.2em; /* taille de titre */
-    margin-bottom: 10px; /* espace sous le titre */
-    margin-top: 10px;
-    text-align: center; /* centre le texte horizontalement */
-    font-family: var(--font-titre);
-    color: var(--color-fonce);
-}
-
-/* Carte de lieu - Texte */
-.place-card p {
-    margin: 15px 15px; /* espace vertical autour des paragraphes */
-    text-align: center;
-    font-size: 1.6em;
-}
-
-.place-image {
-    width: 100%;
-    height: 190px; /* conserve les proportions */
-    object-fit: cover; /* garantie que l'image reste entière */
-    border-radius: 0.5rem; /* coins arrondis */
-    box-shadow: 5px 5px 3px rgba(0,0,0,0.05); /* Ombre droite, bas, intensité, couleur */
-}
-
-/* Bouton de détails, View détails */
-.details-button {
-    display: block; /* transforme le bouton en élément bloc */
-    margin: 10px auto 0; /* haut 10px, centrage auto, bas 0 */
-    background-color: var(--color-moyen-fonce); /* fond couleur */
-    color: var(--color-blanc-clair); /* texte blanc */
-    padding: 8px 12px; /* espace intérieur */
-    border: none; /* aucune bordure */
-    border-radius: 8px; /* coins arrondis */
-    cursor: pointer; /* curseur pointeur au survol */
-    box-shadow: 2px 2px 3px rgba(0,0,0,0.05); /* Ombre droite, bas, intensité, couleur */
-    font-size: 0.9em;
-    font-family: var(--font-titre);
-}
-
+/*----------------------------------------REVIEWS------------------------------------------*/
 /* Avis */
 #reviews {
     max-width: 900px; /* Limite la largeur */
