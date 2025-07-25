@@ -108,7 +108,7 @@ function displayPlaces(places) {
 
     places.forEach(place => { // Parcourt chaque objet "place" du tableau
         const placeDiv = document.createElement('div'); // Crée un nouvel élément <div> pour le lieu
-        placeDiv.className='place-card'; // Ajoute les classes CSS pour le style
+        placeDiv.className='place-list-index'; // Ajoute les classes CSS pour le style
 
         const imagePlace = {
             "Minas Tirith": "images/Minas-tirith.jpg",
@@ -122,10 +122,10 @@ function displayPlaces(places) {
         const image = document.createElement('img');
         image.src = imagePlace[place.title] || "images/default.jpg";
         image.alt = place.title;
-        image.classList.add('place-image');
+        image.classList.add('place-image-index');
 
 
-        const title = document.createElement('h2'); // Crée un élément <h3> pour le titre
+        const title = document.createElement('h2'); // Crée un élément <h2> pour le titre
         title.textContent = place.title; // Récupère le titre depuis la base de données
 
         const price = document.createElement('p');
@@ -133,7 +133,7 @@ function displayPlaces(places) {
 
         const viewButton = document.createElement('button');
         viewButton.textContent = 'View détail';
-        viewButton.classList.add('details-button'); // Applique mon style css
+        viewButton.classList.add('details-button-index'); // Applique mon style css
 
         viewButton.addEventListener('click', () => {
             window.location.href = `place.html?place_id=${place.id}`;
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => { //une fois le DOM chargé,
         const maxPrice = selected === 'all' ? Infinity : parseInt(selected); // convertir la veleur en nombre, et all = infini
 
         // parcourt tous les lieux
-        document.querySelectorAll('.place-card').forEach(placeCard => {
+        document.querySelectorAll('.place-list-index').forEach(placeCard => {
             const price = parseInt(placeCard.getAttribute('data-price')); // récup le prix de la place grâce à l'attribut data
             if (price <= maxPrice) {
                 placeCard.style.display = 'block'; // affiche le lieu si correspond au filtre
@@ -194,34 +194,31 @@ const placeId = parametres.get('place_id'); // Récupérer la valeur du paramèt
 console.log("ID du lieu extrait de l'URL :", placeId); // Afficher dans la console pour vérification
 
 // Faire la requête vers l'API pour récupérer les détails
-fetch(`http://localhost:5000/api/v1/places/${placeId}`)
+fetch(`http://localhost:5000/api/v1/places/${placeId}`) // Requête vers l'API pour obtenir les données d’un lieu par son ID
     .then(response => {
-        if (!response.ok) {
-            throw new Error('Lieu non trouvé');
+        if (!response.ok) { // Vérifie si la réponse est correcte
+            throw new Error('Lieu non trouvé'); // Gère le cas d'erreur HTTP
         }
-        return response.json();
+        return response.json(); // Convertit la réponse en JSON
     })
-    .then(data => { // Afficher les données dans le DOM
-    const placeDetails = document.getElementById('place-details');
+    .then(data => {
+        document.getElementById('place-title').textContent = data.title; // Affiche le titre du lieu
+        document.getElementById('host-name').textContent =
+    'Host : ' + (data.owner ? `${data.owner.first_name} ${data.owner.last_name}` : 'Inconnu'); // Affiche le nom de l'hôte ou "Inconnu"
+        document.getElementById('place-description').textContent = data.description; // Affiche la description du lieu
+        document.getElementById('place-price').textContent = `${data.price}€`; // Affiche le prix du lieu
 
-    placeDetails.innerHTML = `
-        <h2 class="titre-details-place">${data.title}</h2>
-        <div class="place-info">
-            <p class="host">
-                <span class="label">Host :</span>
-                <span class="value">${data.owner ? data.owner.first_name + ' ' + data.owner.last_name : 'Inconnu'}</span>
-            </p>
-            <p class="description">${data.description}</p>
-            <p class="price">Price : ${data.price} € / nuit</p>
-            <h3>Amenities :</h3>
-            <ul>
-            ${data.amenities && data.amenities.length > 0
-                ? data.amenities.map(a => `<li>${a.name}</li>`).join('')
-                : '<li>Aucun équipement listé</li>'}
-            </ul>
-        </div>
-        `;
+        const amenitiesList = document.getElementById('place-amenities'); // Récupère l’élément <ul> pour les équipements
+        if (data.amenities && data.amenities.length > 0) { // Vérifie s'il y a des équipements
+            amenitiesList.innerHTML = data.amenities
+                .map(a => `<li>${a.name}</li>`) // Crée une <li> par équipement
+                .join(''); // Assemble toutes les <li> en une seule chaîne HTML
+        } else {
+            amenitiesList.innerHTML = '<li>Aucun équipement listé</li>'; // Affiche un message si aucun équipement
+        }
     })
     .catch(error => {
-       console.error(error);
+        console.error(error); // Affiche une erreur en cas d’échec de la requête
     });
+
+
