@@ -2,6 +2,7 @@
   This is a SAMPLE File to get you started. Follow the instructions on the project to complete the tasks.
   You'll probably need to override some of theese styles.
 */
+@import url('https://fonts.googleapis.com/css2?family=Ephesis&family=Yellowtail&display=swap');
 
 :root {
   --color-blanc-clair: #FFFFF4;
@@ -14,11 +15,23 @@
   --text-clair: #FFFFF4;
   --text-moyen: #7DC2A5;
   --color-star: #DAA520;
+  --font-titre: 'Ringbearer', 'Ephesis', cursive, Arial, sans-serif;
+  --font-texte: 'Ephesis', cursive, Arial, sans-serif;
 }
 
 @font-face {
   font-family: 'Ringbearer';
   src: url('fonts/RINGM___.TTF') format('truetype');
+}
+
+.ephesis-regular {
+  font-family: 'Ephesis', cursive;
+}
+
+.yellowtail-regular {
+  font-family: 'Yellowtail', cursive;
+  font-weight: 400;
+  font-style: normal;
 }
 
 /* Base Reset - Réinitialisation globale */
@@ -40,16 +53,16 @@ body {
     display: flex; /* active flexbox vertical */
     flex-direction: column; /* empile header, main, footer */
     min-height: 100vh; /* hauteur minimale = hauteur de la fenêtre */
-    font-family: Arial, sans-serif; /* définit la police principale */
+    font-family: var(--font-texte); /* définit la police principale */
 }
 
 a {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 /* Main - Zone de contenu flexible */
 main {
-  flex: 1; /* main prend tout l’espace disponible */
+    flex: 1; /* main prend tout l’espace disponible */
 }
 
 /* Header - En-tête */
@@ -84,6 +97,7 @@ nav {
     text-decoration: none;/* supprime le soulignement des liens */
     color: var(--color-fonce); /* couleur du texte */
     font-weight: bold; /* texte en gras */
+    font-size: 1.5em;
 }
 
 /* Navigation - Liens au survol */
@@ -94,23 +108,18 @@ nav {
 }
 
 /* Bouton de connexion */
-.login-button {
-    padding: 6px 12px; /* espace intérieur du bouton */
-    background-color: var(--color-clair); /* fond */
-    border: none; /* aucune bordure */
-    border-radius: 5px; /* coins arrondis */
-    text-decoration: none; /* supprime le soulignement */
-    font-size: 1em; /* taille de texte légèrement réduite */
-}
-
-/* Bouton d'index */
+.login-button,
 .index-button {
-    padding: 6px 12px; /* espace intérieur du bouton */
-    background-color: var(--color-clair); /* fond */
-    border: none; /* aucune bordure */
-    border-radius: 5px; /* coins arrondis */
-    text-decoration: none; /* supprime le soulignement */
-    font-size: 1em; /* taille de texte légèrement réduite */
+  background-color: var(--color-clair);
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1.5em;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
 /* Bouton de détails - Survol */
@@ -123,16 +132,41 @@ main {
     padding: 2rem; /* espace au-dessus du contenu principal */
 }
 
+/* Bienvenue */
+#bienvenue {
+    background-color: var(--color-blanc-clair); /* couleur de fond */
+    padding: 20px 20px; /* Espacement intérieur */
+    text-align: center; /* Centrer le texte */
+}
+
+#bienvenue h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: var(--color-fonce);
+    font-family: var(--font-titre);
+}
+
+#bienvenue h2 {
+    color: var(--text-noir-vert);
+    font-weight: normal;
+    font-family: var(--font-texte);
+    font-size: 3em;
+}
+
 /* Filter */
 #filter {
     margin-bottom: 20px; /* espace sous le filtre */
 }
 
+label {
+    font-size: 1.7em;
+}
+
 /* Liste des lieux par id# */
-#places-list div{
+#places-list {
     display: flex; /* affiche les cartes en ligne */
     flex-wrap: wrap; /* permet le retour à la ligne si nécessaire */
-    gap: 20px; /* espace entre les cartes */
+    gap: 50px; /* espace entre les cartes */
     justify-content: center; /* centre les cartes horizontalement */
 }
 
@@ -161,12 +195,7 @@ main {
     margin-bottom: 10px; /* Espace sous le titre */
     text-align: center; /* Titre centré */
     color: var(--color-fonce); /* Couleur foncée (variable CSS) */
-    font-family: 'Ringbearer', Arial, sans-serif;
-}
-
-h2 {
-    font-family: 'Ringbearer', Arial, sans-serif;
-    color: var(--color-fonce);
+    font-family: var(--font-titre);
 }
 
 /* Description paragraphe */
@@ -174,6 +203,8 @@ h2 {
     margin-bottom: 10px; /* Marge en dessous des paragraphes */
     text-align: left; /* formatage du texte */
     line-height: 1.4; /* Hauteur de ligne pour meilleure lisibilité */
+    font-family: var(--font-texte);
+    font-size: 2em;
 }
 
 /* Liste équipements  */
@@ -191,16 +222,14 @@ h2 {
     text-align: left; /* formatage texte */
 }
 
-.host {
-    font-weight: bold; /* Définit l'épaisseur de la police */
+.label {
     color: var(--color-moyen-fonce); /* Définit la couleur du texte */
     font-size: 1.2em;
 }
 
-.description {
-    font-weight: bold; /* Définit l'épaisseur de la police */
-    color: var(--color-moyen-fonce); /* Définit la couleur du texte */
-    font-size: 1.2em;
+.value {
+    margin-left: 0.5rem;
+    color: var(--color-fonce);
 }
 
 /* Apparence de bouton pour le prix */
@@ -230,16 +259,28 @@ h2 {
 }
 
 /* Carte de lieu - Titre */
-.place-card h2 {
+.titre-details-place {
     font-size: 1.2em; /* taille de titre */
-    margin-bottom: 5px; /* espace sous le titre */
+    margin-bottom: 10px; /* espace sous le titre */
+    margin-top: 10px;
     text-align: center; /* centre le texte horizontalement */
+    font-family: var(--font-titre);
+    color: var(--color-fonce);
 }
 
 /* Carte de lieu - Texte */
 .place-card p {
-    margin: 5px 0; /* espace vertical autour des paragraphes */
-        text-align: center;
+    margin: 15px 15px; /* espace vertical autour des paragraphes */
+    text-align: center;
+    font-size: 1.6em;
+}
+
+.place-image {
+    width: 100%;
+    height: 190px; /* conserve les proportions */
+    object-fit: cover; /* garantie que l'image reste entière */
+    border-radius: 0.5rem; /* coins arrondis */
+    box-shadow: 5px 5px 3px rgba(0,0,0,0.05); /* Ombre droite, bas, intensité, couleur */
 }
 
 /* Bouton de détails, View détails */
@@ -253,6 +294,8 @@ h2 {
     border-radius: 8px; /* coins arrondis */
     cursor: pointer; /* curseur pointeur au survol */
     box-shadow: 2px 2px 3px rgba(0,0,0,0.05); /* Ombre droite, bas, intensité, couleur */
+    font-size: 0.9em;
+    font-family: var(--font-titre);
 }
 
 /* Avis */
@@ -366,5 +409,5 @@ footer {
     margin-bottom: 20px; /* espace en dessous du pied de page */
     text-align: center; /* texte centré */
     color: var(--text-noir-vert); /* texte gris moyen */
-    font-size: 0.9em; /* taille légèrement réduite */
+    font-size: 1.3em; /* taille légèrement réduite */
 }
