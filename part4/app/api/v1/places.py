@@ -194,22 +194,30 @@ class PlaceResource(Resource):
 
 @api.route('/<place_id>/reviews')
 class PlaceReviewList(Resource):
-    @api.response(200, 'List of reviews for the place retrieved successfully', model=[review_model])
+    @api.response(200, 'List of reviews for the place retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Retrieve all reviews for a specific place"""
-        # vérifie si le lieu existe bien
         place = facade.get_place(place_id)
         if not place:
             return {"error": "Place not found"}, 404
-        # ensuite on récupère tous les avis du lieu
-        reviews = facade.get_reviews_by_place(place_id)
-        # On retourne la liste formatée (même si elle est vide)
-        return [
-            {
+
+        reviews = facade.get_reviews_by_place(place_id) or []
+
+        response = []
+        for review in reviews:
+            review_data = {
                 "id": review.id,
                 "text": review.text,
-                "rating": review.rating
+                "rating": review.rating,
             }
-            for review in reviews
-        ], 200
+
+            if review.user:
+                review_data["user_name"] = f"{review.user.first_name} {review.user.last_name}"
+            else:
+                review_data["user_name"] = "Utilisateur inconnu"
+
+            response.append(review_data)
+
+        return response, 200
+
