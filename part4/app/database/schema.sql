@@ -119,7 +119,7 @@ VALUES(
 	'Boromir',
 	'Toujours Debout',
 	'boromir@gmail.com',
-	'$2a$12$L0n.fHHrJdIydlge4yhzOOJDr9HSz/LvI7GzS.ke4gpn/3uj.kCbG',
+	'$2y$10$CuuDSEJWnbggMTn5YH0EnuTqLJNVI0d1HQ1TB4gwdh4LmzBMMrSMG',
 	FALSE,
 	datetime('now')
 );
