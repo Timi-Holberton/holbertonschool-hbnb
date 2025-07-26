@@ -348,7 +348,6 @@ label {
 
 /* Formulaire ajout avis */
 #add-review {
-    display: none;
     max-width: 600px; /* Largeur maximale du formulaire */
     margin: 0 auto 3rem; /* Centré horizontalement, marge en bas */
     padding: 1rem; /* Espacement intérieur */
@@ -366,6 +365,7 @@ label {
 
 /* Formulaire */
 #review-form {
+    display: none;
     display: flex; /* Flexbox */
     flex-direction: column; /* Alignement vertical */
     gap: 10px; /* Espace entre les éléments */
