@@ -13,20 +13,24 @@ document.addEventListener('DOMContentLoaded', () => { // Quand le DOM est entiè
 });
 
 async function loginUser(email, password) {
-    const response = await fetch('http://localhost:5000/api/v1/auth/login', { // Envoi d'une requête POST à l'API de login
-        method: 'POST',
+    const response = await fetch('http://localhost:5000/api/v1/auth/login', { // Envoi de la requête POST à l'API d'authentification
+        method: 'POST', // Méthode HTTP POST
         headers: {
-            'Content-Type': 'application/json' // Indique que les données sont envoyées en JSON
+            'Content-Type': 'application/json' // Spécifie que le corps de la requête est au format JSON
         },
-        body: JSON.stringify({ email, password }) // Corps de la requête contenant les identifiants
+        body: JSON.stringify({ email, password }) // Corps de la requête contenant l'email et le mot de passe au format JSON
     });
 
-    if (response.ok) {
-        const data = await response.json(); // Si la réponse est OK, on parse les données JSON
-        document.cookie = `token=${data.access_token}; path=/`; // On stocke le token dans un cookie
-        window.location.href = 'index.html'; // On redirige l'utilisateur vers la page d'accueil
+    if (response.ok) { // Si la réponse est positive (code HTTP 2xx)
+        const data = await response.json(); // Extraction du JSON de la réponse
+        document.cookie = `token=${data.access_token}; path=/`; // Stockage du token JWT dans un cookie accessible sur tout le site
+
+        const params = new URLSearchParams(window.location.search); // Récupération des paramètres de l'URL actuelle
+        const next = params.get('next') || '/index.html';  // Récupération de la valeur du paramètre 'next', ou page d'accueil par défaut
+
+        window.location.href = next; // Redirection vers la page demandée dans 'next'
     } else {
-        alert('Login failed: ' + response.statusText); // Affichage d'une alerte en cas d'échec
+        alert('Login failed: ' + response.statusText); // Affichage d'une alerte en cas d'échec de connexion
     }
 }
 
@@ -59,6 +63,22 @@ function getCookie(name) {
     }
     return null; // Si rien trouvé, on retourne null
 }
+
+function getUserIdFromToken(token) { // récupère l'id dans le token
+    try {
+        const base64Url = token.split('.')[1]; // Partie payload encodée en base64url
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Conversion base64url -> base64 standard
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2) // Décodage URL-encoding caractère par caractère
+        ).join('')); // Reconstruction de la chaîne JSON
+        const payload = JSON.parse(jsonPayload); // Conversion JSON en objet JS
+        return payload.user_id || payload.sub; // Retourne user_id ou sub selon champ présent dans token
+    } catch (e) {
+        console.error("Erreur décodage token:", e); // Affiche erreur en cas de problème
+        return null; // Retourne null si échec du décodage
+    }
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
     checkAuthentication(); // Appel de la vérification d'authentification à chaque chargement de page
@@ -284,100 +304,174 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 /*-------------------------Reviews-------------------------*/
-// Lorsque la page est entièrement chargée
-document.addEventListener('DOMContentLoaded', () => {
-    const reviewForm = document.getElementById('review-form'); // Récupère le formulaire d'envoi d'avis
-    const token = checkAuthentication(); // Vérifie si l'utilisateur est connecté (via un token JWT)
-    const placeId = getPlaceIdFromURL(); // Récupère l'identifiant du lieu à partir de l'URL
+let rating = 0; // Note sélectionnée, initialisée à 0
 
-    // Si l'utilisateur n'est pas authentifié, on cache le formulaire de soumission
-    if (!token && reviewForm) {
-        reviewForm.style.display = 'none';
+function updateStars(rating) { // Fonction globale pour mettre à jour l'affichage des étoiles
+    const stars = document.querySelectorAll('#star-rating i'); // Sélectionne toutes les étoiles
+    stars.forEach(star => {
+        const starValue = parseInt(star.getAttribute('data-value'), 10); // Récupère la valeur de l'étoile
+        if (starValue <= rating) { // Si valeur de l'étoile <= note sélectionnée
+            star.classList.remove('far'); // Enlève la classe étoile vide (far)
+            star.classList.add('fas'); // Ajoute la classe étoile pleine (fas)
+        } else {
+            star.classList.remove('fas'); // Enlève la classe étoile pleine (fas)
+            star.classList.add('far'); // Ajoute la classe étoile vide (far)
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => { // Quand le DOM est entièrement chargé
+    const stars = document.querySelectorAll('#star-rating i'); // Sélectionne toutes les étoiles dans le container
+    stars.forEach(star => { // Pour chaque étoile
+        star.addEventListener('click', () => { // Ajoute un écouteur sur le clic
+            rating = parseInt(star.getAttribute('data-value'), 10); // Récupère la valeur de l'étoile cliquée (1 à 5)
+            updateStars(rating); // Met à jour l'affichage des étoiles en fonction de la note choisie
+        });
+    });
+
+    const reviewForm = document.getElementById('review-form'); // Récupère le formulaire d'avis
+    const token = getCookie('token'); // Récupère le token JWT dans les cookies
+    const placeId = getPlaceIdFromURL(); // Récupère l'ID du lieu depuis l'URL
+
+    if (!token && reviewForm) { // Si pas de token et formulaire présent
+        reviewForm.style.display = 'none'; // Cache le formulaire
     }
 
-    // On affiche les avis existants pour tous les visiteurs, connectés ou non
-    if (placeId) {
-    loadReviews(placeId);
+    if (placeId) { // Si un ID de lieu est présent dans l'URL
+        loadReviews(placeId); // Charge les avis existants pour ce lieu
     }
 
-    // Si l'utilisateur est connecté, on lui permet de soumettre un avis
-    if (reviewForm && token) {
-        reviewForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Empêche l'envoi classique du formulaire
+    if (reviewForm && token) { // Si formulaire présent et utilisateur connecté
+        reviewForm.addEventListener('submit', async (event) => { // Ecoute la soumission du formulaire
+            event.preventDefault(); // Empêche le rechargement automatique de la page
 
-            const reviewText = document.getElementById('review-text').value; // Texte saisi par l'utilisateur
-            const response = await submitReview(token, placeId, reviewText); // Envoie de la requête POST à l'API
-            handleResponse(response); // Traitement de la réponse
+            const reviewText = document.getElementById('review-text').value.trim(); // Récupère et nettoie le texte de l'avis
+
+            if (!placeId) { // Vérifie si l'ID du lieu est absent
+                alert("Erreur : Identifiant du lieu manquant."); // Affiche une alerte d'erreur
+                return; // Stoppe l'exécution de la fonction
+            }
+            if (!reviewText) { // Vérifie si le texte de l'avis est vide
+                alert("Erreur : Le texte de la review est vide."); // Affiche une alerte d'erreur
+                return; // Stoppe l'exécution de la fonction
+            }
+            if (rating === 0) { // Vérifie si aucune note n'a été sélectionnée
+                alert("Merci de sélectionner une note."); // Affiche une alerte pour demander la note
+                return; // Stoppe l'exécution de la fonction
+            }
+
+            console.log({ place_id: placeId, text: reviewText, rating: rating }); // Log des données de review
+
+            const response = await soumettreReview(token, placeId, reviewText, rating); // Envoie la requête d'avis à l'API
+            gestionResponse(response); // Traite la réponse de l'API
         });
     }
 });
 
-/* clique sur le titre "Add review" pour rediriger vers le login */
-document.addEventListener('DOMContentLoaded', () => {
-    const addReviewTitle = document.getElementById('add-review-title');
-    const token = getCookie('token');
-    if (addReviewTitle && !token) {
-        addReviewTitle.style.cursor = 'pointer';
-        addReviewTitle.addEventListener('click', () => {
-            window.location.href = '/login.html';
+document.addEventListener('DOMContentLoaded', () => { // Quand le DOM est entièrement chargé
+    const addReviewTitle = document.getElementById('add-review-title'); // Récupère le titre "Add review"
+    const token = getCookie('token'); // Récupère le token JWT
+
+    if (addReviewTitle && !token) { // Si le titre existe et pas de token (utilisateur non connecté)
+        addReviewTitle.style.cursor = 'pointer'; // Change le curseur pour indiquer un clic possible
+        addReviewTitle.addEventListener('click', () => { // Ajoute un écouteur de clic sur le titre
+            const placeId = getPlaceIdFromURL(); // Récupère l'ID du lieu dans l'URL
+            const nextPage = placeId ? `/place.html?place_id=${placeId}` : '/index.html'; // Définit la page de retour après login
+            window.location.href = `/login.html?next=${encodeURIComponent(nextPage)}`; // Redirige vers login avec la page suivante encodée
         });
     }
 });
 
-
-
-// Fonction pour envoyer un avis au serveur via l'API
-async function submitReview(token, placeId, reviewText) {
+async function soumettreReview(token, placeId, reviewText, rating) {
     try {
+        const userId = getUserIdFromToken(token); // Extraction de l'ID utilisateur depuis le token
+        if (!userId) { // Vérifie si l'ID utilisateur est absent ou invalide
+            alert("Erreur : utilisateur non authentifié. Veuillez vous reconnecter."); // Alerte utilisateur en cas de problème
+            return; // Interrompt l'exécution si pas d'utilisateur authentifié
+        }
+
         const response = await fetch('http://localhost:5000/api/v1/reviews', {
-            method: 'POST', // On envoie une requête POST
+            method: 'POST', // Méthode POST
             headers: {
-                'Content-Type': 'application/json', // On précise qu'on envoie du JSON
-                'Authorization': `Bearer ${token}` // On ajoute le jeton JWT dans l'en-tête d'autorisation
+                'Content-Type': 'application/json', // Envoi JSON
+                'Authorization': `Bearer ${token}` // Token JWT
             },
             body: JSON.stringify({
-                place_id: placeId, // On inclut l'identifiant du lieu
-                text: reviewText // Et le contenu de l'avis
+                place_id: placeId, // ID du lieu
+                text: reviewText, // Texte de l'avis
+                rating: rating, // Note de l'avis
+                user_id: userId // ID utilisateur
             })
         });
-        return response; // On retourne la réponse pour qu'elle soit traitée ailleurs
+
+        if (!response.ok) { // Si réponse négative
+            const errorData = await response.json(); // Récupérer erreur JSON
+
+            if (errorData.error === 'You cannot evaluate your own location.') {
+                alert('Vous ne pouvez pas noter votre propre maison'); // Message personnalisé
+            } else {
+                alert('Erreur lors de la soumission : ' + (errorData.message || '400 Bad Request')); // Message générique
+            }
+
+            console.error('Erreur API:', errorData); // Log erreur dans console
+        }
+
+        return response; // Retourne réponse serveur
     } catch (error) {
-        // Si une erreur réseau survient, on l'affiche et on alerte l'utilisateur
-        console.error('Erreur lors de l\'envoi de l\'avis :', error);
-        alert('Erreur réseau. Veuillez réessayer.');
+        console.error('Erreur lors de l\'envoi de l\'avis :', error); // Log erreur réseau
+        alert('Erreur réseau. Veuillez réessayer.'); // Message d'alerte réseau
     }
 }
 
-// Fonction qui gère la réponse de l'API après envoi d'un avis
-function handleResponse(response) {
-    if (!response) return; // Si aucune réponse n’est retournée, on ne fait rien
+function gestionResponse(response) { // Fonction pour gérer la réponse de l'API
+    if (!response) return; // Si pas de réponse, ne fait rien
 
-    if (response.ok) {
-        // Si la réponse est positive (code 2xx)
-        alert('Review submitted successfully!'); // Message de confirmation
-        document.getElementById('review-form').reset(); // On vide le formulaire
-        location.reload(); // Et on recharge la page pour afficher le nouvel avis
+    if (response.ok) { // Si la réponse HTTP est OK (status 2xx)
+        alert('Review submitted successfully!'); // Affiche message de succès
+        document.getElementById('review-form').reset(); // Réinitialise le formulaire d'avis
+        rating = 0; // Réinitialise la note sélectionnée
+        updateStars(0); // Réinitialise l'affichage des étoiles (vides)
+        location.reload(); // Recharge la page pour afficher les avis mis à jour
     } else {
-        // Si la requête a échoué (erreur côté client ou serveur)
-        alert('Failed to submit review');
+        alert('Failed to submit review'); // Alerte en cas d'échec (status non 2xx)
     }
 }
 
-// Fonction pour charger et afficher les avis existants d’un lieu donné
-function loadReviews(placeId) {
-    fetch(`http://localhost:5000/api/v1/places/${placeId}/reviews`)  // Requête pour récupérer les avis d’un lieu donné
-        .then(response => response.json())  // Transformation de la réponse en JSON
-        .then(data => {
-            const reviewContainer = document.getElementById('reviews');  // Récupère le conteneur unique des avis dans la page
-            reviewContainer.innerHTML = ''; // Vide le contenu actuel des avis
-            data.forEach(review => {
-                const div = document.createElement('div');  // Crée un élément div pour chaque avis
-                div.classList.add('review');  // Ajoute la classe CSS "review" au div
-                div.innerHTML = `<p>${review.text}</p>`;  // Insère le texte de l’avis dans un paragraphe
-                reviewContainer.appendChild(div);  // Ajoute le div dans le conteneur des avis
+function loadReviews(placeId) { // Fonction qui charge et affiche les avis pour un lieu donné
+    fetch(`http://localhost:5000/api/v1/places/${placeId}/reviews`) // Envoie une requête GET à l'API pour récupérer les avis du lieu
+        .then(response => response.json()) // Convertit la réponse HTTP en objet JSON
+        .then(data => { // Quand les données JSON sont reçues
+            const reviewContainer = document.getElementById('reviews'); // Récupère l'élément HTML où afficher les avis
+            reviewContainer.innerHTML = ''; // Vide ce conteneur pour réinitialiser l'affichage
+
+            data.forEach(review => { // Pour chaque avis dans les données reçues
+                const div = document.createElement('div'); // Crée un nouvel élément <div>
+                div.classList.add('review'); // Ajoute la classe CSS 'review' à ce div pour le style
+
+                const userName = review.user_name || 'Utilisateur inconnu'; // Récupère le nom utilisateur ou met un texte par défaut
+
+                div.innerHTML = `
+                    <p><strong>${userName}</strong> a écrit :</p>
+                    <p>${review.text}</p>
+                    <p>Note : ${displayStars(review.rating)}</p>
+                `;
+
+                reviewContainer.appendChild(div); // Ajoute ce div dans le conteneur des avis sur la page
             });
         })
-        .catch(error => {
-            console.error('Erreur lors du chargement des avis :', error);  // Affiche une erreur en cas d’échec de la requête
+        .catch(error => { // Si une erreur survient lors de la requête ou du traitement
+            console.error('Erreur lors du chargement des avis :', error); // Affiche l'erreur dans la console du navigateur
         });
+}
+
+function displayStars(rating) { // Fonction qui génère le HTML des étoiles dorées selon la note reçue
+    let starsHTML = ''; // Initialise une chaîne vide pour contenir les étoiles
+
+    for (let i = 1; i <= 5; i++) { // Pour 5 étoiles au total
+        starsHTML += i <= rating  // Si l'indice est inférieur ou égal à la note
+            ? '<i class="fas fa-star" style="color: gold;"></i>'  // Ajoute une étoile pleine dorée
+            : '<i class="far fa-star" style="color: gold;"></i>'; // Sinon une étoile vide dorée
+    }
+
+    return starsHTML; // Retourne le HTML complet des étoiles pour affichage
 }
