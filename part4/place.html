@@ -21,20 +21,31 @@
 
         <section id="place-details">
         </section>
-        
+
         <section id="reviews">
             <!-- Reviews will be populated dynamically -->
         </section>
         <section id="add-review">
             <h2 id="add-review-title">Add a Review</h2>
-            <form id="review-form">
-                <label for="review-text">Review:</label>
-                <textarea id="review-text" name="review-text" required></textarea>
-                <button type="submit">Submit</button>
-            </form>
+        <form id="review-form">
+            <label for="review-text">Review:</label>
+            <textarea id="review-text" name="review-text" required></textarea>
+
+            <label>Rating:</label><br>
+            <div id="star-rating" style="cursor:pointer; font-size: 24px;">
+                <i class="far fa-star" data-value="1"></i>
+                <i class="far fa-star" data-value="2"></i>
+                <i class="far fa-star" data-value="3"></i>
+                <i class="far fa-star" data-value="4"></i>
+                <i class="far fa-star" data-value="5"></i>
+            </div>
+
+            <input type="hidden" id="review-rating" name="review-rating" required>
+
+            <button type="submit">Submit</button>
+        </form>
         </section>
     </main>
-
     <footer>
         <p>&copy; 2025 - HBnB - All rights reserved</p>
     </footer>
