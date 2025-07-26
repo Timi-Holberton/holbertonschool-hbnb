@@ -187,82 +187,130 @@ document.addEventListener('DOMContentLoaded', () => { //une fois le DOM chargé,
 });
 
 
-const chaineRequete = window.location.search; // Récupère la chaîne de requête de l'URL (?place_id=xxx)
-const parametres = new URLSearchParams(chaineRequete); // Crée un objet pour manipuler les paramètres d'URL
-const placeId = parametres.get('place_id'); // Extrait la valeur du paramètre place_id
+// Fonction pour extraire l'ID du lieu depuis l'URL
+function getPlaceIdFromURL() {
+    const params = new URLSearchParams(window.location.search); // Crée un objet pour lire les paramètres URL
+    return params.get('place_id'); // Retourne la valeur de place_id
+}
 
-console.log("ID du lieu extrait de l'URL :", placeId); // Affiche l'ID récupéré pour vérification
+// Fonction asynchrone qui récupère les détails d'un lieu depuis l'API avec authentification
+async function fetchPlaceDetails(token, placeId) {
+    try {
+        const response = await fetch(`http://localhost:5000/api/v1/places/${placeId}`, { // Envoi d'une requête GET vers l'API pour obtenir les détails du lieu identifié par placeId
+            method: 'GET', // Méthode HTTP GET
+            headers: {
+                'Content-Type': 'application/json', // Indique que la réponse attendue est au format JSON
+                'Authorization': `Bearer ${token}` // En-tête Authorization avec token JWT pour authentification
+            }
+        });
 
-fetch(`http://localhost:5000/api/v1/places/${placeId}`) // Envoie une requête GET à l'API pour récupérer les données du lieu
-  .then(response => {
-    if (!response.ok) throw new Error('Lieu non trouvé'); // Si la réponse est en erreur (404...), on déclenche une exception
-    return response.json(); // Sinon, on convertit la réponse en JSON
-  })
-  .then(data => {
-    const section = document.getElementById('place-details'); // Sélectionne la section vide dans le HTML
-    section.innerHTML = ''; // Vide son contenu avant d'ajouter de nouveaux éléments
+        if (!response.ok) { // Vérifie si la réponse HTTP est valide (status 200-299)
+            throw new Error(`Erreur API : ${response.status}`); // En cas d'erreur, lance une exception avec le code statut HTTP
+        }
 
-    const titre = document.createElement('h2'); // Crée un élément <h2>
-    titre.className = 'titre-details-place'; // Attribue une classe CSS
-    titre.textContent = data.title || 'Titre non disponible'; // Met le titre du lieu ou un fallback si absent
-    section.appendChild(titre); // Ajoute le <h2> à la section
+        const data = await response.json(); // Parse la réponse JSON pour obtenir les données du lieu
+        displayPlaceDetails(data); // Appelle la fonction d'affichage en lui passant les données récupérées
+    } catch (error) {
+        console.error('Erreur lors de la récupération des détails :', error); // Affiche une erreur dans la console en cas de problème lors de la requête
+        const section = document.getElementById('place-details'); // Sélectionne la section HTML qui doit contenir les détails
+        section.textContent = 'Erreur lors du chargement des détails du lieu.'; // Affiche un message d'erreur à l'utilisateur dans la page
+    }
+}
 
-    const hostSpan = document.createElement('span'); // Crée un <span> pour l’hôte
-    hostSpan.className = 'host-label'; // Classe CSS pour le style
-    const ownerName = data.owner ? `${data.owner.first_name} ${data.owner.last_name}` : 'Inconnu'; // Construit le nom de l’hôte
-    hostSpan.textContent = 'Host : ' + ownerName; // Définit le texte du <span>
-    section.appendChild(hostSpan); // Ajoute le <span> à la section
+// Fonction qui crée et insère dynamiquement les éléments HTML avec les données du lieu
+function displayPlaceDetails(place) {
+    const section = document.getElementById('place-details'); // Récupère la section HTML où afficher les détails
+    section.innerHTML = ''; // Vide le contenu actuel de la section pour repartir à zéro
 
-    const infoDiv = document.createElement('div'); // Crée un conteneur <div> pour les infos générales
-    infoDiv.className = 'place-info'; // Classe CSS pour styliser
+    const titre = document.createElement('h2'); // Crée un élément <h2> pour le titre du lieu
+    titre.className = 'titre-details-place'; // Ajoute une classe CSS pour le style
+    titre.textContent = place.title || 'Titre non disponible'; // Remplit le titre avec le nom du lieu ou un texte par défaut
+    section.appendChild(titre); // Ajoute ce titre dans la section détails
+
+    const hostSpan = document.createElement('span'); // Crée un élément <span> pour afficher le nom de l'hôte
+    hostSpan.className = 'host-label'; // Ajoute une classe CSS pour le style
+    const ownerName = place.owner ? `${place.owner.first_name} ${place.owner.last_name}` : 'Inconnu'; // Construit le nom complet de l'hôte ou met "Inconnu"
+    hostSpan.textContent = 'Host : ' + ownerName; // Affecte le texte dans le <span>
+    section.appendChild(hostSpan); // Ajoute le <span> dans la section
+
+    const infoDiv = document.createElement('div'); // Crée une <div> conteneur pour les infos complémentaires
+    infoDiv.className = 'place-info'; // Ajoute une classe CSS pour le style
 
     const description = document.createElement('p'); // Crée un paragraphe pour la description
-    description.className = 'description'; // Classe CSS
-    description.textContent = data.description || 'Pas de description.'; // Ajoute le texte de la description
-    infoDiv.appendChild(description); // Ajoute le paragraphe à la div
+    description.className = 'description'; // Ajoute une classe CSS
+    description.textContent = place.description || 'Pas de description.'; // Ajoute la description ou un message par défaut
+    infoDiv.appendChild(description); // Ajoute le paragraphe dans la div info
 
     const price = document.createElement('p'); // Crée un paragraphe pour le prix
-    price.className = 'price'; // Classe CSS
+    price.className = 'price'; // Ajoute une classe CSS
 
-    const priceLabel = document.createElement('span'); // Crée une étiquette pour le prix
-    priceLabel.className = 'text-price'; // Classe CSS
-    priceLabel.textContent = 'Price by night : '; // Texte statique
-    const priceValue = document.createElement('span'); // Crée une balise pour afficher la valeur
-    priceValue.className = 'price-button'; // Classe CSS
-    priceValue.textContent = data.price ? `${data.price}€` : 'Non précisé'; // Valeur dynamique du prix
+    const priceLabel = document.createElement('span'); // Crée un <span> pour le libellé "Price by night"
+    priceLabel.className = 'text-price'; // Ajoute une classe CSS
+    priceLabel.textContent = 'Price by night : '; // Définit le texte du label
 
-    price.appendChild(priceLabel); // Ajoute l’étiquette au paragraphe
-    price.appendChild(priceValue); // Ajoute le prix au paragraphe
-    infoDiv.appendChild(price); // Ajoute tout le bloc prix à la div
+    const priceValue = document.createElement('span'); // Crée un <span> pour la valeur du prix
+    priceValue.className = 'price-button'; // Ajoute une classe CSS
+    priceValue.textContent = place.price ? `${place.price}€` : 'Non précisé'; // Met le prix ou un texte alternatif
 
-    const amenitiesTitle = document.createElement('h3'); // Crée un titre pour les équipements
-    amenitiesTitle.textContent = 'Amenities :'; // Texte du titre
-    infoDiv.appendChild(amenitiesTitle); // Ajoute le titre à la div
+    price.appendChild(priceLabel); // Ajoute le label dans le paragraphe prix
+    price.appendChild(priceValue); // Ajoute la valeur du prix dans le paragraphe
+    infoDiv.appendChild(price); // Ajoute le paragraphe prix dans la div info
 
-    const amenitiesList = document.createElement('ul'); // Crée une liste non ordonnée
-    amenitiesList.id = 'place-amenities'; // ID pour le ciblage ou le style
+    const amenitiesTitle = document.createElement('h3'); // Crée un titre pour la section équipements
+    amenitiesTitle.textContent = 'Amenities :'; // Définit le texte du titre
+    infoDiv.appendChild(amenitiesTitle); // Ajoute le titre dans la div info
 
-    if (data.amenities && data.amenities.length > 0) { // Vérifie s’il y a des équipements
-      data.amenities.forEach(a => { // Pour chaque équipement
-        const li = document.createElement('li'); // Crée un élément de liste
-        li.textContent = a.name; // Met le nom de l’équipement
-        amenitiesList.appendChild(li); // Ajoute à la liste
-      });
+    const amenitiesList = document.createElement('ul'); // Crée une liste à puces pour les équipements
+    amenitiesList.id = 'place-amenities'; // Attribue un id pour ciblage CSS ou JS
+
+    if (place.amenities && place.amenities.length > 0) { // Si des équipements existent
+        place.amenities.forEach(a => { // Pour chaque équipement
+            const li = document.createElement('li'); // Crée un élément de liste
+            li.textContent = a.name; // Met le nom de l'équipement
+            amenitiesList.appendChild(li); // Ajoute l'élément à la liste
+        });
     } else {
-      const li = document.createElement('li'); // Cas où il n’y a aucun équipement
-      li.textContent = 'Aucun équipement listé'; // Texte par défaut
-      amenitiesList.appendChild(li); // Ajoute l’élément par défaut
+        const li = document.createElement('li'); // Sinon crée un seul élément de liste
+        li.textContent = 'Aucun équipement listé'; // Avec un message d'absence d'équipement
+        amenitiesList.appendChild(li); // Ajoute cet élément à la liste
     }
+    infoDiv.appendChild(amenitiesList); // Ajoute la liste des équipements dans la div info
 
-    infoDiv.appendChild(amenitiesList); // Ajoute la liste des équipements à la div
+    section.appendChild(infoDiv); // Ajoute la div info complète à la section principale
+}
 
-    section.appendChild(infoDiv); // Ajoute la div entière à la section principale
-  })
-  .catch(error => {
-    console.error(error); // Affiche l'erreur dans la console
-    const section = document.getElementById('place-details'); // Sélectionne la section
-    section.textContent = 'Erreur lors du chargement du lieu.'; // Affiche un message d’erreur à l’utilisateur
-  });
+document.addEventListener('DOMContentLoaded', () => { // Exécute le code une fois que le DOM est complètement chargé
+    const token = getCookie('token'); // Récupère le token JWT stocké dans les cookies, si présent
+    const placeId = getPlaceIdFromURL(); // Extrait l’ID du lieu depuis les paramètres de l’URL
+    if (placeId) { // Vérifie que l’ID du lieu existe
+        fetchPlaceDetails(token, placeId); // Appelle la fonction pour récupérer et afficher les détails du lieu
+    } else { // Si aucun ID n’est trouvé dans l’URL
+        const section = document.getElementById('place-details'); // Sélectionne la section où afficher le message d’erreur
+        section.textContent = 'Aucun lieu spécifié dans l’URL.'; // Affiche un message d’erreur dans la page
+    }
+});
 
 
+function affichageReview(token) {
+  const reviewSection = document.getElementById('add-review'); // Récupère la section du formulaire d'avis
+  if (!reviewSection) return; // Si absent, rien à faire
 
+  if (token) {
+    reviewSection.style.display = 'block'; // Affiche le formulaire si utilisateur authentifié
+  } else {
+    reviewSection.style.display = 'none'; // Cache le formulaire sinon
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const token = getCookie('token');
+    affichageReview(token);
+
+    const placeId = getPlaceIdFromURL();
+    if (placeId) {
+        fetchPlaceDetails(token, placeId);
+    } else {
+        const section = document.getElementById('place-details');
+        section.textContent = 'Aucun lieu spécifié dans l\'URL.';
+    }
+});
