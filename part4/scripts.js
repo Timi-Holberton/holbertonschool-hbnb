@@ -187,38 +187,82 @@ document.addEventListener('DOMContentLoaded', () => { //une fois le DOM chargé,
 });
 
 
-const chaineRequete = window.location.search; // Récupérer la chaîne de requête dans l'URL (tout ce qui suit le ?)
-const parametres = new URLSearchParams(chaineRequete); // réer un objet URLSearchParams pour manipuler facilement les paramètres
-const placeId = parametres.get('place_id'); // Récupérer la valeur du paramètre 'place_id' (ou le nom que tu utilises)
+const chaineRequete = window.location.search; // Récupère la chaîne de requête de l'URL (?place_id=xxx)
+const parametres = new URLSearchParams(chaineRequete); // Crée un objet pour manipuler les paramètres d'URL
+const placeId = parametres.get('place_id'); // Extrait la valeur du paramètre place_id
 
-console.log("ID du lieu extrait de l'URL :", placeId); // Afficher dans la console pour vérification
+console.log("ID du lieu extrait de l'URL :", placeId); // Affiche l'ID récupéré pour vérification
 
-// Faire la requête vers l'API pour récupérer les détails
-fetch(`http://localhost:5000/api/v1/places/${placeId}`) // Requête vers l'API pour obtenir les données d’un lieu par son ID
-    .then(response => {
-        if (!response.ok) { // Vérifie si la réponse est correcte
-            throw new Error('Lieu non trouvé'); // Gère le cas d'erreur HTTP
-        }
-        return response.json(); // Convertit la réponse en JSON
-    })
-    .then(data => {
-        document.getElementById('place-title').textContent = data.title; // Affiche le titre du lieu
-        document.getElementById('host-name').textContent =
-    'Host : ' + (data.owner ? `${data.owner.first_name} ${data.owner.last_name}` : 'Inconnu'); // Affiche le nom de l'hôte ou "Inconnu"
-        document.getElementById('place-description').textContent = data.description; // Affiche la description du lieu
-        document.getElementById('place-price').textContent = `${data.price}€`; // Affiche le prix du lieu
+fetch(`http://localhost:5000/api/v1/places/${placeId}`) // Envoie une requête GET à l'API pour récupérer les données du lieu
+  .then(response => {
+    if (!response.ok) throw new Error('Lieu non trouvé'); // Si la réponse est en erreur (404...), on déclenche une exception
+    return response.json(); // Sinon, on convertit la réponse en JSON
+  })
+  .then(data => {
+    const section = document.getElementById('place-details'); // Sélectionne la section vide dans le HTML
+    section.innerHTML = ''; // Vide son contenu avant d'ajouter de nouveaux éléments
 
-        const amenitiesList = document.getElementById('place-amenities'); // Récupère l’élément <ul> pour les équipements
-        if (data.amenities && data.amenities.length > 0) { // Vérifie s'il y a des équipements
-            amenitiesList.innerHTML = data.amenities
-                .map(a => `<li>${a.name}</li>`) // Crée une <li> par équipement
-                .join(''); // Assemble toutes les <li> en une seule chaîne HTML
-        } else {
-            amenitiesList.innerHTML = '<li>Aucun équipement listé</li>'; // Affiche un message si aucun équipement
-        }
-    })
-    .catch(error => {
-        console.error(error); // Affiche une erreur en cas d’échec de la requête
-    });
+    const titre = document.createElement('h2'); // Crée un élément <h2>
+    titre.className = 'titre-details-place'; // Attribue une classe CSS
+    titre.textContent = data.title || 'Titre non disponible'; // Met le titre du lieu ou un fallback si absent
+    section.appendChild(titre); // Ajoute le <h2> à la section
+
+    const hostSpan = document.createElement('span'); // Crée un <span> pour l’hôte
+    hostSpan.className = 'host-label'; // Classe CSS pour le style
+    const ownerName = data.owner ? `${data.owner.first_name} ${data.owner.last_name}` : 'Inconnu'; // Construit le nom de l’hôte
+    hostSpan.textContent = 'Host : ' + ownerName; // Définit le texte du <span>
+    section.appendChild(hostSpan); // Ajoute le <span> à la section
+
+    const infoDiv = document.createElement('div'); // Crée un conteneur <div> pour les infos générales
+    infoDiv.className = 'place-info'; // Classe CSS pour styliser
+
+    const description = document.createElement('p'); // Crée un paragraphe pour la description
+    description.className = 'description'; // Classe CSS
+    description.textContent = data.description || 'Pas de description.'; // Ajoute le texte de la description
+    infoDiv.appendChild(description); // Ajoute le paragraphe à la div
+
+    const price = document.createElement('p'); // Crée un paragraphe pour le prix
+    price.className = 'price'; // Classe CSS
+
+    const priceLabel = document.createElement('span'); // Crée une étiquette pour le prix
+    priceLabel.className = 'text-price'; // Classe CSS
+    priceLabel.textContent = 'Price by night : '; // Texte statique
+    const priceValue = document.createElement('span'); // Crée une balise pour afficher la valeur
+    priceValue.className = 'price-button'; // Classe CSS
+    priceValue.textContent = data.price ? `${data.price}€` : 'Non précisé'; // Valeur dynamique du prix
+
+    price.appendChild(priceLabel); // Ajoute l’étiquette au paragraphe
+    price.appendChild(priceValue); // Ajoute le prix au paragraphe
+    infoDiv.appendChild(price); // Ajoute tout le bloc prix à la div
+
+    const amenitiesTitle = document.createElement('h3'); // Crée un titre pour les équipements
+    amenitiesTitle.textContent = 'Amenities :'; // Texte du titre
+    infoDiv.appendChild(amenitiesTitle); // Ajoute le titre à la div
+
+    const amenitiesList = document.createElement('ul'); // Crée une liste non ordonnée
+    amenitiesList.id = 'place-amenities'; // ID pour le ciblage ou le style
+
+    if (data.amenities && data.amenities.length > 0) { // Vérifie s’il y a des équipements
+      data.amenities.forEach(a => { // Pour chaque équipement
+        const li = document.createElement('li'); // Crée un élément de liste
+        li.textContent = a.name; // Met le nom de l’équipement
+        amenitiesList.appendChild(li); // Ajoute à la liste
+      });
+    } else {
+      const li = document.createElement('li'); // Cas où il n’y a aucun équipement
+      li.textContent = 'Aucun équipement listé'; // Texte par défaut
+      amenitiesList.appendChild(li); // Ajoute l’élément par défaut
+    }
+
+    infoDiv.appendChild(amenitiesList); // Ajoute la liste des équipements à la div
+
+    section.appendChild(infoDiv); // Ajoute la div entière à la section principale
+  })
+  .catch(error => {
+    console.error(error); // Affiche l'erreur dans la console
+    const section = document.getElementById('place-details'); // Sélectionne la section
+    section.textContent = 'Erreur lors du chargement du lieu.'; // Affiche un message d’erreur à l’utilisateur
+  });
+
 
 
