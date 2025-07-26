@@ -30,42 +30,24 @@ async function loginUser(email, password) {
     }
 }
 
-
-/* Mettre reviews dans bonne place */
-document.addEventListener("DOMContentLoaded", () => { // Quand le DOM est prêt
-    document.querySelectorAll(".review-card").forEach(review => { // Pour chaque review
-        const placeId = review.getAttribute("data-place"); // On récupère l'identifiant du lieu associé
-        const placeArticle = document.getElementById(placeId); // On récupère l'article HTML correspondant à ce lieu
-        if (placeArticle) {
-            placeArticle.appendChild(review); // On insère la review dans l'article correspondant
-        }
-    });
-});
-
-
 /* Vérifier authentification du user */
 function checkAuthentication() {
-    console.log('checkAuthentication appelé'); // Log de débogage
-    const token = getCookie('token'); // Récupération du token depuis les cookies
-    console.log('token dans cookie:', token); // Log du token
-    const loginLink = document.getElementById('login-link'); // On récupère le lien de connexion
+    console.log('checkAuthentication sur la page :', window.location.pathname); // Affiche la page actuelle
 
-    if (!token) {
-        console.log("Aucun token => affichage du lien de connexion"); // Si pas de token, on montre le lien
-        loginLink.style.display = 'block';
-    } else {
-        console.log("Token trouvé => on masque le lien de connexion"); // Sinon, on le masque
-        loginLink.style.display = 'none';
+    const token = getCookie('token'); // Récupère le token JWT depuis les cookies
+    const loginLink = document.getElementById('login-link'); // Récupère le lien de connexion dans le DOM
+
+    if (!token) loginLink.style.display = 'block'; // Affiche le lien si pas de token
+    else loginLink.style.display = 'none'; // Masque le lien si token présent
+
+    if (document.getElementById('places-list')) { // Vérifie si l'élément 'places-list' existe dans la page
+        fetchPlaces(token).then(places => { // Récupère la liste des lieux avec le token
+            if (places) displayPlaces(places); // Affiche les lieux s'ils existent
+            else console.error("aucun lieu trouvé ou reçu"); // Log d'erreur si aucun lieu reçu
+        });
     }
-        // on récupère les places
-    fetchPlaces(token).then(places => {
-        if (places) {
-            displayPlaces(places) // affiche les places
-        } else {
-            console.error("aucun lieu trouvé ou reçu")
-        }
-    }); // Et on récupère les lieux avec le token
 }
+
 
 function getCookie(name) {
     const cookies = document.cookie.split(';'); // On sépare tous les cookies
@@ -103,6 +85,11 @@ async function fetchPlaces(token) {
 
 function displayPlaces(places) {
     const placesList = document.getElementById('places-list') // Récupère l'élément HTML qui contiendra les lieux
+    console.log('Dans displayPlaces, placesList =', placesList);
+    if (!placesList) {
+        console.error('L’élément #places-list est introuvable dans le DOM au moment de l’exécution');
+        return; // éviter de planter le script
+    }
 
     placesList.innerHTML = ''; // Vide le contenu précédent, super !
 
@@ -154,6 +141,8 @@ function displayPlaces(places) {
 /*Filtre prix*/
 document.addEventListener('DOMContentLoaded', () => { //une fois le DOM chargé, on exécute
     const priceFilter = document.getElementById('price-filter'); // récupère l'élément <select> du filtre prix html
+
+    if (!priceFilter) return; // quitte la fonction si l'élément n'existe pas (ex : sur place.html)
 
     const options = [ // Option des filtres
         { value: 'all', text: 'All' },
@@ -279,38 +268,116 @@ function displayPlaceDetails(place) {
     section.appendChild(infoDiv); // Ajoute la div info complète à la section principale
 }
 
-document.addEventListener('DOMContentLoaded', () => { // Exécute le code une fois que le DOM est complètement chargé
-    const token = getCookie('token'); // Récupère le token JWT stocké dans les cookies, si présent
-    const placeId = getPlaceIdFromURL(); // Extrait l’ID du lieu depuis les paramètres de l’URL
-    if (placeId) { // Vérifie que l’ID du lieu existe
-        fetchPlaceDetails(token, placeId); // Appelle la fonction pour récupérer et afficher les détails du lieu
-    } else { // Si aucun ID n’est trouvé dans l’URL
-        const section = document.getElementById('place-details'); // Sélectionne la section où afficher le message d’erreur
-        section.textContent = 'Aucun lieu spécifié dans l’URL.'; // Affiche un message d’erreur dans la page
+document.addEventListener('DOMContentLoaded', () => {
+    const token = getCookie('token'); // Récupère le token JWT stocké dans les cookies
+    const placeId = getPlaceIdFromURL(); // Récupère l’ID du lieu depuis les paramètres URL
+    const placeDetailsElement = document.getElementById('place-details'); // Cherche l’élément #place-details dans le DOM
+
+    if (placeDetailsElement) { // Ce bloc ne s'exécute que sur place.html
+        if (placeId) {
+            fetchPlaceDetails(token, placeId); // Si ID présent, on charge les détails
+        } else {
+            placeDetailsElement.textContent = 'Aucun lieu spécifié dans l’URL.'; // Sinon, message d’erreur
+        }
     }
 });
 
 
-function affichageReview(token) {
-  const reviewSection = document.getElementById('add-review'); // Récupère la section du formulaire d'avis
-  if (!reviewSection) return; // Si absent, rien à faire
+/*-------------------------Reviews-------------------------*/
+// Lorsque la page est entièrement chargée
+document.addEventListener('DOMContentLoaded', () => {
+    const reviewForm = document.getElementById('review-form'); // Récupère le formulaire d'envoi d'avis
+    const token = checkAuthentication(); // Vérifie si l'utilisateur est connecté (via un token JWT)
+    const placeId = getPlaceIdFromURL(); // Récupère l'identifiant du lieu à partir de l'URL
 
-  if (token) {
-    reviewSection.style.display = 'block'; // Affiche le formulaire si utilisateur authentifié
-  } else {
-    reviewSection.style.display = 'none'; // Cache le formulaire sinon
-  }
+    // Si l'utilisateur n'est pas authentifié, on cache le formulaire de soumission
+    if (!token && reviewForm) {
+        reviewForm.style.display = 'none';
+    }
+
+    // On affiche les avis existants pour tous les visiteurs, connectés ou non
+    if (placeId) {
+    loadReviews(placeId);
+    }
+
+    // Si l'utilisateur est connecté, on lui permet de soumettre un avis
+    if (reviewForm && token) {
+        reviewForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Empêche l'envoi classique du formulaire
+
+            const reviewText = document.getElementById('review-text').value; // Texte saisi par l'utilisateur
+            const response = await submitReview(token, placeId, reviewText); // Envoie de la requête POST à l'API
+            handleResponse(response); // Traitement de la réponse
+        });
+    }
+});
+
+/* clique sur le titre "Add review" pour rediriger vers le login */
+document.addEventListener('DOMContentLoaded', () => {
+    const addReviewTitle = document.getElementById('add-review-title');
+    const token = getCookie('token');
+    if (addReviewTitle && !token) {
+        addReviewTitle.style.cursor = 'pointer';
+        addReviewTitle.addEventListener('click', () => {
+            window.location.href = '/login.html';
+        });
+    }
+});
+
+
+
+// Fonction pour envoyer un avis au serveur via l'API
+async function submitReview(token, placeId, reviewText) {
+    try {
+        const response = await fetch('http://localhost:5000/api/v1/reviews', {
+            method: 'POST', // On envoie une requête POST
+            headers: {
+                'Content-Type': 'application/json', // On précise qu'on envoie du JSON
+                'Authorization': `Bearer ${token}` // On ajoute le jeton JWT dans l'en-tête d'autorisation
+            },
+            body: JSON.stringify({
+                place_id: placeId, // On inclut l'identifiant du lieu
+                text: reviewText // Et le contenu de l'avis
+            })
+        });
+        return response; // On retourne la réponse pour qu'elle soit traitée ailleurs
+    } catch (error) {
+        // Si une erreur réseau survient, on l'affiche et on alerte l'utilisateur
+        console.error('Erreur lors de l\'envoi de l\'avis :', error);
+        alert('Erreur réseau. Veuillez réessayer.');
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const token = getCookie('token');
-    affichageReview(token);
+// Fonction qui gère la réponse de l'API après envoi d'un avis
+function handleResponse(response) {
+    if (!response) return; // Si aucune réponse n’est retournée, on ne fait rien
 
-    const placeId = getPlaceIdFromURL();
-    if (placeId) {
-        fetchPlaceDetails(token, placeId);
+    if (response.ok) {
+        // Si la réponse est positive (code 2xx)
+        alert('Review submitted successfully!'); // Message de confirmation
+        document.getElementById('review-form').reset(); // On vide le formulaire
+        location.reload(); // Et on recharge la page pour afficher le nouvel avis
     } else {
-        const section = document.getElementById('place-details');
-        section.textContent = 'Aucun lieu spécifié dans l\'URL.';
+        // Si la requête a échoué (erreur côté client ou serveur)
+        alert('Failed to submit review');
     }
-});
+}
+
+// Fonction pour charger et afficher les avis existants d’un lieu donné
+function loadReviews(placeId) {
+    fetch(`http://localhost:5000/api/v1/places/${placeId}/reviews`)  // Requête pour récupérer les avis d’un lieu donné
+        .then(response => response.json())  // Transformation de la réponse en JSON
+        .then(data => {
+            const reviewContainer = document.getElementById('reviews');  // Récupère le conteneur unique des avis dans la page
+            reviewContainer.innerHTML = ''; // Vide le contenu actuel des avis
+            data.forEach(review => {
+                const div = document.createElement('div');  // Crée un élément div pour chaque avis
+                div.classList.add('review');  // Ajoute la classe CSS "review" au div
+                div.innerHTML = `<p>${review.text}</p>`;  // Insère le texte de l’avis dans un paragraphe
+                reviewContainer.appendChild(div);  // Ajoute le div dans le conteneur des avis
+            });
+        })
+        .catch(error => {
+            console.error('Erreur lors du chargement des avis :', error);  // Affiche une erreur en cas d’échec de la requête
+        });
+}
