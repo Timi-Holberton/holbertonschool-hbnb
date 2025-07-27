@@ -242,6 +242,11 @@ class HBnBFacade:
         user_id = review_data.get('user_id')
         place_id = review_data.get('place_id')
 
+        print(f"DEBUG user_id reçu : {user_id} (type: {type(user_id)})")
+        if isinstance(user_id, dict):
+            user_id = user_id.get('id')
+            print(f"DEBUG user_id extrait du dict : {user_id}")
+
         # Validation des IDs
         if not user_id:
             raise ValueError("user_id est requis")
