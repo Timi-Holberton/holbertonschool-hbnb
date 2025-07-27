@@ -17,6 +17,7 @@
   --color-star: #DAA520;
   --font-titre: 'Ringbearer', 'Ephesis', cursive, Arial, sans-serif;
   --font-texte: 'Ephesis', cursive, Arial, sans-serif;
+  --font-autre: "Delius", cursive, Arial, sans-serif;
 }
 
 @font-face {
@@ -28,11 +29,12 @@
   font-family: 'Ephesis', cursive;
 }
 
-.yellowtail-regular {
-  font-family: 'Yellowtail', cursive;
+.delius-regular {
+  font-family: "Delius", cursive;
   font-weight: 400;
   font-style: normal;
 }
+
 
 /* Base Reset - Réinitialisation globale */
 * {
@@ -225,7 +227,7 @@ label {
     display: flex; /* Active le modèle Flexbox */
     flex-wrap: wrap; /* Autorise les éléments à passer à la ligne si nécessaire */
     flex-direction: column;
-    gap: 20px; /* Espacement entre les éléments */
+    gap: 10px; /* Espacement entre les éléments */
     justify-content: center; /* Centre les éléments horizontalement */
     margin-bottom: 2rem; /* Marge en bas de la section */
     align-items: center;
@@ -233,18 +235,35 @@ label {
 
 /* Informations sur le lieu */
 .place-info {
-    background-color: var(--color-clair); /* Fond clair (variable CSS) */
-    border: 1px solid var(--color-moyen-fonce); /* Bordure fine de couleur moyenne foncée */
+
     border-radius: 10px; /* Coins arrondis */
     padding: 15px; /* Espacement intérieur */
-    width: 600px; /* Largeur fixe des cartes */
+    width: 100%; /* Largeur fixe des cartes */
+    max-width: 800px;
     box-shadow: 5px 5px 3px rgba(0,0,0,0.05); /* Légère ombre portée */
+    border: 5px inset var(--color-moyen-fonce); /* Bordure effet 3D */
+    flex: 1 1 400px;
+}
+
+.place-image {
+    max-width: 400px; /* Limite la largeur maximale de l’image à 400px */
+    width: 100%; /* L’image prend toute la largeur disponible dans son conteneur */
+    border-radius: 10px; /* Bords arrondis  */
+    object-fit: cover; /* L’image couvre son conteneur sans se déformer */
+}
+
+.place-container {
+    display: flex; /* Utilise Flexbox pour aligner horizontalement */
+    gap: 20px; /* Espace de 20px entre les enfants (ex: image et .place-info) */
+    align-items: center; /* Aligne les enfants en haut du conteneur */
+    flex-wrap: wrap; /* Permet de passer à la ligne si la fenêtre est trop étroite */
+    justify-content: center; /* Centre horizontalement les éléments sur plusieurs lignes */
 }
 
 /* Carte de lieu - Titre */
 .titre-details-place {
     font-size: 2em; /* taille de titre */
-    margin-bottom: 10px; /* espace sous le titre */
+    margin-bottom: 5px; /* espace sous le titre */
     margin-top: 10px;
     text-align: center; /* centre le texte horizontalement */
     font-family: var(--font-titre);
@@ -257,7 +276,7 @@ label {
     text-align: left; /* formatage du texte */
     line-height: 1.4; /* Hauteur de ligne pour meilleure lisibilité */
     font-family: var(--font-texte);
-    font-size: 2em;
+    font-size: 1.7em;
 }
 
 /* Liste équipements  */
@@ -265,28 +284,37 @@ label {
     list-style-type: circle; /* style Puces */
     margin-left: 20px; /* Décalage vers la droite de la liste */
     margin-bottom: 10px; /* Espace sous la liste */
-    font-size: 1.8em;
+    font-size: 1.7em;
+    font-family: var(--font-texte);
 }
 
 /* Titre amenities */
 .place-info h3 {
     margin-top: 15px; /* Espace au-dessus */
     margin-bottom: 8px; /* Espace en dessous */
-    color: var(--color-moyen-fonce); /* Couleur moyenne foncée */
+    color: var(--color-fonce); /* Couleur moyenne foncée */
     text-align: left; /* formatage texte */
     font-size: 2em;
 }
 
 .host-label {
     color: var(--color-moyen-fonce); /* Définit la couleur du texte */
+    font-family: var(--font-texte);
     font-size: 2em;
+    font-weight: bold;
+}
+
+.price {
+    margin: 0 auto;
+    display: block;
+    width: fit-content; /* ou une largeur fixe si nécessaire */
 }
 
 /* Apparence de bouton pour le prix */
 .price-button {
     display: inline-block; /* Nécessaire pour padding et border */
     padding: 0.1em 0.3em; /* Espace intérieur */
-    background-color: var(--color-blanc-clair); /* Couleur de fond */
+    background-color: var(--color-clair); /* Couleur de fond */
     border-radius: 8px; /* Bords arrondis */
     color: var(--text-noir-vert); /* Couleur du texte */
     font-weight: bold; /* Texte gras */
@@ -304,25 +332,21 @@ label {
 #reviews {
     max-width: 900px; /* Limite la largeur */
     margin: 0 auto 2rem; /* Centre la section et ajoute une marge en bas */
+    font-size: 1.5em;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Titre section avis */
-#reviews h2 {
-    text-align: center; /* Centre le texte */
-    margin-bottom: 1rem; /* Espace en dessous du titre */
-    color: var(--color-fonce); /* Couleur foncée */
+#add-review-title {
+    font-size: 2em; /* taille text */
 }
 
-/* avis utilisateur */
-.review-user {
-    font-weight: bold; /* Définit l'épaisseur de la police */
-    color: var(--color-fonce); /* Couleur personnalisée pour distinguer l'auteur */
-    font-size: 1.1em; /* taille text */
-}
-
-.review-comment {
-    margin: 0.5em 0; /* Espacement vertical autour du commentaire */
-    font-style: italic; /* Applique un style italique au texte */
+.review {
+    border-radius: 8px; /* Coins arrondis */
+    padding: 15px; /* Espacement intérieur */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-moyen-fonce); /* Bordure fine de couleur moyenne foncée */
+    margin: 10px 0 10px 0 ;
 }
 
 .review-rating {
@@ -330,20 +354,10 @@ label {
     font-size: 1.1em; /* taille text */
 }
 
-/* Carte d’avis utilisateur */
-.review-card {
-    background-color: var(--color-blanc-clair); /* Fond très clair */
-    border: 5px inset var(--color-moyen-fonce); /* Bordure grise claire */
-    border-radius: 10px; /* Coins arrondis */
-    padding: 15px; /* Espacement intérieur */
-    margin-bottom: 15px; /* Espace entre les cartes */
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.05); /* Légère ombre */
-}
-
 /* Paragraphes avis*/
-.review-card p {
-    margin-bottom: 8px; /* Marge sous le paragraphe */
-    line-height: 1.4; /* Hauteur de ligne augmentée */
+.review p {
+    margin-bottom: 5px; /* Marge sous le paragraphe */
+
 }
 
 /* Formulaire ajout avis */
@@ -359,7 +373,6 @@ label {
 /* Titre formulaire ajout avis */
 #add-review h2 {
     text-align: center; /* Centrage du texte */
-    margin-bottom: 1rem; /* Marge en dessous */
     color: var(--color-fonce); /* Couleur foncée */
 }
 
@@ -385,7 +398,7 @@ label {
     border: 1px solid var(--color-moyen-fonce); /* Bordure foncée */
     border-radius: 5px; /* Coins légèrement arrondis */
     font-family: inherit; /* Hérite de la police du parent */
-    font-size: 1em; /* Taille de police normale */
+    font-size: 1.7em; /* Taille de police normale */
 }
 
 /* Bouton soumettre */
