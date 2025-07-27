@@ -36,6 +36,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_cors import cross_origin
 
 # Create a namespace for review-related endpoints
 api = Namespace('reviews', description='Review operations')
@@ -85,9 +86,11 @@ class ReviewList(Resource):
     @api.response(400, 'Invalid input data')
     @jwt_required()
     @api.doc(security='Bearer Auth')
+    @cross_origin(origins="http://localhost:8000", supports_credentials=True)
     def post(self):
         """Register a new review"""
         # Récupération des données envoyées dans le corps de la requête (format JSON)
+
         review_data = api.payload
 
         # Extraction des champs 'user_id' et 'place_id' des données de la review car ils seront utilisés
@@ -145,6 +148,7 @@ class ReviewList(Resource):
 
 @api.route('/<review_id>')
 class ReviewResource(Resource):
+    @cross_origin(origins="http://localhost:8000", supports_credentials=True)
     @api.response(200, 'Review details retrieved successfully', model=review_detailed_response)
     @api.response(404, 'Review not found')
     def get(self, review_id):
