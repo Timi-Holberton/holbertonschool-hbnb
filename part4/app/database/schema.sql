@@ -130,7 +130,7 @@ VALUES(
 	'Sam',
 	'Le Brave',
 	'samlebrave@gmail.com',
-	'$2a$12$4pHCLukTh30/W6LAJJn/O.dZosp7.u0DSWqmhX2lKbyQkTWfiSTBO',
+	'$2y$10$SIkt7/eo7TBwEieOxJ4yKebGovfY5oQUietpuKX7u/Ogmk4IAdWya',
 	FALSE,
 	datetime('now')
 );
