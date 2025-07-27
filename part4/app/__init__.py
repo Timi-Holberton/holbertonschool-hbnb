@@ -21,7 +21,8 @@ def create_app(config_class=config.DevelopmentConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    CORS(app, supports_credentials=True, origins=["http://localhost:8000"])
+    CORS(app, supports_credentials=True, origins=["http://localhost:8000"], resources={r"/api/*": {"origins": "http://localhost:8000"}})
+
 
     # Désactive la distinction entre URLs avec ou sans slash final
     # Permet d'éviter les redirections 308/301 qui posent problème
