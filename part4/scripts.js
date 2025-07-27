@@ -36,18 +36,37 @@ async function loginUser(email, password) {
 
 /* Vérifier authentification du user */
 function checkAuthentication() {
-    console.log('checkAuthentication sur la page :', window.location.pathname); // Affiche la page actuelle
+    console.log('checkAuthentication sur la page :', window.location.pathname); // Affiche la page actuelle dans la console
 
-    const token = getCookie('token'); // Récupère le token JWT depuis les cookies
-    const loginLink = document.getElementById('login-link'); // Récupère le lien de connexion dans le DOM
+    const token = getCookie('token'); // Récupère le token JWT dans les cookies
+    const loginLink = document.getElementById('login-link'); // Récupère le lien "Login" / "Logout"
 
-    if (!token) loginLink.style.display = 'block'; // Affiche le lien si pas de token
-    else loginLink.style.display = 'none'; // Masque le lien si token présent
+    if (!loginLink) return; // Sort si le lien n'existe pas dans le DOM
 
-    if (document.getElementById('places-list')) { // Vérifie si l'élément 'places-list' existe dans la page
-        fetchPlaces(token).then(places => { // Récupère la liste des lieux avec le token
-            if (places) displayPlaces(places); // Affiche les lieux s'ils existent
-            else console.error("aucun lieu trouvé ou reçu"); // Log d'erreur si aucun lieu reçu
+    if (!token) {
+        // Pas de token => utilisateur non connecté, affiche "Login"
+        loginLink.style.display = 'block';
+        loginLink.textContent = 'Login';
+        loginLink.href = '/login.html';
+        loginLink.onclick = null; // Supprime tout gestionnaire d'événement
+    } else {
+        // Token présent => utilisateur connecté, affiche "Logout"
+        loginLink.style.display = 'block';
+        loginLink.textContent = 'Logout';
+        loginLink.href = '#';
+
+        loginLink.onclick = (e) => {
+            e.preventDefault(); // Empêche le comportement par défaut du lien
+            document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'; // Supprime le cookie token
+            window.location.href = '/index.html'; // Redirige vers la page d'accueil
+        };
+    }
+
+    if (document.getElementById('places-list')) {
+        // Si la page contient la liste des lieux, récupère et affiche ces lieux
+        fetchPlaces(token).then(places => {
+            if (places) displayPlaces(places);
+            else console.error("aucun lieu trouvé ou reçu");
         });
     }
 }
@@ -226,67 +245,87 @@ async function fetchPlaceDetails(token, placeId) {
     }
 }
 
-// Fonction qui crée et insère dynamiquement les éléments HTML avec les données du lieu
 function displayPlaceDetails(place) {
     const section = document.getElementById('place-details'); // Récupère la section HTML où afficher les détails
-    section.innerHTML = ''; // Vide le contenu actuel de la section pour repartir à zéro
+    section.innerHTML = ''; // Vide le contenu actuel de la section
 
     const titre = document.createElement('h2'); // Crée un élément <h2> pour le titre du lieu
-    titre.className = 'titre-details-place'; // Ajoute une classe CSS pour le style
-    titre.textContent = place.title || 'Titre non disponible'; // Remplit le titre avec le nom du lieu ou un texte par défaut
-    section.appendChild(titre); // Ajoute ce titre dans la section détails
+    titre.className = 'titre-details-place'; // Ajoute une classe CSS
+    titre.textContent = place.title || 'Titre non disponible'; // Définit le texte du titre
+    section.appendChild(titre); // Ajoute le titre à la section
 
-    const hostSpan = document.createElement('span'); // Crée un élément <span> pour afficher le nom de l'hôte
-    hostSpan.className = 'host-label'; // Ajoute une classe CSS pour le style
-    const ownerName = place.owner ? `${place.owner.first_name} ${place.owner.last_name}` : 'Inconnu'; // Construit le nom complet de l'hôte ou met "Inconnu"
-    hostSpan.textContent = 'Host : ' + ownerName; // Affecte le texte dans le <span>
-    section.appendChild(hostSpan); // Ajoute le <span> dans la section
+    const hostSpan = document.createElement('span'); // Crée un <span> pour le nom de l'hôte
+    hostSpan.className = 'host-label'; // Ajoute une classe CSS
+    const ownerName = place.owner ? `${place.owner.first_name} ${place.owner.last_name}` : 'Inconnu'; // Prépare le nom complet ou 'Inconnu'
+    hostSpan.textContent = 'Host : ' + ownerName; // Définit le texte du <span>
+    section.appendChild(hostSpan); // Ajoute le <span> à la section
 
-    const infoDiv = document.createElement('div'); // Crée une <div> conteneur pour les infos complémentaires
-    infoDiv.className = 'place-info'; // Ajoute une classe CSS pour le style
+    const placeContainer = document.createElement('div'); // Crée un conteneur parent
+    placeContainer.className = 'place-container'; // Ajoute une classe CSS pour le style flex
 
-    const description = document.createElement('p'); // Crée un paragraphe pour la description
+    const infoDiv = document.createElement('div'); // Crée une div pour les infos du lieu
+    infoDiv.className = 'place-info'; // Ajoute une classe CSS
+
+    const description = document.createElement('p'); // Crée un paragraphe description
     description.className = 'description'; // Ajoute une classe CSS
-    description.textContent = place.description || 'Pas de description.'; // Ajoute la description ou un message par défaut
-    infoDiv.appendChild(description); // Ajoute le paragraphe dans la div info
+    description.textContent = place.description || 'Pas de description.'; // Définit le texte ou message par défaut
+    infoDiv.appendChild(description); // Ajoute la description dans infoDiv
 
-    const price = document.createElement('p'); // Crée un paragraphe pour le prix
+    const price = document.createElement('p'); // Crée un paragraphe prix
     price.className = 'price'; // Ajoute une classe CSS
 
-    const priceLabel = document.createElement('span'); // Crée un <span> pour le libellé "Price by night"
+    const priceLabel = document.createElement('span'); // Crée un <span> label prix
     priceLabel.className = 'text-price'; // Ajoute une classe CSS
-    priceLabel.textContent = 'Price by night : '; // Définit le texte du label
+    priceLabel.textContent = 'Price by night : '; // Définit le texte label
 
-    const priceValue = document.createElement('span'); // Crée un <span> pour la valeur du prix
+    const priceValue = document.createElement('span'); // Crée un <span> valeur prix
     priceValue.className = 'price-button'; // Ajoute une classe CSS
-    priceValue.textContent = place.price ? `${place.price}€` : 'Non précisé'; // Met le prix ou un texte alternatif
+    priceValue.textContent = place.price ? `${place.price}€` : 'Non précisé'; // Définit le texte prix ou alternatif
 
     price.appendChild(priceLabel); // Ajoute le label dans le paragraphe prix
-    price.appendChild(priceValue); // Ajoute la valeur du prix dans le paragraphe
-    infoDiv.appendChild(price); // Ajoute le paragraphe prix dans la div info
+    price.appendChild(priceValue); // Ajoute la valeur dans le paragraphe prix
+    infoDiv.appendChild(price); // Ajoute le paragraphe prix dans infoDiv
 
-    const amenitiesTitle = document.createElement('h3'); // Crée un titre pour la section équipements
+    const amenitiesTitle = document.createElement('h3'); // Crée un titre pour les équipements
     amenitiesTitle.textContent = 'Amenities :'; // Définit le texte du titre
-    infoDiv.appendChild(amenitiesTitle); // Ajoute le titre dans la div info
+    infoDiv.appendChild(amenitiesTitle); // Ajoute le titre dans infoDiv
 
-    const amenitiesList = document.createElement('ul'); // Crée une liste à puces pour les équipements
-    amenitiesList.id = 'place-amenities'; // Attribue un id pour ciblage CSS ou JS
+    const amenitiesList = document.createElement('ul'); // Crée une liste à puces
+    amenitiesList.id = 'place-amenities'; // Ajoute un id pour ciblage
 
-    if (place.amenities && place.amenities.length > 0) { // Si des équipements existent
+    if (place.amenities && place.amenities.length > 0) { // Vérifie présence équipements
         place.amenities.forEach(a => { // Pour chaque équipement
             const li = document.createElement('li'); // Crée un élément de liste
-            li.textContent = a.name; // Met le nom de l'équipement
+            li.textContent = a.name; // Définit le texte de l'équipement
             amenitiesList.appendChild(li); // Ajoute l'élément à la liste
         });
     } else {
-        const li = document.createElement('li'); // Sinon crée un seul élément de liste
-        li.textContent = 'Aucun équipement listé'; // Avec un message d'absence d'équipement
+        const li = document.createElement('li'); // Sinon crée un élément unique
+        li.textContent = 'Aucun équipement listé'; // Message par défaut
         amenitiesList.appendChild(li); // Ajoute cet élément à la liste
     }
-    infoDiv.appendChild(amenitiesList); // Ajoute la liste des équipements dans la div info
+    infoDiv.appendChild(amenitiesList); // Ajoute la liste des équipements dans infoDiv
 
-    section.appendChild(infoDiv); // Ajoute la div info complète à la section principale
+    placeContainer.appendChild(infoDiv); // Ajoute infoDiv dans le conteneur parent
+
+    const image = document.createElement('img'); // Crée un élément image
+    const imagePlace = { // Dictionnaire des images par titre
+        "Minas Tirith": "images/Minas-tirith.jpg",
+        "Gouffre de Helm": "images/helm.jpg",
+        "Fondcombe": "images/fondcombe.jpg",
+        "Mordor": "images/mordor.jpg",
+        "Mines of Moria": "images/mine-moria.jpg",
+        "The Prancing Pony": "images/pony.jpg"
+    };
+    image.src = imagePlace[place.title] || 'images/default.jpg'; // Définit la source ou image par défaut
+    image.alt = place.title; // Texte alternatif
+    image.classList.add('place-image'); // Ajoute une classe CSS
+
+    placeContainer.appendChild(image); // Ajoute l'image dans le conteneur parent
+
+    section.appendChild(placeContainer); // Ajoute le conteneur complet dans la section
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const token = getCookie('token'); // Récupère le token JWT stocké dans les cookies
@@ -301,6 +340,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+
 
 
 /*-------------------------Reviews-------------------------*/
@@ -419,7 +460,7 @@ async function soumettreReview(token, placeId, reviewText, rating) {
         return response; // Retourne réponse serveur
     } catch (error) {
         console.error('Erreur lors de l\'envoi de l\'avis :', error); // Log erreur réseau
-        alert('Erreur réseau. Veuillez réessayer.'); // Message d'alerte réseau
+        alert('Vous ne pouvez pas noter votre propre maion. Veuillez réessayer.'); // Message d'alerte réseau
     }
 }
 
