@@ -112,16 +112,16 @@ nav {
 /* Bouton de connexion */
 .login-button,
 .index-button {
-  background-color: var(--color-clair);
-  border: none;
-  border-radius: 5px;
-  text-decoration: none;
-  font-size: 1.5em;
-  padding: 6px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+    background-color: var(--color-clair);
+    border: none; /*  */
+    border-radius: 5px; /* coin arrondis */
+    text-decoration: none; /*  */
+    font-size: 1.5em; /*  */
+    padding: 6px 12px; /*  */
+    display: flex; /*  */
+    align-items: center; /*  */
+    justify-content: center; /*  */
+    height: 100%; /* hauteur */
 }
 
 /* Bouton de détails - Survol */
@@ -133,6 +133,64 @@ nav {
 main {
     padding: 2rem; /* espace au-dessus du contenu principal */
 }
+
+/*---------------------login email-mdp----------------------------------------*/
+/* Conteneur du formulaire */
+#login-form {
+    background-color: white;
+    padding: 2em;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 350px;
+    margin: auto;
+}
+
+/* Titre */
+#login-form h2 {
+    text-align: center;
+    margin-bottom: 1em;
+    font-size: 2.5em;
+    font-family: var(--font-titre);
+    color: var(--color-fonce);
+}
+
+/* Champs */
+#login-form label {
+    display: block;
+    margin-bottom: 0.3em;
+    font-weight: 600;
+    font-size: 1.7em;
+}
+
+#login-form input[type="email"],
+#login-form input[type="password"] {
+    width: 100%;
+    padding: 0.6em;
+    margin-bottom: 1em;
+    border: 1px solid var(--color-fonce);
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+/* Bouton */
+#login-form button {
+    width: 100%;
+    padding: 0.2;
+    background-color: var(--color-moyen-fonce);
+    color: var(--color-blanc-clair);
+    border: none;
+    font-size: 1.7em;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: var(--font-texte);
+}
+
+#login-form button:hover {
+    background-color: var(--color-fonce);
+}
+
 
 /* Bienvenue */
 #bienvenue {
