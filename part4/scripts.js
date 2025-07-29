@@ -1,4 +1,4 @@
-/* Login */
+/*-------------------------------Login---------------------------------------*/
 document.addEventListener('DOMContentLoaded', () => { // Quand le DOM est entièrement chargé
     const loginForm = document.getElementById('login-form'); // On récupère le formulaire de connexion
 
