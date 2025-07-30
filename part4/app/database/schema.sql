@@ -263,4 +263,3 @@ SELECT * FROM places;
 SELECT * FROM reviews;
 SELECT * FROM amenities;
 SELECT * FROM place_amenity;
-
