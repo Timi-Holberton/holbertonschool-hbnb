@@ -289,6 +289,7 @@ label {
     justify-content: center; /* Centre les éléments horizontalement */
     margin-bottom: 2rem; /* Marge en bas de la section */
     align-items: center;
+
 }
 
 /* Informations sur le lieu */
@@ -301,6 +302,8 @@ label {
     box-shadow: 5px 5px 3px rgba(0,0,0,0.05); /* Légère ombre portée */
     border: 5px inset var(--color-moyen-fonce); /* Bordure effet 3D */
     flex: 1 1 400px;
+    background: var(--color-clair);
+
 }
 
 .place-image {
@@ -372,7 +375,7 @@ label {
 .price-button {
     display: inline-block; /* Nécessaire pour padding et border */
     padding: 0.1em 0.3em; /* Espace intérieur */
-    background-color: var(--color-clair); /* Couleur de fond */
+    background-color: var(--color-clair-moyen); /* Couleur de fond */
     border-radius: 8px; /* Bords arrondis */
     color: var(--text-noir-vert); /* Couleur du texte */
     font-weight: bold; /* Texte gras */
@@ -405,6 +408,7 @@ label {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--color-moyen-fonce); /* Bordure fine de couleur moyenne foncée */
     margin: 10px 0 10px 0 ;
+    background: white;
 }
 
 .review-rating {
@@ -428,6 +432,19 @@ label {
     box-shadow: 3px 3px 5px rgba(0,0,0,0.1); /* Ombre douce */
 }
 
+.review-action-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.rating-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 /* Titre formulaire ajout avis */
 #add-review h2 {
     text-align: center; /* Centrage du texte */
@@ -446,6 +463,12 @@ label {
 #review-form label {
     font-weight: bold; /* Texte en gras */
     color: var(--color-fonce); /* Couleur foncée */
+}
+
+#star-rating {
+    color: var(--color-star); /* Couleur des étoiles */
+    font-size: 1.5em; /* taille text */
+    cursor: pointer;
 }
 
 /* Zone de texte */
