@@ -30,19 +30,20 @@
         <form id="review-form">
             <label for="review-text">Review:</label>
             <textarea id="review-text" name="review-text" required></textarea>
-
-            <label>Rating:</label>
-            <div id="star-rating" style="cursor:pointer; font-size: 24px;">
-                <i class="far fa-star" data-value="1"></i>
-                <i class="far fa-star" data-value="2"></i>
-                <i class="far fa-star" data-value="3"></i>
-                <i class="far fa-star" data-value="4"></i>
-                <i class="far fa-star" data-value="5"></i>
+            <div class="review-action-row">
+                <div class="rating-container">
+                    <label for="review-rating">Rating:</label>
+                    <div id="star-rating">
+                        <i class="far fa-star" data-value="1"></i>
+                        <i class="far fa-star" data-value="2"></i>
+                        <i class="far fa-star" data-value="3"></i>
+                        <i class="far fa-star" data-value="4"></i>
+                        <i class="far fa-star" data-value="5"></i>
+                    </div>
+                </div>
+                <input type="hidden" id="review-rating" name="review-rating" required>
+                <button type="submit">Submit</button>
             </div>
-
-            <input type="hidden" id="review-rating" name="review-rating" required>
-
-            <button type="submit">Submit</button>
         </form>
         </section>
     </main>
