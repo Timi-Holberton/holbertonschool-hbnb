@@ -126,18 +126,10 @@ erDiagram
         CHAR(36) place_id FK
         CHAR(36) amenity_id FK
     }
-    USER_PLACE_RESERVATION {
-        CHAR(36) place_id FK
-        CHAR(36) user_id FK
-        DATE start_date
-        DATE end_date
-    }
     USERS ||--o{ PLACES : owns
     USERS ||--o{ REVIEWS : writes
-    USERS ||--o{ USER_PLACE_RESERVATION : books
     PLACES ||--o{ REVIEWS : receives
     PLACES ||--o{ PLACE_AMENITY : has
-    PLACES ||--o{ USER_PLACE_RESERVATION : reserved_by
     AMENITIES ||--o{ PLACE_AMENITY : linked_to
 ```
 
