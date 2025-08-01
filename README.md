@@ -139,6 +139,7 @@ erDiagram
     PLACES ||--o{ PLACE_AMENITY : has
     PLACES ||--o{ USER_PLACE_RESERVATION : reserved_by
     AMENITIES ||--o{ PLACE_AMENITY : linked_to
+```
 
 ## How to Run the Application
 
