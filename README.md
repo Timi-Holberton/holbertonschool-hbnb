@@ -158,7 +158,7 @@ erDiagram
    sqlite3 instance/development.db < app/database/schema.sql
    ```
 
-6. The application should now be running with the SQL script implemented. You can now launch the application and open your web browser, then go to http://127.0.0.1:5000/api/v1
+6. The application should now be running with the SQL script implemented. You can now launch the application and open your web browser, then go to http://localhost:8000/
 
 7. To use the web client, open:
 
