@@ -16,8 +16,14 @@
   --text-moyen: #7DC2A5;
   --color-star: #DAA520;
   --font-titre: 'Ringbearer', 'Ephesis', cursive, Arial, sans-serif;
-  --font-texte: 'Ephesis', cursive, Arial, sans-serif;
+  --font-texte: 'Aniron', 'Ephesis', cursive, Arial, sans-serif;
   --font-autre: "Delius", cursive, Arial, sans-serif;
+  --color-marron1: #5b5d62;
+  --color-marron2: #EEE6D8;
+  --color-marron3: #DAAB3A;
+  --color-marron4: #B67332;
+  --color-marron5: #93441A;
+  --color-bleu1: #D8E0EE;
 }
 
 @font-face {
@@ -33,6 +39,11 @@
   font-family: "Delius", cursive;
   font-weight: 400;
   font-style: normal;
+}
+
+@font-face {
+  font-family: 'Aniron';
+  src: url('fonts/Aniron-7BaP.ttf') format('truetype');
 }
 
 
@@ -56,6 +67,13 @@ body {
     flex-direction: column; /* empile header, main, footer */
     min-height: 100vh; /* hauteur minimale = hauteur de la fenêtre */
     font-family: var(--font-texte); /* définit la police principale */
+    background-image: url("images/terre_du_milieu.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-color: rgba(255, 255, 255, 0.5); /* blanc transparent par-dessus */
+    background-blend-mode: lighten;
 }
 
 a {
@@ -69,7 +87,7 @@ main {
 
 /* Header - En-tête */
 header {
-    background-color: var(--color-moyen-fonce);/* couleur de fond */
+    /* couleur de fond */
     color: var(--text-noir-vert); /* couleur point liste */
     padding: 10px 20px; /* padding vertical 10px, horizontal 20px */
 }
@@ -85,6 +103,7 @@ nav {
     align-items: center; /* alignement vertical */
     justify-content: space-between; /* espace entre logo et liens */
     width: 100%; /* occupe toute la largeur */
+    position: relative;
 }
 
 /* Navigation - Liste de liens */
@@ -99,7 +118,6 @@ nav {
     text-decoration: none;/* supprime le soulignement des liens */
     color: var(--color-fonce); /* couleur du texte */
     font-weight: bold; /* texte en gras */
-    font-size: 1.5em;
 }
 
 /* Navigation - Liens au survol */
@@ -110,24 +128,67 @@ nav {
 }
 
 /* Bouton de connexion */
-.login-button,
-.index-button {
-    background-color: var(--color-clair);
-    border: none; /*  */
-    border-radius: 5px; /* coin arrondis */
+.login-button {
     text-decoration: none; /*  */
-    font-size: 1.5em; /*  */
-    padding: 6px 12px; /*  */
     display: flex; /*  */
     align-items: center; /*  */
     justify-content: center; /*  */
     height: 100%; /* hauteur */
+    padding: 0.5em 0.7em;
+    font-size: 18px;
+
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 50px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 26px -18px inset;
+    border-radius: 50px;
 }
 
 /* Bouton de détails - Survol */
 .details-button:hover {
     background-color: var(--color-fonce); /* couleur bouton survole*/
 }
+
+.defile-wrapper {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    position: relative;
+}
+
+.defile-container {
+    display: inline-block;
+    animation: defilement 15s linear infinite;
+}
+
+.defile {
+    display: inline-block;
+    margin-right: 2rem;
+}
+
+.titre {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-noir-vert);
+    font-family: var(--font-titre);
+}
+
+.sous-titre {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--text-noir-vert);
+    font-family: var(--font-texte);
+    letter-spacing: -2px;
+}
+
+@keyframes defilement {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 
 /* Contenu principal */
 main {
@@ -137,13 +198,13 @@ main {
 /*---------------------login email-mdp----------------------------------------*/
 /* Conteneur du formulaire */
 #login-form {
-    background-color: white;
     padding: 2em;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
     width: 100%;
     max-width: 350px;
     margin: auto;
+    border-radius: 50px;
+    background-color: rgba(255, 255, 255, 0.5); /* blanc transparent par-dessus */
+    background-blend-mode: lighten;
 }
 
 /* Titre */
@@ -152,7 +213,7 @@ main {
     margin-bottom: 1em;
     font-size: 2.5em;
     font-family: var(--font-titre);
-    color: var(--color-fonce);
+    color: var(--text-noir-vert);
 }
 
 /* Champs */
@@ -160,7 +221,8 @@ main {
     display: block;
     margin-bottom: 0.3em;
     font-weight: 600;
-    font-size: 1.7em;
+    font-size: 1.2em;
+    letter-spacing: -1.5px;
 }
 
 #login-form input[type="email"],
@@ -168,7 +230,6 @@ main {
     width: 100%;
     padding: 0.6em;
     margin-bottom: 1em;
-    border: 1px solid var(--color-fonce);
     border-radius: 6px;
     box-sizing: border-box;
 }
@@ -177,40 +238,18 @@ main {
 #login-form button {
     width: 100%;
     padding: 0.2;
-    background-color: var(--color-moyen-fonce);
-    color: var(--color-blanc-clair);
     border: none;
     font-size: 1.7em;
-    border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-family: var(--font-texte);
+    border-radius: 50px;
+    background: #e0e0e0;
+    box-shadow: inset 20px 20px 60px var(--color-marron2), inset -20px -20px 60px #ffffff;
 }
 
 #login-form button:hover {
     background-color: var(--color-fonce);
-}
-
-
-/* Bienvenue */
-#bienvenue {
-    background-color: var(--color-blanc-clair); /* couleur de fond */
-    padding: 20px 20px; /* Espacement intérieur */
-    text-align: center; /* Centrer le texte */
-}
-
-#bienvenue h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    color: var(--color-fonce);
-    font-family: var(--font-titre);
-}
-
-#bienvenue h2 {
-    color: var(--text-noir-vert);
-    font-weight: normal;
-    font-family: var(--font-texte);
-    font-size: 3em;
 }
 
 /* Filter */
@@ -219,7 +258,8 @@ main {
 }
 
 label {
-    font-size: 1.7em;
+    font-size: 1.2em;
+    letter-spacing: -2px;
 }
 /*----------------------------------INDEX----------------------------------------------*/
 /* Liste des lieux par id# */
@@ -232,12 +272,13 @@ label {
 
 /* Carte de lieu */
 .place-list-index {
-    background-color: var(--color-clair); /* couleur fond */
     border: 1px solid var(--color-moyen-fonce); /* bordure couleur*/
     border-radius: 10px; /* coins arrondis */
     padding: 10px; /* espace intérieur */
-    width: 300px; /* largeur fixe */
+    width: 350px; /* largeur fixe */
     box-shadow: 5px 5px 3px rgba(0,0,0,0.05); /* Ombre droite, bas, intensité, couleur */
+    background-color: rgba(255, 255, 255, 0.5); /* blanc transparent par-dessus */
+    background-blend-mode: lighten;
 }
 
 .place-list-index h2 {
@@ -253,7 +294,8 @@ label {
 .place-list-index p {
     margin: 15px 15px; /* espace vertical autour des paragraphes */
     text-align: center;
-    font-size: 1.6em;
+    font-size: 1.2em;
+    letter-spacing: -2px;
 }
 
 .place-image-index {
@@ -294,16 +336,14 @@ label {
 
 /* Informations sur le lieu */
 .place-info {
-
-    border-radius: 10px; /* Coins arrondis */
     padding: 15px; /* Espacement intérieur */
     width: 100%; /* Largeur fixe des cartes */
     max-width: 800px;
-    box-shadow: 5px 5px 3px rgba(0,0,0,0.05); /* Légère ombre portée */
-    border: 5px inset var(--color-moyen-fonce); /* Bordure effet 3D */
     flex: 1 1 400px;
-    background: var(--color-clair);
-
+    border-radius: 50px;
+    background-color: rgba(255, 255, 255, 0.5); /* blanc transparent par-dessus */
+    background-blend-mode: lighten;
+    box-shadow:  20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
 }
 
 .place-image {
@@ -328,16 +368,17 @@ label {
     margin-top: 10px;
     text-align: center; /* centre le texte horizontalement */
     font-family: var(--font-titre);
-    color: var(--color-fonce);
+    color: var(--text-noir-vert);
 }
 
 /* Description paragraphe */
 .place-info p {
-    margin-bottom: 10px; /* Marge en dessous des paragraphes */
+    margin-bottom: 20px; /* Marge en dessous des paragraphes */
     text-align: left; /* formatage du texte */
     line-height: 1.4; /* Hauteur de ligne pour meilleure lisibilité */
     font-family: var(--font-texte);
-    font-size: 1.7em;
+    font-size: 1em;
+    letter-spacing: -2px;
 }
 
 /* Liste équipements  */
@@ -345,8 +386,9 @@ label {
     list-style-type: circle; /* style Puces */
     margin-left: 20px; /* Décalage vers la droite de la liste */
     margin-bottom: 10px; /* Espace sous la liste */
-    font-size: 1.7em;
+    font-size: 1em;
     font-family: var(--font-texte);
+    letter-spacing: -2px;
 }
 
 /* Titre amenities */
@@ -355,33 +397,34 @@ label {
     margin-bottom: 8px; /* Espace en dessous */
     color: var(--color-fonce); /* Couleur moyenne foncée */
     text-align: left; /* formatage texte */
-    font-size: 2em;
+    font-size: 1.3em;
 }
 
 .host-label {
-    color: var(--color-moyen-fonce); /* Définit la couleur du texte */
+    color: var(--color-fonce); /* Définit la couleur du texte */
     font-family: var(--font-texte);
-    font-size: 2em;
+    font-size: 1.2em;
     font-weight: bold;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
 }
 
 .price {
     margin: 0 auto;
     display: block;
     width: fit-content; /* ou une largeur fixe si nécessaire */
+    border-radius: 50px;
+    background: linear-gradient(145deg, white , var(--color-blanc-clair));
+    box-shadow:  20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+    padding: 5px 10px 10px 10px;
 }
 
 /* Apparence de bouton pour le prix */
 .price-button {
     display: inline-block; /* Nécessaire pour padding et border */
-    padding: 0.1em 0.3em; /* Espace intérieur */
-    background-color: var(--color-clair-moyen); /* Couleur de fond */
-    border-radius: 8px; /* Bords arrondis */
-    color: var(--text-noir-vert); /* Couleur du texte */
     font-weight: bold; /* Texte gras */
-    box-shadow: 1px 1px 5px rgba(0,0,0,0.1); /* Léger effet d'ombre */
-    transition: background-color 0.3s ease;
-    margin: 0 auto 0; /* haut 10px, centrage auto, bas 0 */
+    font-size: 1.5em;
+
 }
 
 .price-button:hover {
@@ -393,13 +436,13 @@ label {
 #reviews {
     max-width: 900px; /* Limite la largeur */
     margin: 0 auto 2rem; /* Centre la section et ajoute une marge en bas */
-    font-size: 1.5em;
+    font-size: 1.2em;
     display: flex;
     flex-direction: column;
 }
 
 #add-review-title {
-    font-size: 2em; /* taille text */
+    font-size: 1.5em; /* taille text */
 }
 
 .review {
@@ -408,18 +451,20 @@ label {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--color-moyen-fonce); /* Bordure fine de couleur moyenne foncée */
     margin: 10px 0 10px 0 ;
-    background: white;
+    background-color: rgba(255, 255, 255, 0.5); /* blanc transparent par-dessus */
+    background-blend-mode: lighten;
 }
 
 .review-rating {
     color: var(--color-star); /* Couleur des étoiles */
-    font-size: 1.1em; /* taille text */
+    font-size: 1.5em; /* taille text */
 }
 
 /* Paragraphes avis*/
 .review p {
     margin-bottom: 5px; /* Marge sous le paragraphe */
-
+    font-size: 0.8em;
+    letter-spacing: -1.3px;
 }
 
 /* Formulaire ajout avis */
@@ -427,9 +472,9 @@ label {
     max-width: 600px; /* Largeur maximale du formulaire */
     margin: 0 auto 3rem; /* Centré horizontalement, marge en bas */
     padding: 1rem; /* Espacement intérieur */
-    background-color: var(--color-clair-moyen); /* Fond moyen clair */
+
     border-radius: 10px; /* Coins arrondis */
-    box-shadow: 3px 3px 5px rgba(0,0,0,0.1); /* Ombre douce */
+    box-shadow: 5px 5px 10px 10px rgba(0,0,0,0.1); /* Ombre douce */
 }
 
 .review-action-row {
@@ -467,7 +512,7 @@ label {
 
 #star-rating {
     color: var(--color-star); /* Couleur des étoiles */
-    font-size: 1.5em; /* taille text */
+    font-size: 1.2em; /* taille text */
     cursor: pointer;
 }
 
@@ -479,7 +524,7 @@ label {
     border: 1px solid var(--color-moyen-fonce); /* Bordure foncée */
     border-radius: 5px; /* Coins légèrement arrondis */
     font-family: inherit; /* Hérite de la police du parent */
-    font-size: 1.7em; /* Taille de police normale */
+    font-size: 1em; /* Taille de police normale */
 }
 
 /* Bouton soumettre */
@@ -506,5 +551,5 @@ footer {
     margin-bottom: 20px; /* espace en dessous du pied de page */
     text-align: center; /* texte centré */
     color: var(--text-noir-vert); /* texte gris moyen */
-    font-size: 1.3em; /* taille légèrement réduite */
+    font-size: 0.7em; /* taille légèrement réduite */
 }

@@ -10,18 +10,21 @@
 <body>
     <header>
         <nav>
-            <img src="images/logo.png" class="logo" alt="Logo HBnB, Mixte du logo de AirBnB et l'hippocampe de Holberton School" title="Logo HBnB">
-            <ul class="nav-links">
-                <li><a href="index.html" id="index-link" class="index-button">Index</a></li>
-                <li><a href="login.html" id="login-link" class="login-button">Login</a></li>
-            </ul>
+            <a href="index.html">
+                <img src="images/logo.png" class="logo" alt="Logo HBnB, Mixte du logo de AirBnB et l'hippocampe de Holberton School" title="Retour à l'accueil">
+            </a>
+        <div class="defile-wrapper">
+            <div class="defile-container">
+                <span class="defile titre">Welcome on HBnB</span>
+                <span class="defile sous-titre">Your home rental platform</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="login.html" id="login-link" class="login-button">Login</a></li>
+        </ul>
         </nav>
     </header>
     <main>
-        <header id="bienvenue">
-            <h1>Welcome on HBnB</h1>
-            <h2>Your home rental platform</h2>
-        </header>
         <section id="filter">
             <label for="price-filter">Max Price:</label>
             <select id="price-filter">
